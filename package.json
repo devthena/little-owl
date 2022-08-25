@@ -1,0 +1,22 @@
+{
+  "name": "little-owl",
+  "version": "0.1.0",
+  "description": "AthenaUS Twitch and Discord Bot",
+  "main": "index.ts",
+  "repository": "git@github.com:devthena/little-owl.git",
+  "author": "AthenaUS <theathenaus@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "tmi.js": "^1.8.5"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.13",
+    "@types/tmi.js": "^1.8.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  }
+}
