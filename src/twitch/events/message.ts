@@ -3,12 +3,12 @@ import { Client } from 'tmi.js';
 export const onMessage = (
   Bot: Client,
   channel: string,
-  tags: object,
+  userstate: object,
   message: string,
   self: boolean
 ) => {
   if (self) return;
 
   // TODO: Implement custom commands for the bot
-  console.log(Bot, channel, tags, message);
+  console.log(Bot, channel, userstate, message);
 };

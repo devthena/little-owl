@@ -16,7 +16,7 @@ const dbClient = new mdb.MongoClient(process.env.MONGODB_URL || '');
 
 import { onReady } from './discord/events';
 
-import { onMessage } from './twitch/events';
+import { onJoin, onMessage } from './twitch/events';
 
 type BotsProps = {
   db: mdb.Db | null;
@@ -59,10 +59,11 @@ const initBots = async () => {
 
   Bots.discord.on('ready', onReady.bind(null, Bots.discord));
 
+  Bots.twitch.on('join', onJoin);
   Bots.twitch.on('message', onMessage.bind(null, Bots.twitch));
 
-  Bots.twitch.connect().catch(console.error);
   Bots.discord.login(process.env.TOKEN);
+  Bots.twitch.connect().catch(console.error);
 };
 
 initBots();

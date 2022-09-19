@@ -1,8 +1,14 @@
 import { Client } from 'discord.js';
 
-export const onReady = (Bot: Client) => {
+export const onReady = async (Bot: Client) => {
   console.log('* LittleOwl is online *');
 
-  // TODO: Register slash comands for the bot
-  if (!Bot.application?.commands) console.log('Test');
+  if (!Bot.application?.commands) await Bot.application?.fetch();
+
+  if (!process.env.DEV) {
+    // TODO: Register slash commands for the bot
+    // await Bot.application?.commands.set(commands);
+    // TODO: Start a timer for updating bot activity
+    // startTimer(Bot);
+  }
 };
