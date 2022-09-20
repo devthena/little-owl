@@ -34,6 +34,8 @@ const Bots: BotsProps = {
       djs.GatewayIntentBits.GuildMessageReactions,
       djs.GatewayIntentBits.GuildMessages,
       djs.GatewayIntentBits.GuildPresences,
+      djs.GatewayIntentBits.Guilds,
+      djs.GatewayIntentBits.MessageContent,
     ],
   }),
   twitch: new tmi.Client({
