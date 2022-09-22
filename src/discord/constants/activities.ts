@@ -1,50 +1,50 @@
 export const BOT_ACTIVITIES = [
   {
     name: 'with Chat',
-    type: 'PLAYING',
+    type: 1,
   },
   {
     name: 'keyboard clicks',
-    type: 'LISTENING',
+    type: 2,
   },
   {
     name: 'Athena VODs',
-    type: 'WATCHING',
+    type: 3,
   },
   {
     name: 'with a controller',
-    type: 'PLAYING',
+    type: 1,
   },
   {
     name: 'Athena sing',
-    type: 'LISTENING',
+    type: 2,
   },
   {
     name: 'you gamble points',
-    type: 'WATCHING',
+    type: 3,
   },
   {
     name: 'with fire',
-    type: 'PLAYING',
+    type: 1,
   },
   {
     name: 'video game music',
-    type: 'LISTENING',
+    type: 2,
   },
   {
     name: 'you succeed <3',
-    type: 'WATCHING',
+    type: 3,
   },
   {
     name: 'with 1s and 0s',
-    type: 'PLAYING',
+    type: 1,
   },
   {
     name: 'ambient sounds',
-    type: 'LISTENING',
+    type: 2,
   },
   {
     name: 'Athena code',
-    type: 'WATCHING',
+    type: 3,
   },
 ];
