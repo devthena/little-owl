@@ -1,4 +1,6 @@
-export const COLORS = {
+import { StringObjectProps } from 'src/constants';
+
+export const COLORS: StringObjectProps = {
   BLUE: '#93C7FF',
   GREEN: '#2ECC71',
   ORANGE: '#E74C3C',

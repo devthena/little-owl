@@ -11,8 +11,10 @@ require('dotenv').config();
 import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
 
-import * as mdb from 'mongodb';
-const dbClient = new mdb.MongoClient(process.env.MONGODB_URL || '');
+import { MongoClient } from 'mongodb';
+const dbClient = new MongoClient(process.env.MONGODB_URL || '');
+
+import { BotsProps } from './constants';
 
 import { onReady } from './discord/events';
 
@@ -29,12 +31,6 @@ import {
   onSubscription,
   onTimeout,
 } from './twitch/events';
-
-type BotsProps = {
-  db: mdb.Db | null;
-  discord: djs.Client<boolean>;
-  twitch: tmi.Client;
-};
 
 const Bots: BotsProps = {
   db: null,
@@ -76,7 +72,7 @@ const initBots = async () => {
   Bots.twitch.on('ban', onBan.bind(null, Bots.twitch));
   Bots.twitch.on('chat', onChat.bind(null, Bots.twitch));
   Bots.twitch.on('cheer', onCheer.bind(null, Bots.twitch));
-  Bots.twitch.on('join', onJoin.bind(null, Bots.twitch));
+  Bots.twitch.on('join', onJoin.bind(null, Bots));
   Bots.twitch.on('part', onPart.bind(null, Bots.twitch));
   Bots.twitch.on('raided', onRaided.bind(null, Bots.twitch));
   Bots.twitch.on('resub', onResub.bind(null, Bots.twitch));
