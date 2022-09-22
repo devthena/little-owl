@@ -1,17 +1,17 @@
 export const SERVER_CONFIG = {
-  channels: {
+  CHANNELS: {
     alertStream: 'announcements',
   },
-  mods: {
+  MODS: {
     alertStream: true,
     autoAdd: true,
     gameGamble: false,
   },
-  roles: {
+  ROLES: {
     autoAdd: 'Heroes',
     live: 'Now Live',
   },
-  settings: {
+  SETTINGS: {
     gamblePercent: 40,
   },
 };
