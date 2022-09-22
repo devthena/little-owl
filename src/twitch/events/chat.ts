@@ -48,5 +48,19 @@ export const onChat = (
   }
 
   // TODO: Implement custom commands for the bot
-  console.log(message);
+  if (message.startsWith('!')) {
+    return;
+  }
+
+  const words = message.split(/ +/g);
+  const pattern = new RegExp('[A-Za-z].{2,}');
+
+  const isValid = words.length > 2 && words.some(word => pattern.test(word));
+
+  // TODO: Add logic to detect spam messages
+
+  if (!isValid) return;
+
+  // TODO: Get user from the database then add 1 drachma to their balance
+  console.log('User gets 1 drachma');
 };
