@@ -1,8 +1,6 @@
-type ProbabilityProps = {
-  [key: string]: number;
-};
+import { ObjectProps } from '../constants';
 
-export const weightedRandom = (toRandomize: ProbabilityProps) => {
+export const weightedRandom = (toRandomize: ObjectProps) => {
   let i,
     sum = 0,
     r = Math.random();
