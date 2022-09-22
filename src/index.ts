@@ -16,7 +16,19 @@ const dbClient = new mdb.MongoClient(process.env.MONGODB_URL || '');
 
 import { onReady } from './discord/events';
 
-import { onJoin, onMessage } from './twitch/events';
+import {
+  onBan,
+  onChat,
+  onCheer,
+  onJoin,
+  onPart,
+  onRaided,
+  onResub,
+  onSubGift,
+  onSubMysteryGift,
+  onSubscription,
+  onTimeout,
+} from './twitch/events';
 
 type BotsProps = {
   db: mdb.Db | null;
@@ -61,8 +73,17 @@ const initBots = async () => {
 
   Bots.discord.on('ready', onReady.bind(null, Bots.discord));
 
-  Bots.twitch.on('join', onJoin);
-  Bots.twitch.on('message', onMessage.bind(null, Bots.twitch));
+  Bots.twitch.on('ban', onBan.bind(null, Bots.twitch));
+  Bots.twitch.on('chat', onChat.bind(null, Bots.twitch));
+  Bots.twitch.on('cheer', onCheer.bind(null, Bots.twitch));
+  Bots.twitch.on('join', onJoin.bind(null, Bots.twitch));
+  Bots.twitch.on('part', onPart.bind(null, Bots.twitch));
+  Bots.twitch.on('raided', onRaided.bind(null, Bots.twitch));
+  Bots.twitch.on('resub', onResub.bind(null, Bots.twitch));
+  Bots.twitch.on('subgift', onSubGift.bind(null, Bots.twitch));
+  Bots.twitch.on('submysterygift', onSubMysteryGift.bind(null, Bots.twitch));
+  Bots.twitch.on('subscription', onSubscription.bind(null, Bots.twitch));
+  Bots.twitch.on('timeout', onTimeout.bind(null, Bots.twitch));
 
   Bots.discord.login(process.env.TOKEN);
   Bots.twitch.connect().catch(console.error);
