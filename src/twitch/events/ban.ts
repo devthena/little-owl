@@ -1,12 +1,16 @@
-import { Client } from 'tmi.js';
+import { BotsProps } from 'src/constants';
+import { logEvent } from '../../utils';
 
 export const onBan = (
-  _Bot: Client,
+  Bots: BotsProps,
   channel: string,
   username: string,
   _reason: string
 ) => {
   // TODO: Remove user information from the database
-  // TODO: Log this event on private server
-  console.log(`${username} has been banned from ${channel}!`);
+  logEvent(
+    Bots.discord,
+    'timeout',
+    `${username} has been banned from ${channel}!`
+  );
 };

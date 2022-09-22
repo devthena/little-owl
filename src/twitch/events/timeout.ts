@@ -1,16 +1,17 @@
-import { Client } from 'tmi.js';
-import { ObjectProps } from 'src/constants';
+import { BotsProps, ObjectProps } from 'src/constants';
+import { logEvent } from '../../utils';
 
 export const onTimeout = (
-  _Bot: Client,
+  Bots: BotsProps,
   _channel: string,
   username: string,
   reason: string,
   duration: number,
   _userstate: ObjectProps
 ) => {
-  // TODO: Log this event on private server
-  console.log(
-    `${username} has been timed out for ${duration}s. Reason: ${reason}`
+  logEvent(
+    Bots.discord,
+    'timeout',
+    `${username} has been timed out for ${duration}s.\n\nReason: ${reason}`
   );
 };

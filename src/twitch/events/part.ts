@@ -1,11 +1,11 @@
-import { Client } from 'tmi.js';
+import { BotsProps } from 'src/constants';
+import { logEvent } from '../../utils';
 
 export const onPart = (
-  _Bot: Client,
+  Bots: BotsProps,
   _channel: string,
   username: string,
   _self: boolean
 ) => {
-  // TODO: Log this event on private server
-  console.log(`${username} has left the chat.`);
+  logEvent(Bots.discord, 'user', `${username} has left the chat.`);
 };

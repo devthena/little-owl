@@ -1,14 +1,17 @@
-import { Client } from 'tmi.js';
-import { ObjectProps } from 'src/constants';
+import { BotsProps, ObjectProps } from 'src/constants';
+import { logEvent } from '../../utils';
 
 export const onSubscription = (
-  _Bot: Client,
+  Bots: BotsProps,
   _channel: string,
   username: string,
   _methods: ObjectProps,
   message: string,
   _userstate: ObjectProps
 ) => {
-  // TODO: Log this event on private server
-  console.log(`${username} has subscribed to the channel! Message: ${message}`);
+  logEvent(
+    Bots.discord,
+    'alert',
+    `${username} has subscribed to the channel!\n\nMessage: ${message}`
+  );
 };

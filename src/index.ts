@@ -69,17 +69,17 @@ const initBots = async () => {
 
   Bots.discord.on('ready', onReady.bind(null, Bots.discord));
 
-  Bots.twitch.on('ban', onBan.bind(null, Bots.twitch));
-  Bots.twitch.on('chat', onChat.bind(null, Bots.twitch));
-  Bots.twitch.on('cheer', onCheer.bind(null, Bots.twitch));
+  Bots.twitch.on('ban', onBan.bind(null, Bots));
+  Bots.twitch.on('chat', onChat.bind(null, Bots));
+  Bots.twitch.on('cheer', onCheer.bind(null, Bots));
   Bots.twitch.on('join', onJoin.bind(null, Bots));
-  Bots.twitch.on('part', onPart.bind(null, Bots.twitch));
-  Bots.twitch.on('raided', onRaided.bind(null, Bots.twitch));
-  Bots.twitch.on('resub', onResub.bind(null, Bots.twitch));
-  Bots.twitch.on('subgift', onSubGift.bind(null, Bots.twitch));
-  Bots.twitch.on('submysterygift', onSubMysteryGift.bind(null, Bots.twitch));
-  Bots.twitch.on('subscription', onSubscription.bind(null, Bots.twitch));
-  Bots.twitch.on('timeout', onTimeout.bind(null, Bots.twitch));
+  Bots.twitch.on('part', onPart.bind(null, Bots));
+  Bots.twitch.on('raided', onRaided.bind(null, Bots));
+  Bots.twitch.on('resub', onResub.bind(null, Bots));
+  Bots.twitch.on('subgift', onSubGift.bind(null, Bots));
+  Bots.twitch.on('submysterygift', onSubMysteryGift.bind(null, Bots));
+  Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
+  Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
   Bots.discord.login(process.env.TOKEN);
   Bots.twitch.connect().catch(console.error);

@@ -1,8 +1,8 @@
-import { Client } from 'tmi.js';
-import { ObjectProps } from 'src/constants';
+import { BotsProps, ObjectProps } from 'src/constants';
+import { logEvent } from '../../utils';
 
 export const onSubGift = (
-  _Bot: Client,
+  Bots: BotsProps,
   _channel: string,
   username: string,
   _streakMonths: number,
@@ -11,6 +11,9 @@ export const onSubGift = (
   _userstate: ObjectProps
 ) => {
   // TODO: Add logic for variations of subgift events
-  // TODO: Log this event on private server
-  console.log(`${username} gifted a subscription to ${recipient}!`);
+  logEvent(
+    Bots.discord,
+    'alert',
+    `${username} gifted a subscription to ${recipient}!`
+  );
 };

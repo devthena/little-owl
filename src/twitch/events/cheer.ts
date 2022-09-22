@@ -1,14 +1,15 @@
-import { Client } from 'tmi.js';
-import { ObjectProps } from '../../constants';
+import { BotsProps, ObjectProps } from 'src/constants';
+import { logEvent } from '../../utils';
 
 export const onCheer = (
-  _Bot: Client,
+  Bots: BotsProps,
   _channel: string,
   userstate: ObjectProps,
   message: string
 ) => {
-  // TODO: Log this event on private server
-  console.log(
-    `${userstate.username} cheered ${userstate.bits} in the chat! Message: ${message}`
+  logEvent(
+    Bots.discord,
+    'alert',
+    `${userstate.username} cheered ${userstate.bits} in the chat!\n\nMessage: ${message}`
   );
 };

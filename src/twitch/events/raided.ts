@@ -1,11 +1,15 @@
-import { Client } from 'tmi.js';
+import { BotsProps } from 'src/constants';
+import { logEvent } from '../../utils';
 
 export const onRaided = (
-  _Bot: Client,
+  Bots: BotsProps,
   _channel: string,
   username: string,
   viewers: number
 ) => {
-  // TODO: Log this event on private server
-  console.log(`${username} is raiding the chat with ${viewers} viewers!`);
+  logEvent(
+    Bots.discord,
+    'alert',
+    `${username} has raided the chat with ${viewers} viewers!`
+  );
 };
