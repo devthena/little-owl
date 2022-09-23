@@ -1,4 +1,4 @@
-import { BotsProps } from 'src/constants';
+import { BotsProps } from 'src/interfaces';
 import { logEvent } from '../../utils';
 
 export const onJoin = (

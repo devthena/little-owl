@@ -6,7 +6,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { BOT_CONFIG } from '../constants';
+import { CONFIG } from 'src/constants';
 
 export const Help = {
   data: new SlashCommandBuilder()
@@ -18,13 +18,13 @@ export const Help = {
         new ButtonBuilder()
           .setLabel('Commands')
           .setStyle(ButtonStyle.Link)
-          .setURL(BOT_CONFIG.URLS.COMMANDS)
+          .setURL(CONFIG.URLS.COMMANDS)
       )
       .addComponents(
         new ButtonBuilder()
           .setLabel('FAQ')
           .setStyle(ButtonStyle.Link)
-          .setURL(BOT_CONFIG.URLS.FAQ)
+          .setURL(CONFIG.URLS.FAQ)
       );
 
     await interaction.reply({

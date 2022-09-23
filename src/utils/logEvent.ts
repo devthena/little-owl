@@ -1,12 +1,12 @@
 import { Client, EmbedBuilder } from 'discord.js';
-import { StringObjectProps } from '../constants';
-import { BOT_CONFIG } from '../discord/constants';
+import { CONFIG } from '../constants';
+import { StringObjectProps } from 'src/interfaces';
 
 const channelMap: StringObjectProps = {
-  activity: BOT_CONFIG.CHANNELS.ACTIVITIES,
-  alert: BOT_CONFIG.CHANNELS.ALERTS,
-  timeout: BOT_CONFIG.CHANNELS.TIMEOUTS,
-  user: BOT_CONFIG.CHANNELS.USERS,
+  activity: CONFIG.CHANNELS.LOGS.ACTIVITIES,
+  alert: CONFIG.CHANNELS.LOGS.ALERTS,
+  timeout: CONFIG.CHANNELS.LOGS.TIMEOUTS,
+  user: CONFIG.CHANNELS.LOGS.USERS,
 };
 
 export const logEvent = (Bot: Client, type: string, description: string) => {

@@ -14,7 +14,7 @@ import * as tmi from 'tmi.js';
 import { MongoClient } from 'mongodb';
 const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
-import { BotsProps } from './constants';
+import { BotsProps } from './interfaces';
 
 import { onReady } from './discord/events';
 

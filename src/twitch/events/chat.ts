@@ -1,5 +1,5 @@
-import { BotsProps, ObjectProps } from 'src/constants';
-import { CUSTOM_REWARDS } from '../constants';
+import { CONFIG } from '../../constants';
+import { BotsProps, ObjectProps } from 'src/interfaces';
 import { logEvent } from '../../utils';
 
 export const onChat = (
@@ -14,41 +14,41 @@ export const onChat = (
   const redeemId = userstate['custom-reward-id'];
 
   if (redeemId) {
-    let drachmae = 0;
+    let points = 0;
 
     switch (redeemId) {
-      case CUSTOM_REWARDS.CONVERT100:
-        // TODO: Update user's balance with additional 100 drachmae
-        drachmae = 100;
+      case CONFIG.REWARDS.CONVERT100:
+        // TODO: Update user's balance with additional 100 drachmai
+        points = 100;
         break;
-      case CUSTOM_REWARDS.CONVERT500:
-        // TODO: Update user's balance with additional 500 drachmae
-        drachmae = 500;
+      case CONFIG.REWARDS.CONVERT500:
+        // TODO: Update user's balance with additional 500 drachmai
+        points = 500;
         break;
-      case CUSTOM_REWARDS.CONVERT1000:
-        // TODO: Update user's balance with additional 1000 drachmae
-        drachmae = 1000;
+      case CONFIG.REWARDS.CONVERT1000:
+        // TODO: Update user's balance with additional 1000 drachmai
+        points = 1000;
         break;
     }
 
-    if (!drachmae) return;
+    if (!points) return;
 
     Bots.twitch.say(
       channel,
-      `${userstate.username} has redeemed ${drachmae} drachmae!`
+      `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
     );
 
     return logEvent(
       Bots.discord,
       'activity',
       `${userstate.username} has redeemed conversion of ${
-        drachmae * 10
-      } channel points to ${drachmae} drachmae`
+        points * 10
+      } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`
     );
   }
 
   // TODO: Implement custom commands for the bot
-  if (message.startsWith('!')) {
+  if (message.startsWith(CONFIG.PREFIX)) {
     return;
   }
 
@@ -62,5 +62,4 @@ export const onChat = (
   if (!isValid) return;
 
   // TODO: Get user from the database then add 1 drachma to their balance
-  console.log('User gets 1 drachma');
 };
