@@ -25,11 +25,10 @@ export const CONFIG = {
   },
   POLL_RATE_MS: 1800000,
   PREFIX: '!',
-  // TODO: Create custom rewards on Twitch and add the IDs below
   REWARDS: {
-    CONVERT100: '',
-    CONVERT500: '',
-    CONVERT1000: '',
+    CONVERT100: 'af2d04b1-2cc6-4f09-a555-954ff7e3aadb',
+    CONVERT500: 'a54efdc9-caa9-45ba-9d48-822333d4c30b',
+    CONVERT1000: '270d9a74-dd9d-43c5-861d-f8bd56a78fc6',
   },
   ROLES: {
     AUTO_ADD: {

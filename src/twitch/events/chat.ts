@@ -2,7 +2,7 @@ import { CONFIG } from '../../constants';
 import { BotsProps, ObjectProps } from 'src/interfaces';
 import { logEvent } from '../../utils';
 
-export const onChat = (
+export const onChat = async (
   Bots: BotsProps,
   channel: string,
   userstate: ObjectProps,
@@ -18,15 +18,12 @@ export const onChat = (
 
     switch (redeemId) {
       case CONFIG.REWARDS.CONVERT100:
-        // TODO: Update user's balance with additional 100 drachmai
         points = 100;
         break;
       case CONFIG.REWARDS.CONVERT500:
-        // TODO: Update user's balance with additional 500 drachmai
         points = 500;
         break;
       case CONFIG.REWARDS.CONVERT1000:
-        // TODO: Update user's balance with additional 1000 drachmai
         points = 1000;
         break;
     }
@@ -38,17 +35,39 @@ export const onChat = (
       `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
     );
 
-    return logEvent(
+    logEvent(
       Bots.discord,
       'activity',
       `${userstate.username} has redeemed conversion of ${
         points * 10
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`
     );
+
+    if (process.env.MONGODB_CHAT) {
+      await Bots.db?.collection(process.env.MONGODB_CHAT).updateOne(
+        { twitch_id: userstate['user-id'] },
+        {
+          $set: {
+            username: userstate.username,
+          },
+          $inc: {
+            points: points,
+          },
+        },
+        { upsert: true }
+      );
+    }
+
+    return;
   }
 
   // TODO: Implement custom commands for the bot
   if (message.startsWith(CONFIG.PREFIX)) {
+    const args = message.slice(1).split(' ');
+    const command = args.shift()?.toLowerCase();
+
+    if (command === 'gamble') {
+    }
     return;
   }
 
@@ -61,5 +80,19 @@ export const onChat = (
 
   if (!isValid) return;
 
-  // TODO: Get user from the database then add 1 drachma to their balance
+  if (process.env.MONGODB_CHAT) {
+    await Bots.db?.collection(process.env.MONGODB_CHAT).updateOne(
+      { twitch_id: userstate['user-id'] },
+      {
+        $set: {
+          username: userstate.username,
+          last_chat: message,
+        },
+        $inc: {
+          points: 1,
+        },
+      },
+      { upsert: true }
+    );
+  }
 };
