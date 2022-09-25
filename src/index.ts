@@ -16,7 +16,7 @@ const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
 import { BotsProps } from './interfaces';
 
-import { onReady } from './discord/events';
+import { onMessageCreate, onReady } from './discord/events';
 
 import {
   onBan,
@@ -68,6 +68,7 @@ const initBots = async () => {
   Bots.db = dbClient.db(process.env.MONGODB_DB);
 
   Bots.discord.on('ready', onReady.bind(null, Bots.discord));
+  Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
 
   Bots.twitch.on('ban', onBan.bind(null, Bots));
   Bots.twitch.on('chat', onChat.bind(null, Bots));
