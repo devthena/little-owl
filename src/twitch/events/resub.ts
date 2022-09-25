@@ -1,4 +1,4 @@
-import { BotsProps, ObjectProps } from 'src/constants';
+import { BotsProps, ObjectProps } from 'src/interfaces';
 import { logEvent } from '../../utils';
 
 export const onResub = (

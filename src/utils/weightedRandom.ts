@@ -1,4 +1,4 @@
-import { ObjectProps } from '../constants';
+import { ObjectProps } from 'src/interfaces';
 
 export const weightedRandom = (toRandomize: ObjectProps) => {
   let i,

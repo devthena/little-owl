@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { SERVER_CONFIG } from '../constants';
+import { CONFIG } from 'src/constants';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
@@ -12,7 +12,7 @@ export const Gamble = {
         .setRequired(true)
     ),
   execute: async (interaction: CommandInteraction) => {
-    if (!SERVER_CONFIG.MODS.gameGamble) {
+    if (!CONFIG.GAMES.GAMBLE.ENABLED) {
       await interaction.reply('Gambling is not enabled in this server.');
       return;
     }

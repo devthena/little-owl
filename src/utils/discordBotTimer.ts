@@ -1,5 +1,5 @@
 import { ActivityType, Client } from 'discord.js';
-import { BOT_ACTIVITIES, BOT_CONFIG } from '../discord/constants';
+import { BOT_ACTIVITIES, CONFIG } from '../constants';
 
 let timer: NodeJS.Timeout | null = null;
 let pointer: number = 0;
@@ -23,5 +23,5 @@ export const discordBotTimer = (Bot: Client) => {
   if (timer) clearTimeout(timer);
   timer = setTimeout(() => {
     discordBotTimer(Bot);
-  }, BOT_CONFIG.POLL_RATE_MS);
+  }, CONFIG.POLL_RATE_MS);
 };
