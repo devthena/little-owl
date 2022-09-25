@@ -1,6 +1,7 @@
+import { BotsProps, ObjectProps, TwitchUserProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
-import { BotsProps, ObjectProps } from 'src/interfaces';
 import { logEvent } from '../../utils';
+import { onGamble } from '../commands';
 
 export const onChat = async (
   Bots: BotsProps,
@@ -66,8 +67,29 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    if (command === 'gamble') {
+    if (process.env.MONGODB_CHAT) {
+      const document = await Bots.db
+        ?.collection(process.env.MONGODB_CHAT)
+        .findOne({ twitch_id: userstate['user-id'] });
+
+      const data: TwitchUserProps = {
+        twitch_id: userstate['user-id'],
+        username: userstate.username,
+        points: document ? document.points : 0,
+      };
+
+      if (command === 'gamble') {
+        onGamble(Bots, channel, data, args);
+      } else if (command === 'points') {
+        Bots.twitch.say(
+          channel,
+          `${userstate.username} you have ${data.points} ${
+            data.points > 1 ? CONFIG.CURRENCY.PLURAL : CONFIG.CURRENCY.SINGLE
+          }.`
+        );
+      }
     }
+
     return;
   }
 

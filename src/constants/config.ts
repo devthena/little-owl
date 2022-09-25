@@ -19,7 +19,7 @@ export const CONFIG = {
   },
   GAMES: {
     GAMBLE: {
-      ENABLED: false,
+      ENABLED: true,
       WIN_PERCENT: 40,
     },
   },

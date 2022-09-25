@@ -15,3 +15,10 @@ export interface ObjectProps {
 export interface StringObjectProps {
   [key: string]: string;
 }
+
+export interface TwitchUserProps {
+  twitch_id: string;
+  username: string;
+  points: number;
+  last_chat?: string;
+}
