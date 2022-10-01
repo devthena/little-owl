@@ -8,7 +8,7 @@ export const onRaided = (
   viewers: number
 ) => {
   logEvent(
-    Bots.discord,
+    Bots,
     'alert',
     `${username} has raided the chat with ${viewers} viewers!`
   );

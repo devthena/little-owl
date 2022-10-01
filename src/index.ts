@@ -16,7 +16,11 @@ const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
 import { BotsProps } from './interfaces';
 
-import { onMessageCreate, onReady } from './discord/events';
+import {
+  onInteractionCreate,
+  onMessageCreate,
+  onReady,
+} from './discord/events';
 
 import {
   onBan,
@@ -46,6 +50,15 @@ const Bots: BotsProps = {
       djs.GatewayIntentBits.MessageContent,
     ],
   }),
+  env: {
+    ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
+    DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID || '',
+    DISCORD_TOKEN: process.env.DISCORD_TOKEN || '',
+    SERVER_ID: process.env.SERVER_ID || '',
+    MONGODB_USERS: process.env.MONGODB_USERS || '',
+    MONGODB_CHAT: process.env.MONGODB_CHAT || '',
+    MONGODB_VIEW: process.env.MONGODB_VIEW || '',
+  },
   twitch: new tmi.Client({
     options: { debug: true },
     identity: {
@@ -68,6 +81,7 @@ const initBots = async () => {
   Bots.db = dbClient.db(process.env.MONGODB_DB);
 
   Bots.discord.on('ready', onReady.bind(null, Bots.discord));
+  Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
   Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
 
   Bots.twitch.on('ban', onBan.bind(null, Bots));
@@ -82,7 +96,7 @@ const initBots = async () => {
   Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
-  Bots.discord.login(process.env.TOKEN);
+  Bots.discord.login(process.env.DISCORD_TOKEN);
   Bots.twitch.connect().catch(console.error);
 };
 

@@ -1,6 +1,6 @@
-import { Client, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { CONFIG } from '../constants';
-import { StringObjectProps } from 'src/interfaces';
+import { BotsProps, StringObjectProps } from 'src/interfaces';
 
 const channelMap: StringObjectProps = {
   activity: CONFIG.CHANNELS.LOGS.ACTIVITIES,
@@ -9,8 +9,12 @@ const channelMap: StringObjectProps = {
   user: CONFIG.CHANNELS.LOGS.USERS,
 };
 
-export const logEvent = (Bot: Client, type: string, description: string) => {
-  const server = Bot.guilds.cache.get(process.env.ADMIN_SERVER_ID || '');
+export const logEvent = (
+  Bots: BotsProps,
+  type: string,
+  description: string
+) => {
+  const server = Bots.discord.guilds.cache.get(Bots.env.ADMIN_SERVER_ID);
 
   if (server && server.available) {
     const channel = server.channels.cache.get(channelMap[type]);

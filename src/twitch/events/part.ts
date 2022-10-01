@@ -7,5 +7,5 @@ export const onPart = (
   username: string,
   _self: boolean
 ) => {
-  logEvent(Bots.discord, 'user', `${username} has left the chat.`);
+  logEvent(Bots, 'user', `${username} has left the chat.`);
 };

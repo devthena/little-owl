@@ -1,24 +1,42 @@
 import { Routes } from 'discord.js';
 import { REST } from '@discordjs/rest';
-import { Gamble, Help, Info, Magic8Ball, Points } from './commands';
+import { Gamble, Points } from './commands';
 
-const commands = [];
+require('dotenv').config();
 
-commands.push(Magic8Ball.data.toJSON());
-commands.push(Gamble.data.toJSON());
-commands.push(Help.data.toJSON());
-commands.push(Info.data.toJSON());
-commands.push(Points.data.toJSON());
+const register = (): void => {
+  if (!process.env.DISCORD_TOKEN) {
+    return console.error('Bot Register Command: Missing Token.');
+  }
 
-const rest = new REST({ version: '10' }).setToken(process.env.TOKEN || '');
+  if (!process.env.DISCORD_CLIENT_ID) {
+    return console.error('Bot Register Command: Missing Client ID.');
+  }
 
-rest
-  .put(
-    Routes.applicationGuildCommands(
-      process.env.DISCORD_CLIENT_ID || '',
-      process.env.SERVER_ID || ''
-    ),
-    { body: commands }
-  )
-  .then(_data => console.log('Successfully registered Discord commands.'))
-  .catch(console.error);
+  if (!process.env.SERVER_ID) {
+    return console.error('Bot Register Command: Missing Server ID.');
+  }
+
+  const commands = [];
+
+  // commands.push(Magic8Ball.data.toJSON());
+  commands.push(Gamble.data.toJSON());
+  // commands.push(Help.data.toJSON());
+  // commands.push(Info.data.toJSON());
+  commands.push(Points.data.toJSON());
+
+  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+
+  rest
+    .put(
+      Routes.applicationGuildCommands(
+        process.env.DISCORD_CLIENT_ID,
+        process.env.SERVER_ID
+      ),
+      { body: commands }
+    )
+    .then(_data => console.log('Successfully registered Discord commands.'))
+    .catch(console.error);
+};
+
+register();

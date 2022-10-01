@@ -12,7 +12,7 @@ export const onResub = (
 ) => {
   // TODO: Add logic for variations of resub event
   logEvent(
-    Bots.discord,
+    Bots,
     'alert',
     `${username} has resubbed to the channel!\n\nMessage: ${message}`
   );

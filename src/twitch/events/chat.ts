@@ -37,27 +37,25 @@ export const onChat = async (
     );
 
     logEvent(
-      Bots.discord,
+      Bots,
       'activity',
       `${userstate.username} has redeemed conversion of ${
         points * 10
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`
     );
 
-    if (process.env.MONGODB_CHAT) {
-      await Bots.db?.collection(process.env.MONGODB_CHAT).updateOne(
-        { twitch_id: userstate['user-id'] },
-        {
-          $set: {
-            username: userstate.username,
-          },
-          $inc: {
-            points: points,
-          },
+    await Bots.db?.collection(Bots.env.MONGODB_CHAT).updateOne(
+      { twitch_id: userstate['user-id'] },
+      {
+        $set: {
+          username: userstate.username,
         },
-        { upsert: true }
-      );
-    }
+        $inc: {
+          points: points,
+        },
+      },
+      { upsert: true }
+    );
 
     return;
   }
@@ -67,27 +65,25 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    if (process.env.MONGODB_CHAT) {
-      const document = await Bots.db
-        ?.collection(process.env.MONGODB_CHAT)
-        .findOne({ twitch_id: userstate['user-id'] });
+    const document = await Bots.db
+      ?.collection(Bots.env.MONGODB_CHAT)
+      .findOne({ twitch_id: userstate['user-id'] });
 
-      const data: TwitchUserProps = {
-        twitch_id: userstate['user-id'],
-        username: userstate.username,
-        points: document ? document.points : 0,
-      };
+    const data: TwitchUserProps = {
+      twitch_id: userstate['user-id'],
+      username: userstate.username,
+      points: document ? document.points : 0,
+    };
 
-      if (command === 'gamble') {
-        onGamble(Bots, channel, data, args);
-      } else if (command === 'points') {
-        Bots.twitch.say(
-          channel,
-          `${userstate.username} you have ${data.points} ${
-            data.points > 1 ? CONFIG.CURRENCY.PLURAL : CONFIG.CURRENCY.SINGLE
-          }.`
-        );
-      }
+    if (command === 'gamble') {
+      onGamble(Bots, channel, data, args);
+    } else if (command === 'points') {
+      Bots.twitch.say(
+        channel,
+        `${userstate.username} you have ${data.points} ${
+          data.points > 1 ? CONFIG.CURRENCY.PLURAL : CONFIG.CURRENCY.SINGLE
+        }.`
+      );
     }
 
     return;
@@ -102,19 +98,17 @@ export const onChat = async (
 
   if (!isValid) return;
 
-  if (process.env.MONGODB_CHAT) {
-    await Bots.db?.collection(process.env.MONGODB_CHAT).updateOne(
-      { twitch_id: userstate['user-id'] },
-      {
-        $set: {
-          username: userstate.username,
-          last_chat: message,
-        },
-        $inc: {
-          points: 1,
-        },
+  await Bots.db?.collection(Bots.env.MONGODB_CHAT).updateOne(
+    { twitch_id: userstate['user-id'] },
+    {
+      $set: {
+        username: userstate.username,
+        last_chat: message,
       },
-      { upsert: true }
-    );
-  }
+      $inc: {
+        points: 1,
+      },
+    },
+    { upsert: true }
+  );
 };
