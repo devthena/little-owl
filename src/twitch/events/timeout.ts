@@ -10,7 +10,7 @@ export const onTimeout = (
   _userstate: ObjectProps
 ) => {
   logEvent(
-    Bots.discord,
+    Bots,
     'timeout',
     `${username} has been timed out for ${duration}s.\n\nReason: ${reason}`
   );

@@ -11,7 +11,7 @@ export const onSubMysteryGift = (
 ) => {
   // TODO: Update description with more information
   logEvent(
-    Bots.discord,
+    Bots,
     'alert',
     `${username} is gifting ${numOfSubs} subscription${
       numOfSubs > 1 ? 's' : ''

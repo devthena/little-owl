@@ -8,7 +8,7 @@ export const onCheer = (
   message: string
 ) => {
   logEvent(
-    Bots.discord,
+    Bots,
     'alert',
     `${userstate.username} cheered ${userstate.bits} in the chat!\n\nMessage: ${message}`
   );

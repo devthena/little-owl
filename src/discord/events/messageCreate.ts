@@ -19,20 +19,18 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
   if (!isValid) return;
 
-  if (process.env.MONGODB_USERS) {
-    await Bots.db?.collection(process.env.MONGODB_USERS).updateOne(
-      { discord_id: message.member.id },
-      {
-        $set: {
-          discord_name: message.member.displayName,
-          discord_tag: message.member.user.tag,
-          last_message: message.content,
-        },
-        $inc: {
-          points: 1,
-        },
+  await Bots.db?.collection(Bots.env.MONGODB_USERS).updateOne(
+    { discord_id: message.member.id },
+    {
+      $set: {
+        discord_name: message.member.displayName,
+        discord_tag: message.member.user.tag,
+        last_message: message.content,
       },
-      { upsert: true }
-    );
-  }
+      $inc: {
+        points: 1,
+      },
+    },
+    { upsert: true }
+  );
 };

@@ -90,13 +90,11 @@ export const onGamble = async (
     return;
   }
 
-  if (process.env.MONGODB_CHAT) {
-    await Bots.db
-      ?.collection(process.env.MONGODB_CHAT)
-      .updateOne(
-        { twitch_id: user.twitch_id },
-        { $set: { ...updates } },
-        { upsert: true }
-      );
-  }
+  await Bots.db
+    ?.collection(Bots.env.MONGODB_CHAT)
+    .updateOne(
+      { twitch_id: user.twitch_id },
+      { $set: { ...updates } },
+      { upsert: true }
+    );
 };
