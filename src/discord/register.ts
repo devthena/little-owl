@@ -1,6 +1,6 @@
 import { Routes } from 'discord.js';
 import { REST } from '@discordjs/rest';
-import { Gamble, Points } from './commands';
+import { Gamble, Help, Points } from './commands';
 
 require('dotenv').config();
 
@@ -19,10 +19,8 @@ const register = (): void => {
 
   const commands = [];
 
-  // commands.push(Magic8Ball.data.toJSON());
   commands.push(Gamble.data.toJSON());
-  // commands.push(Help.data.toJSON());
-  // commands.push(Info.data.toJSON());
+  commands.push(Help.data.toJSON());
   commands.push(Points.data.toJSON());
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
