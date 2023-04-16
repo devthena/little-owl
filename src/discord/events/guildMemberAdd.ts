@@ -12,5 +12,8 @@ export const onGuildMemberAdd = async (message: Message) => {
     // if role does not exist, do nothing
     if(!ID || !welcomeRole) return;
 
+    // if user already has the role, do nothing
+    if(message.member?.roles.cache.some(roles => roles.id === ID)) return;
+
     message.member?.roles.add(welcomeRole?.id || ID)
 }
