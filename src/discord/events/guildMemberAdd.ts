@@ -1,14 +1,16 @@
 import { Message } from "discord.js";
-
-const DEFAULT_ROLE_ID = process.env.DEFAULT_ROLE_ID || '';
+import { CONFIG } from '../../constants';
 
 export const onGuildMemberAdd = async (message: Message) => {
+    const { ENABLED, ID } = CONFIG.ROLES.DEFAULT;
 
-    const welcomeRole = message.guild?.roles.cache.find(role => role.id === DEFAULT_ROLE_ID);
+    // if feature is not enabled, do nothing
+    if(!ENABLED) return;
+
+    const welcomeRole = message.guild?.roles.cache.find(role => role.id === ID);
 
     // if role does not exist, do nothing
-    if(!DEFAULT_ROLE_ID || !welcomeRole) return;
+    if(!ID || !welcomeRole) return;
 
-    message.member?.roles.add(welcomeRole?.id || DEFAULT_ROLE_ID)
-
+    message.member?.roles.add(welcomeRole?.id || ID)
 }
