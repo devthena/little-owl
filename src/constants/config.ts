@@ -32,7 +32,7 @@ export const CONFIG = {
     CONVERT1000: '270d9a74-dd9d-43c5-861d-f8bd56a78fc6',
   },
   ROLES: {
-    AUTO_ADD: {
+    DEFAULT: {
       ENABLED: true,
       ID: '299308298467803136',
     },
