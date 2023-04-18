@@ -3,6 +3,7 @@ import * as tmi from 'tmi.js';
 import { Db } from 'mongodb';
 
 export interface BotsProps {
+  cooldowns: ObjectProps;
   db: Db | null;
   discord: djs.Client<boolean>;
   env: StringObjectProps;

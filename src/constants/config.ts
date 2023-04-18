@@ -1,6 +1,7 @@
 export const CONFIG = {
   CHANNELS: {
     ALERTS: {
+      COOLDOWN_MS: 43200000,
       ENABLED: true,
       ID: '901898913047511071',
     },
