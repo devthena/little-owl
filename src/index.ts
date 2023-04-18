@@ -37,6 +37,9 @@ import {
 } from './twitch/events';
 
 const Bots: BotsProps = {
+  cooldowns: {
+    streamAlerts: false,
+  },
   db: null,
   discord: new djs.Client({
     intents: [
@@ -54,10 +57,10 @@ const Bots: BotsProps = {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID || '',
     DISCORD_TOKEN: process.env.DISCORD_TOKEN || '',
-    SERVER_ID: process.env.SERVER_ID || '',
     MONGODB_USERS: process.env.MONGODB_USERS || '',
     MONGODB_CHAT: process.env.MONGODB_CHAT || '',
     MONGODB_VIEW: process.env.MONGODB_VIEW || '',
+    SERVER_ID: process.env.SERVER_ID || '',
   },
   twitch: new tmi.Client({
     options: { debug: true },
