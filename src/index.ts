@@ -20,6 +20,7 @@ import {
   onGuildMemberAdd,
   onInteractionCreate,
   onMessageCreate,
+  onPresenceUpdate,
   onReady,
 } from './discord/events';
 
@@ -84,10 +85,11 @@ const initBots = async () => {
 
   Bots.db = dbClient.db(process.env.MONGODB_DB);
 
-  Bots.discord.on('ready', onReady.bind(null, Bots.discord));
+  Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null));
   Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
   Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
-  Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null))
+  Bots.discord.on('presenceUpdate', onPresenceUpdate.bind(null, Bots));
+  Bots.discord.on('ready', onReady.bind(null, Bots.discord));
 
   Bots.twitch.on('ban', onBan.bind(null, Bots));
   Bots.twitch.on('chat', onChat.bind(null, Bots));
