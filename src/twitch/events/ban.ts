@@ -8,5 +8,9 @@ export const onBan = (
   _reason: string
 ) => {
   // TODO: Remove user information from the database
-  logEvent(Bots, 'timeout', `${username} has been banned from ${channel}!`);
+  logEvent({
+    Bots,
+    type: 'leave',
+    description: `${username} has been banned from ${channel}!`,
+  });
 };

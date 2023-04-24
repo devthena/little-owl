@@ -7,9 +7,9 @@ export const onCheer = (
   userstate: ObjectProps,
   message: string
 ) => {
-  logEvent(
+  logEvent({
     Bots,
-    'alert',
-    `${userstate.username} cheered ${userstate.bits} in the chat!\n\nMessage: ${message}`
-  );
+    type: 'alert',
+    description: `${userstate.username} cheered ${userstate.bits} in the chat!\n\nMessage: ${message}`,
+  });
 };

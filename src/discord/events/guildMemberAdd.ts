@@ -1,19 +1,30 @@
-import { Message } from "discord.js";
+import { GuildMember } from 'discord.js';
+import { BotsProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
+import { logEvent } from '../../utils';
 
-export const onGuildMemberAdd = async (message: Message) => {
-    const { ENABLED, ID } = CONFIG.ROLES.DEFAULT;
+export const onGuildMemberAdd = async (
+  Bots: BotsProps,
+  member: GuildMember
+) => {
+  const { ENABLED, ID } = CONFIG.ROLES.DEFAULT;
 
-    // if feature is not enabled, do nothing
-    if(!ENABLED) return;
+  if (!ENABLED) return;
 
-    const welcomeRole = message.guild?.roles.cache.find(role => role.id === ID);
+  const welcomeRole = member.guild?.roles.cache.find(role => role.id === ID);
 
-    // if role does not exist, do nothing
-    if(!ID || !welcomeRole) return;
+  if (!ID || !welcomeRole) return;
+  if (member.roles.cache.some(roles => roles.id === ID)) return;
 
-    // if user already has the role, do nothing
-    if(message.member?.roles.cache.some(roles => roles.id === ID)) return;
-
-    message.member?.roles.add(welcomeRole?.id || ID)
-}
+  member.roles
+    .add(welcomeRole.id || ID)
+    .then(_data => {
+      logEvent({
+        Bots,
+        type: 'activity',
+        description: `${member.user.tag} aka ${member.displayName} has joined the server.`,
+        footer: `Discord User ID: ${member.id}`,
+      });
+    })
+    .catch(console.error);
+};

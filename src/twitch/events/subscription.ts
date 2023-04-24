@@ -9,9 +9,9 @@ export const onSubscription = (
   message: string,
   _userstate: ObjectProps
 ) => {
-  logEvent(
+  logEvent({
     Bots,
-    'alert',
-    `${username} has subscribed to the channel!\n\nMessage: ${message}`
-  );
+    type: 'alert',
+    description: `${username} has subscribed to the channel!\n\nMessage: ${message}`,
+  });
 };

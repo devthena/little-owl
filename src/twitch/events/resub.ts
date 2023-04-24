@@ -11,9 +11,9 @@ export const onResub = (
   _methods: ObjectProps
 ) => {
   // TODO: Add logic for variations of resub event
-  logEvent(
+  logEvent({
     Bots,
-    'alert',
-    `${username} has resubbed to the channel!\n\nMessage: ${message}`
-  );
+    type: 'alert',
+    description: `${username} has resubbed to the channel!\n\nMessage: ${message}`,
+  });
 };

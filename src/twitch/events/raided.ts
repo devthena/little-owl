@@ -7,9 +7,9 @@ export const onRaided = (
   username: string,
   viewers: number
 ) => {
-  logEvent(
+  logEvent({
     Bots,
-    'alert',
-    `${username} has raided the chat with ${viewers} viewers!`
-  );
+    type: 'alert',
+    description: `${username} has raided the chat with ${viewers} viewers!`,
+  });
 };
