@@ -10,11 +10,11 @@ export const onSubMysteryGift = (
   _userstate: ObjectProps
 ) => {
   // TODO: Update description with more information
-  logEvent(
+  logEvent({
     Bots,
-    'alert',
-    `${username} is gifting ${numOfSubs} subscription${
+    type: 'alert',
+    description: `${username} is gifting ${numOfSubs} subscription${
       numOfSubs > 1 ? 's' : ''
-    } in the channel!`
-  );
+    } in the channel!`,
+  });
 };

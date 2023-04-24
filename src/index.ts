@@ -18,6 +18,7 @@ import { BotsProps } from './interfaces';
 
 import {
   onGuildMemberAdd,
+  onGuildMemberRemove,
   onInteractionCreate,
   onMessageCreate,
   onPresenceUpdate,
@@ -85,7 +86,8 @@ const initBots = async () => {
 
   Bots.db = dbClient.db(process.env.MONGODB_DB);
 
-  Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null));
+  Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
+  Bots.discord.on('guildMemberRemove', onGuildMemberRemove.bind(null, Bots));
   Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
   Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
   Bots.discord.on('presenceUpdate', onPresenceUpdate.bind(null, Bots));

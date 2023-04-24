@@ -36,13 +36,13 @@ export const onChat = async (
       `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
     );
 
-    logEvent(
+    logEvent({
       Bots,
-      'activity',
-      `${userstate.username} has redeemed conversion of ${
+      type: 'activity',
+      description: `${userstate.username} has redeemed conversion of ${
         points * 10
-      } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`
-    );
+      } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
+    });
 
     await Bots.db?.collection(Bots.env.MONGODB_CHAT).updateOne(
       { twitch_id: userstate['user-id'] },

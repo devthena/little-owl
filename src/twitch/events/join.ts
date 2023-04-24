@@ -11,5 +11,9 @@ export const onJoin = async (
   if (self) return console.log('* Twitch LittleOwl is online *');
   else if (IGNORE_LIST.includes(username)) return;
 
-  logEvent(Bots, 'user', `${username} has joined the chat.`);
+  logEvent({
+    Bots,
+    type: 'user',
+    description: `${username} has joined the chat.`,
+  });
 };

@@ -11,5 +11,9 @@ export const onSubGift = (
   _userstate: ObjectProps
 ) => {
   // TODO: Add logic for variations of subgift events
-  logEvent(Bots, 'alert', `${username} gifted a subscription to ${recipient}!`);
+  logEvent({
+    Bots,
+    type: 'alert',
+    description: `${username} gifted a subscription to ${recipient}!`,
+  });
 };

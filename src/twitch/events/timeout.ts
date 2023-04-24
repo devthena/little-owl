@@ -9,9 +9,9 @@ export const onTimeout = (
   duration: number,
   _userstate: ObjectProps
 ) => {
-  logEvent(
+  logEvent({
     Bots,
-    'timeout',
-    `${username} has been timed out for ${duration}s.\n\nReason: ${reason}`
-  );
+    type: 'leave',
+    description: `${username} has been timed out for ${duration}s.\n\nReason: ${reason}`,
+  });
 };
