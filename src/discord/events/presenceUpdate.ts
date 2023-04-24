@@ -20,8 +20,34 @@ export const onPresenceUpdate = async (
         )
       : false;
 
+    const liveRole = newPresence.guild.roles.cache.find(role => 
+      CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
+    );
+
+    // member went offline
+    if(newPresence.status === 'offline') {
+      if(
+        liveRole &&
+        newPresence.member?.manageable &&
+        newPresence.member?.roles.cache.has(liveRole.id)
+      ){
+        newPresence.member?.roles.remove(liveRole.id)
+        // @todo: add then() and catch() to log success and failure
+      }
+    }
+
     // member has started streaming
     if (!hasBeenStreaming && isStreaming) {
+      // add live role
+      if(
+        liveRole &&
+        newPresence.member?.manageable &&
+        !newPresence.member?.roles.cache.has(liveRole.id)
+      ){
+        newPresence.member?.roles.add(liveRole)
+        // @todo: add then() and catch() to log success and failure?
+      }
+
       // stream announcement for server owner
       if (
         CONFIG.CHANNELS.ALERTS.ENABLED &&
@@ -81,6 +107,24 @@ export const onPresenceUpdate = async (
               }, CONFIG.CHANNELS.ALERTS.COOLDOWN_MS);
             });
         }
+      }
+    } else if(hasBeenStreaming && !isStreaming) {
+      if(
+        liveRole &&
+        newPresence.member?.manageable &&
+        newPresence.member?.roles.cache.has(liveRole.id)
+      ){
+        newPresence.member?.roles.remove('liveRole')
+        // @todo: add then() and catch() to log success and failure?
+      }
+    } else {
+      if(
+        liveRole &&
+        newPresence.member?.manageable &&
+        newPresence.member?.roles.cache.has(liveRole.id)
+      ){
+        newPresence.member?.roles.remove('liveRole')
+        // @todo: add then() and catch() to log success and failure?
       }
     }
   }
