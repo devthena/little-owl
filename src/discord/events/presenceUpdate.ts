@@ -69,9 +69,10 @@ export const onPresenceUpdate = async (
 
           streamAlertChannel
             .send(`@everyone ${newPresence.member.displayName} is now live!`)
-            .then(() => {
+            .then(_data => {
               streamAlertChannel.send({ embeds: [botEmbed] });
             })
+            .catch(console.error)
             .finally(() => {
               Bots.cooldowns.streamAlerts = true;
 

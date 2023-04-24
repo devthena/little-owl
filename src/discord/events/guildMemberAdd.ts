@@ -16,12 +16,15 @@ export const onGuildMemberAdd = async (
   if (!ID || !welcomeRole) return;
   if (member.roles.cache.some(roles => roles.id === ID)) return;
 
-  member.roles.add(welcomeRole.id || ID).then(() => {
-    logEvent({
-      Bots,
-      type: 'activity',
-      description: `${member.user.tag} aka ${member.displayName} has joined the server.`,
-      footer: `Discord User ID: ${member.id}`,
-    });
-  });
+  member.roles
+    .add(welcomeRole.id || ID)
+    .then(_data => {
+      logEvent({
+        Bots,
+        type: 'activity',
+        description: `${member.user.tag} aka ${member.displayName} has joined the server.`,
+        footer: `Discord User ID: ${member.id}`,
+      });
+    })
+    .catch(console.error);
 };
