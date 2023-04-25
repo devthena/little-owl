@@ -15,6 +15,7 @@ export const onGuildBanAdd = async (
     Bots,
     type: 'leave',
     description: `${user.tag} has been banned from the server.${reasonStr}`,
+    thumbnail: user.displayAvatarURL() || undefined,
     footer: `Discord User ID: ${user.id}`,
   });
 
@@ -25,6 +26,7 @@ export const onGuildBanAdd = async (
         Bots,
         type: 'db|delete',
         description: `Record with discord_id=${user.tag} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
+        thumbnail: user.displayAvatarURL() || undefined,
         footer: `Discord User ID: ${user.id}`,
       });
   }).catch(() => {
@@ -32,6 +34,7 @@ export const onGuildBanAdd = async (
         Bots,
         type: 'db|error',
         description: `Error deleting record with discord_id=${user.tag} from collection ${Bots.env.MONGODB_USERS}.`,
+        thumbnail: user.displayAvatarURL() || undefined,
         footer: `Discord User ID: ${user.id}`,
       });
   });
