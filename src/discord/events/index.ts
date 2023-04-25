@@ -1,3 +1,4 @@
+export * from './guildBanAdd';
 export * from './guildMemberAdd';
 export * from './guildMemberRemove';
 export * from './interactionCreate';

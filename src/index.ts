@@ -17,6 +17,7 @@ const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 import { BotsProps } from './interfaces';
 
 import {
+  onGuildBanAdd,
   onGuildMemberAdd,
   onGuildMemberRemove,
   onInteractionCreate,
@@ -86,6 +87,7 @@ const initBots = async () => {
 
   Bots.db = dbClient.db(process.env.MONGODB_DB);
 
+  Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
   Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
   Bots.discord.on('guildMemberRemove', onGuildMemberRemove.bind(null, Bots));
   Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
