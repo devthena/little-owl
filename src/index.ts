@@ -21,6 +21,8 @@ import {
   onGuildMemberRemove,
   onInteractionCreate,
   onMessageCreate,
+  onMessageDelete,
+  onMessageDeleteBulk,
   onPresenceUpdate,
   onReady,
 } from './discord/events';
@@ -90,6 +92,8 @@ const initBots = async () => {
   Bots.discord.on('guildMemberRemove', onGuildMemberRemove.bind(null, Bots));
   Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
   Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
+  Bots.discord.on('messageDelete', onMessageDelete.bind(null, Bots));
+  Bots.discord.on('messageDeleteBulk', onMessageDeleteBulk.bind(null, Bots));
   Bots.discord.on('presenceUpdate', onPresenceUpdate.bind(null, Bots));
   Bots.discord.on('ready', onReady.bind(null, Bots.discord));
 

@@ -6,6 +6,7 @@ interface LogProps {
   Bots: BotsProps;
   type: string;
   description: string;
+  authorIcon?: string;
   thumbnail?: string;
   footer?: string;
 }
@@ -13,6 +14,7 @@ interface LogProps {
 const channelMap: StringObjectProps = {
   activity: CONFIG.CHANNELS.LOGS.ACTIVITIES,
   alert: CONFIG.CHANNELS.LOGS.ALERTS,
+  deleted: CONFIG.CHANNELS.LOGS.DELETED,
   leave: CONFIG.CHANNELS.LOGS.LEAVERS,
   user: CONFIG.CHANNELS.LOGS.USERS,
 };
@@ -29,7 +31,7 @@ export const logEvent = (props: LogProps) => {
       const botEmbed = new EmbedBuilder()
         .setAuthor({
           name: `${server.name} Server`,
-          iconURL: server.iconURL() || '',
+          iconURL: props.authorIcon || server.iconURL() || '',
         })
         .setDescription(props.description);
 
