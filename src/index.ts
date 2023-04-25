@@ -50,7 +50,7 @@ const Bots: BotsProps = {
   discord: new djs.Client({
     intents: [
       djs.GatewayIntentBits.DirectMessages,
-      djs.GatewayIntentBits.GuildBans,
+      djs.GatewayIntentBits.GuildModeration,
       djs.GatewayIntentBits.GuildMembers,
       djs.GatewayIntentBits.GuildMessageReactions,
       djs.GatewayIntentBits.GuildMessages,
