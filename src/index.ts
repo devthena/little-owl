@@ -17,10 +17,13 @@ const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 import { BotsProps } from './interfaces';
 
 import {
+  onGuildBanAdd,
   onGuildMemberAdd,
   onGuildMemberRemove,
   onInteractionCreate,
   onMessageCreate,
+  onMessageDelete,
+  onMessageDeleteBulk,
   onPresenceUpdate,
   onReady,
 } from './discord/events';
@@ -47,7 +50,7 @@ const Bots: BotsProps = {
   discord: new djs.Client({
     intents: [
       djs.GatewayIntentBits.DirectMessages,
-      djs.GatewayIntentBits.GuildBans,
+      djs.GatewayIntentBits.GuildModeration,
       djs.GatewayIntentBits.GuildMembers,
       djs.GatewayIntentBits.GuildMessageReactions,
       djs.GatewayIntentBits.GuildMessages,
@@ -86,10 +89,13 @@ const initBots = async () => {
 
   Bots.db = dbClient.db(process.env.MONGODB_DB);
 
+  Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
   Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
   Bots.discord.on('guildMemberRemove', onGuildMemberRemove.bind(null, Bots));
   Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
   Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
+  Bots.discord.on('messageDelete', onMessageDelete.bind(null, Bots));
+  Bots.discord.on('messageDeleteBulk', onMessageDeleteBulk.bind(null, Bots));
   Bots.discord.on('presenceUpdate', onPresenceUpdate.bind(null, Bots));
   Bots.discord.on('ready', onReady.bind(null, Bots.discord));
 
