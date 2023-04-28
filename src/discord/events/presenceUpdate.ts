@@ -31,7 +31,7 @@ export const onPresenceUpdate = async (
         newPresence.member?.manageable &&
         newPresence.member?.roles.cache.has(liveRole.id)
       ) {
-        newPresence.member?.roles.remove(liveRole.id);
+        newPresence.member?.roles.remove(liveRole);
         // @todo: add then() and catch() to log success and failure
       }
     }
