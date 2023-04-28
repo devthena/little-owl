@@ -20,18 +20,18 @@ export const onPresenceUpdate = async (
         )
       : false;
 
-    const liveRole = newPresence.guild.roles.cache.find(role => 
-      CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
+    const liveRole = newPresence.guild.roles.cache.find(
+      role => CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
     );
 
     // member went offline
-    if(newPresence.status === 'offline') {
-      if(
+    if (newPresence.status === 'offline') {
+      if (
         liveRole &&
         newPresence.member?.manageable &&
         newPresence.member?.roles.cache.has(liveRole.id)
-      ){
-        newPresence.member?.roles.remove(liveRole.id)
+      ) {
+        newPresence.member?.roles.remove(liveRole.id);
         // @todo: add then() and catch() to log success and failure
       }
     }
@@ -39,12 +39,12 @@ export const onPresenceUpdate = async (
     // member has started streaming
     if (!hasBeenStreaming && isStreaming) {
       // add live role
-      if(
+      if (
         liveRole &&
         newPresence.member?.manageable &&
         !newPresence.member?.roles.cache.has(liveRole.id)
-      ){
-        newPresence.member?.roles.add(liveRole)
+      ) {
+        newPresence.member?.roles.add(liveRole);
         // @todo: add then() and catch() to log success and failure?
       }
 
@@ -108,22 +108,22 @@ export const onPresenceUpdate = async (
             });
         }
       }
-    } else if(hasBeenStreaming && !isStreaming) {
-      if(
+    } else if (hasBeenStreaming && !isStreaming) {
+      if (
         liveRole &&
         newPresence.member?.manageable &&
         newPresence.member?.roles.cache.has(liveRole.id)
-      ){
-        newPresence.member?.roles.remove('liveRole')
+      ) {
+        newPresence.member?.roles.remove(liveRole);
         // @todo: add then() and catch() to log success and failure?
       }
     } else {
-      if(
+      if (
         liveRole &&
         newPresence.member?.manageable &&
         newPresence.member?.roles.cache.has(liveRole.id)
-      ){
-        newPresence.member?.roles.remove('liveRole')
+      ) {
+        newPresence.member?.roles.remove(liveRole);
         // @todo: add then() and catch() to log success and failure?
       }
     }
