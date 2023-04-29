@@ -1,6 +1,7 @@
 import { ActivityType, EmbedBuilder, Presence } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
+import { logEvent } from '../../utils';
 
 export const onPresenceUpdate = async (
   Bots: BotsProps,
@@ -9,43 +10,50 @@ export const onPresenceUpdate = async (
 ) => {
   if (!newPresence.guild?.available) return;
 
+  const liveRole = newPresence.guild.roles.cache.find(
+    role => CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
+  );
+
+  // member went offline
+  if (newPresence.status === 'offline') {
+    if (
+      liveRole &&
+      newPresence.member?.manageable &&
+      newPresence.member?.roles.cache.has(liveRole.id)
+    ) {
+      newPresence.member?.roles.remove(liveRole).catch(console.error);
+    }
+  }
+
   if (newPresence.activities.length) {
     const isStreaming = newPresence.activities.some(
       activity => activity.type === ActivityType.Streaming
     );
 
-    const hasBeenStreaming = oldPresence
-      ? oldPresence.activities.some(
-          activity => activity.type === ActivityType.Streaming
-        )
-      : false;
-
-    const liveRole = newPresence.guild.roles.cache.find(
-      role => CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
-    );
-
-    // member went offline
-    if (newPresence.status === 'offline') {
-      if (
-        liveRole &&
-        newPresence.member?.manageable &&
-        newPresence.member?.roles.cache.has(liveRole.id)
-      ) {
-        newPresence.member?.roles.remove(liveRole);
-        // @todo: add then() and catch() to log success and failure
-      }
-    }
+    const hasBeenStreaming =
+      oldPresence &&
+      oldPresence.activities.some(
+        activity => activity.type === ActivityType.Streaming
+      );
 
     // member has started streaming
     if (!hasBeenStreaming && isStreaming) {
-      // add live role
       if (
         liveRole &&
         newPresence.member?.manageable &&
         !newPresence.member?.roles.cache.has(liveRole.id)
       ) {
-        newPresence.member?.roles.add(liveRole);
-        // @todo: add then() and catch() to log success and failure?
+        newPresence.member?.roles
+          .add(liveRole)
+          .then(_data => {
+            logEvent({
+              Bots,
+              type: 'activity',
+              description: `${newPresence.member?.user.tag} aka ${newPresence.member?.displayName} has started streaming.`,
+              footer: `Discord User ID: ${newPresence.member?.id}`,
+            });
+          })
+          .catch(console.error);
       }
 
       // stream announcement for server owner
@@ -114,8 +122,7 @@ export const onPresenceUpdate = async (
         newPresence.member?.manageable &&
         newPresence.member?.roles.cache.has(liveRole.id)
       ) {
-        newPresence.member?.roles.remove(liveRole);
-        // @todo: add then() and catch() to log success and failure?
+        newPresence.member?.roles.remove(liveRole).catch(console.error);
       }
     } else {
       if (
@@ -123,8 +130,7 @@ export const onPresenceUpdate = async (
         newPresence.member?.manageable &&
         newPresence.member?.roles.cache.has(liveRole.id)
       ) {
-        newPresence.member?.roles.remove(liveRole);
-        // @todo: add then() and catch() to log success and failure?
+        newPresence.member?.roles.remove(liveRole).catch(console.error);
       }
     }
   }
