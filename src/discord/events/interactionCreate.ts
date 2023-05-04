@@ -21,7 +21,8 @@ export const onInteractionCreate = async (
     const data: DiscordUserProps = {
       discord_id: interaction.member.user.id,
       discord_name: interaction.member.user.username,
-      discord_tag: document ? document.discord_tag : discordTag,
+      discord_tag: document?.discord_tag || discordTag,
+      last_star: document?.last_star || '',
       points: document?.points || 0,
       stars: document?.stars || 0,
     };
