@@ -22,8 +22,10 @@ export interface DiscordUserProps {
   discord_id: string;
   discord_name: string;
   discord_tag: string;
-  points: number;
   last_message?: string;
+  last_star?: string;
+  points: number;
+  stars: number;
 }
 
 export interface TwitchUserProps {
