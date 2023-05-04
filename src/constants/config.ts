@@ -43,6 +43,9 @@ export const CONFIG = {
       ID: '684850466559098962',
     },
   },
+  STAR: {
+    ENABLED: true,
+  },
   URLS: {
     COMMANDS: 'https://parthenon.app/commands',
     FAQ: 'https://parthenon.app/faq',

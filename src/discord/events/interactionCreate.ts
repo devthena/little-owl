@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { BotsProps, DiscordUserProps } from 'src/interfaces';
-import { CoinFlip, EightBall, Gamble, Help, Points } from '../commands';
+import { CoinFlip, EightBall, Gamble, Help, Points, Star } from '../commands';
 
 export const onInteractionCreate = async (
   Bots: BotsProps,
@@ -21,8 +21,10 @@ export const onInteractionCreate = async (
     const data: DiscordUserProps = {
       discord_id: interaction.member.user.id,
       discord_name: interaction.member.user.username,
-      discord_tag: document ? document.discord_tag : discordTag,
-      points: document ? document.points : 0,
+      discord_tag: document?.discord_tag || discordTag,
+      last_star: document?.last_star || '',
+      points: document?.points || 0,
+      stars: document?.stars || 0,
     };
 
     if (interaction.commandName === 'coinflip') {
@@ -36,6 +38,29 @@ export const onInteractionCreate = async (
     } else if (interaction.commandName === 'points') {
       Points.execute(interaction, data);
     }
+
+    const recipient = interaction.options.getUser('user');
+
+    if (!recipient) return;
+
+    const recipientDoc = await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .findOne({ discord_id: recipient.id });
+
+    const recipientTag = `${recipient.username}#${recipient.discriminator}`;
+
+    const recipientData: DiscordUserProps = {
+      discord_id: recipient.id,
+      discord_name: recipient.username,
+      discord_tag: recipientTag,
+      points: recipientDoc?.points || 0,
+      stars: recipientDoc?.stars || 0,
+    };
+
+    if (interaction.commandName === 'star') {
+      Star.execute(Bots, interaction, data, recipientData);
+    }
+
     return;
   }
 };
