@@ -1,6 +1,6 @@
 import { Routes } from 'discord.js';
 import { REST } from '@discordjs/rest';
-import { CoinFlip, EightBall, Gamble, Help, Points } from './commands';
+import { CoinFlip, EightBall, Gamble, Give, Help, Points } from './commands';
 
 require('dotenv').config();
 
@@ -29,6 +29,7 @@ const register = (): void => {
   commands.push(EightBall.data.toJSON());
   commands.push(Gamble.data.toJSON());
   commands.push(Points.data.toJSON());
+  commands.push(Give.data.toJSON());
 
   // commands in development for testing should be added here
   commandsStage.push(Help.data.toJSON());

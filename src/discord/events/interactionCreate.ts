@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { BotsProps, DiscordUserProps } from 'src/interfaces';
-import { CoinFlip, EightBall, Gamble, Help, Points } from '../commands';
+import { CoinFlip, EightBall, Gamble, Help, Points, Give } from '../commands';
 
 export const onInteractionCreate = async (
   Bots: BotsProps,
@@ -35,6 +35,27 @@ export const onInteractionCreate = async (
       Help.execute(interaction);
     } else if (interaction.commandName === 'points') {
       Points.execute(interaction, data);
+    }
+
+    const recipient = interaction.options.getUser('user');
+
+    if (!recipient) return;
+
+    const recipientDoc = await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .findOne({ discord_id: recipient.id });
+
+    const recipientTag = `${recipient.username}#${recipient.discriminator}}`;
+
+    const recipientData: DiscordUserProps = {
+      discord_id: recipient.id,
+      discord_name: recipient.username,
+      discord_tag: recipientTag,
+      points: recipientDoc ? recipientDoc.points : 0,
+    };
+
+    if (interaction.commandName === 'give') {
+      Give.execute(Bots, interaction, data, recipientData);
     }
     return;
   }

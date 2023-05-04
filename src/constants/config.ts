@@ -26,6 +26,9 @@ export const CONFIG = {
       WIN_PERCENT: 40,
     },
   },
+  GIVE: {
+    ENABLED: true,
+  },
   POLL_RATE_MS: 1800000,
   PREFIX: '!',
   REWARDS: {
