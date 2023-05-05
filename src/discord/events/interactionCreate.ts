@@ -1,6 +1,14 @@
 import { CommandInteraction } from 'discord.js';
 import { BotsProps, DiscordUserProps } from 'src/interfaces';
-import { CoinFlip, EightBall, Gamble, Help, Points, Star } from '../commands';
+import {
+  CoinFlip,
+  EightBall,
+  Gamble,
+  Give,
+  Help,
+  Points,
+  Star,
+} from '../commands';
 
 export const onInteractionCreate = async (
   Bots: BotsProps,
@@ -57,7 +65,9 @@ export const onInteractionCreate = async (
       stars: recipientDoc?.stars || 0,
     };
 
-    if (interaction.commandName === 'star') {
+    if (interaction.commandName === 'give') {
+      Give.execute(Bots, interaction, data, recipientData);
+    } else if (interaction.commandName === 'star') {
       Star.execute(Bots, interaction, data, recipientData);
     }
 
