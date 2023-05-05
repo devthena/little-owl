@@ -3,8 +3,8 @@ import { BotsProps, DiscordUserProps } from 'src/interfaces';
 import {
   CoinFlip,
   EightBall,
-  Give,
   Gamble,
+  Give,
   Help,
   Points,
   Star,
