@@ -4,3 +4,4 @@ export * from './gamble';
 export * from './give';
 export * from './help';
 export * from './points';
+export * from './star';
