@@ -4,7 +4,6 @@ export const COMMAND_NAMES_DISCORD = {
   GAMBLE: 'gamble',
   GIVE: 'give',
   HELP: 'help',
-  INFO: 'info',
   POINTS: 'points',
   STAR: 'star',
 };
