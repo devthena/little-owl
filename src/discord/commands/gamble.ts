@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { BotsProps, DiscordUserProps } from 'src/interfaces';
+import { BotsProps, UserProps } from 'src/interfaces';
 import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 import { weightedRandom } from '../../utils';
@@ -17,7 +17,7 @@ export const Gamble = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: DiscordUserProps
+    user: UserProps
   ) => {
     if (!CONFIG.GAMES.GAMBLE.ENABLED) {
       await interaction.reply({
@@ -35,7 +35,7 @@ export const Gamble = {
       notEnough: `You don't have that much ${CONFIG.CURRENCY.PLURAL} to gamble.`,
     };
 
-    if (user.points < 1) {
+    if (user.cash < 1) {
       await interaction.reply({ content: replies.noPoints });
       return;
     }
@@ -73,46 +73,46 @@ export const Gamble = {
       loss: 1 - CONFIG.GAMES.GAMBLE.WIN_PERCENT / 100,
     };
 
-    let updates = { points: user.points };
+    let points = user.cash;
     const result = weightedRandom(probability);
 
     if (arg === 'all') {
       if (result === 'win') {
-        updates.points += user.points;
+        points += user.cash;
         await interaction.reply({
-          content: `You won ${user.points} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`,
+          content: `You won ${user.cash} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`,
         });
       } else {
-        updates.points = 0;
+        points = 0;
         await interaction.reply({ content: replies.lostAll });
       }
     } else if (arg === 'half') {
-      const halfPoints = Math.round(user.points / 2);
+      const halfPoints = Math.round(user.cash / 2);
 
       if (result === 'win') {
-        updates.points += halfPoints;
+        points += halfPoints;
         await interaction.reply({
           content: `You won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`,
         });
       } else {
-        updates.points -= halfPoints;
+        points -= halfPoints;
         await interaction.reply({
           content: `You lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`,
         });
       }
-    } else if (amount <= user.points) {
+    } else if (amount <= user.cash) {
       if (result === 'win') {
-        updates.points += amount;
+        points += amount;
         await interaction.reply({
           content: `You won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`,
         });
       } else {
-        updates.points -= amount;
+        points -= amount;
         await interaction.reply({
           content: `You lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`,
         });
       }
-    } else if (amount > user.points) {
+    } else if (amount > user.cash) {
       await interaction.reply({
         content: replies.notEnough,
         ephemeral: true,
@@ -120,15 +120,9 @@ export const Gamble = {
       return;
     }
 
-    if (process.env.MONGODB_USERS) {
-      await Bots.db
-        ?.collection(process.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: user.discord_id },
-          { $set: { ...updates } },
-          { upsert: true }
-        );
-    }
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne({ discord_id: user.discord_id }, { $set: { cash: points } });
   },
   getName: (): string => {
     return COMMAND_NAMES_DISCORD.GAMBLE;

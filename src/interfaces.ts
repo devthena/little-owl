@@ -18,16 +18,6 @@ export interface StringObjectProps {
   [key: string]: string;
 }
 
-export interface DiscordUserProps {
-  discord_id: string;
-  discord_name: string;
-  discord_tag: string;
-  last_message?: string;
-  last_star?: string;
-  points: number;
-  stars: number;
-}
-
 export interface UserProps {
   user_id: string;
   discord_id: string | null;

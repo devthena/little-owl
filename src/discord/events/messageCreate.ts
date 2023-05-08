@@ -28,12 +28,11 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
       ...UserModel,
       user_id: uuidv4(),
       discord_id: message.member.id,
-      discord_username: message.member.displayName,
+      discord_username: message.member.user.username,
       cash: 1,
     };
 
     await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
-
     return;
   }
 

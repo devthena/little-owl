@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { BotsProps, DiscordUserProps } from 'src/interfaces';
+import { BotsProps, UserProps } from 'src/interfaces';
 import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 
@@ -22,8 +22,8 @@ export const Give = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: DiscordUserProps,
-    recipient: DiscordUserProps
+    user: UserProps,
+    recipient: UserProps
   ) => {
     if (!CONFIG.GIVE.ENABLED) {
       await interaction.reply({
@@ -39,10 +39,10 @@ export const Give = {
       invalidRecipient: `Enter a valid recipient.`,
       noPoints: `Sorry, you have no ${CONFIG.CURRENCY.SINGLE} to give. :neutral_face:`,
       notEnough: `Sorry, you don't have that many ${CONFIG.CURRENCY.PLURAL} to give. :neutral_face:`,
-      success: `You gave ${recipient.discord_name} ${amount} ${CONFIG.CURRENCY.PLURAL}.`,
+      success: `You gave ${recipient.discord_username} ${amount} ${CONFIG.CURRENCY.PLURAL}.`,
     };
 
-    if (user.points < 1) {
+    if (user.cash < 1) {
       await interaction.reply({ content: replies.noPoints, ephemeral: true });
       return;
     }
@@ -55,7 +55,7 @@ export const Give = {
       return;
     }
 
-    if (user.points < amount) {
+    if (user.cash < amount) {
       await interaction.reply({ content: replies.notEnough, ephemeral: true });
       return;
     }
@@ -68,21 +68,19 @@ export const Give = {
       return;
     }
 
-    await Bots.db?.collection(Bots.env.MONGODB_USERS).updateOne(
-      {
-        discord_id: recipient.discord_id,
-      },
-      { $set: { points: (recipient.points += amount) } },
-      { upsert: true }
-    );
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne(
+        { discord_id: recipient.discord_id },
+        { $set: { points: (recipient.cash += amount) } }
+      );
 
-    await Bots.db?.collection(Bots.env.MONGODB_USERS).updateOne(
-      {
-        discord_id: user.discord_id,
-      },
-      { $set: { points: (user.points -= amount) } },
-      { upsert: true }
-    );
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne(
+        { discord_id: user.discord_id },
+        { $set: { points: (user.cash -= amount) } }
+      );
 
     await interaction.reply({ content: replies.success });
     return;
