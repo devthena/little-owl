@@ -1,5 +1,7 @@
 import { Message } from 'discord.js';
-import { BotsProps } from 'src/interfaces';
+import { v4 as uuidv4 } from 'uuid';
+import { BotsProps, UserProps } from 'src/interfaces';
+import { UserModel } from 'src/schemas';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;
@@ -15,22 +17,27 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   const isValidAttachment = !!message.attachments.first();
   const isValid = isValidMsg || isValidAttachment;
 
-  // TODO: Add logic to detect spam messages
-
   if (!isValid) return;
 
-  await Bots.db?.collection(Bots.env.MONGODB_USERS).updateOne(
-    { discord_id: message.member.id },
-    {
-      $set: {
-        discord_name: message.member.displayName,
-        discord_tag: message.member.user.tag,
-        last_message: message.content,
-      },
-      $inc: {
-        points: 1,
-      },
-    },
-    { upsert: true }
-  );
+  const document = await Bots.db
+    ?.collection(Bots.env.MONGODB_USERS)
+    .findOne({ discord_id: message.member.id });
+
+  if (!document) {
+    const userData: UserProps = {
+      ...UserModel,
+      user_id: uuidv4(),
+      discord_id: message.member.id,
+      discord_username: message.member.displayName,
+      cash: 1,
+    };
+
+    await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+
+    return;
+  }
+
+  await Bots.db
+    ?.collection(Bots.env.MONGODB_USERS)
+    .updateOne({ discord_id: message.member.id }, { $inc: { cash: 1 } });
 };
