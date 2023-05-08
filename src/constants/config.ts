@@ -26,6 +26,9 @@ export const CONFIG = {
       WIN_PERCENT: 40,
     },
   },
+  GIVE: {
+    ENABLED: true,
+  },
   POLL_RATE_MS: 1800000,
   PREFIX: '!',
   REWARDS: {
@@ -42,6 +45,9 @@ export const CONFIG = {
       ENABLED: true,
       ID: '684850466559098962',
     },
+  },
+  STAR: {
+    ENABLED: true,
   },
   URLS: {
     COMMANDS: 'https://parthenon.app/commands',

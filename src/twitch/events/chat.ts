@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
 import { UserModel } from 'src/schemas';
+import { COMMAND_NAMES_TWITCH } from '../commands/constants';
 import { CONFIG } from '../../constants';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
@@ -88,9 +89,9 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    if (command === 'gamble') {
+    if (command === COMMAND_NAMES_TWITCH.GAMBLE) {
       onGamble(Bots, channel, userData, args);
-    } else if (command === 'points') {
+    } else if (command === COMMAND_NAMES_TWITCH.POINTS) {
       Bots.twitch.say(
         channel,
         `${userstate.username} you have ${userData.cash} ${
