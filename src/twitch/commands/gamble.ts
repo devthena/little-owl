@@ -1,24 +1,24 @@
-import { BotsProps, TwitchUserProps } from 'src/interfaces';
+import { BotsProps, UserProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
 import { weightedRandom } from '../../utils';
 
 export const onGamble = async (
   Bots: BotsProps,
   channel: string,
-  user: TwitchUserProps,
-  args: Array<string>
+  user: UserProps,
+  args: string[]
 ) => {
   if (!CONFIG.GAMES.GAMBLE.ENABLED) return;
 
   const replies = {
-    invalidInput: `${user.username} enter a specific amount, 'all', or 'half'.`,
-    invalidNegative: `${user.username} you should gamble at least 1 ${CONFIG.CURRENCY.SINGLE}.`,
-    lostAll: `${user.username} lost all of their ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`,
-    noPoints: `${user.username} you have no ${CONFIG.CURRENCY.SINGLE} to gamble.`,
-    notEnough: `${user.username} you don't have that much ${CONFIG.CURRENCY.PLURAL} to gamble.`,
+    invalidInput: `${user.twitch_username} enter a specific amount, 'all', or 'half'.`,
+    invalidNegative: `${user.twitch_username} you should gamble at least 1 ${CONFIG.CURRENCY.SINGLE}.`,
+    lostAll: `${user.twitch_username} lost all of their ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`,
+    noPoints: `${user.twitch_username} you have no ${CONFIG.CURRENCY.SINGLE} to gamble.`,
+    notEnough: `${user.twitch_username} you don't have that much ${CONFIG.CURRENCY.PLURAL} to gamble.`,
   };
 
-  if (user.points < 1) {
+  if (user.cash < 1) {
     Bots.twitch.say(channel, replies.noPoints);
     return;
   }
@@ -41,60 +41,56 @@ export const onGamble = async (
     loss: 1 - CONFIG.GAMES.GAMBLE.WIN_PERCENT / 100,
   };
 
-  let updates = { points: user.points };
+  let points = user.cash;
   const result = weightedRandom(probability);
 
   if (value === 'all') {
     if (result === 'win') {
-      updates.points += user.points;
+      points += user.cash;
       Bots.twitch.say(
         channel,
-        `${user.username} won ${user.points} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
+        `${user.twitch_username} won ${user.cash} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
       );
     } else {
-      updates.points = 0;
+      points = 0;
       Bots.twitch.say(channel, replies.lostAll);
     }
   } else if (value === 'half') {
-    const halfPoints = Math.round(user.points / 2);
+    const halfPoints = Math.round(user.cash / 2);
 
     if (result === 'win') {
-      updates.points += halfPoints;
+      points += halfPoints;
       Bots.twitch.say(
         channel,
-        `${user.username} won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
+        `${user.twitch_username} won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
       );
     } else {
-      updates.points -= halfPoints;
+      points -= halfPoints;
       Bots.twitch.say(
         channel,
-        `${user.username} lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`
+        `${user.twitch_username} lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`
       );
     }
-  } else if (amount <= user.points) {
+  } else if (amount <= user.cash) {
     if (result === 'win') {
-      updates.points += amount;
+      points += amount;
       Bots.twitch.say(
         channel,
-        `${user.username} won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
+        `${user.twitch_username} won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
       );
     } else {
-      updates.points -= amount;
+      points -= amount;
       Bots.twitch.say(
         channel,
-        `${user.username} lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`
+        `${user.twitch_username} lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`
       );
     }
-  } else if (amount > user.points) {
+  } else if (amount > user.cash) {
     Bots.twitch.say(channel, replies.notEnough);
     return;
   }
 
   await Bots.db
-    ?.collection(Bots.env.MONGODB_CHAT)
-    .updateOne(
-      { twitch_id: user.twitch_id },
-      { $set: { ...updates } },
-      { upsert: true }
-    );
+    ?.collection(Bots.env.MONGODB_USERS)
+    .updateOne({ twitch_id: user.twitch_id }, { $set: { cash: points } });
 };
