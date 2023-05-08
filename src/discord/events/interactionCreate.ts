@@ -35,15 +35,15 @@ export const onInteractionCreate = async (
       stars: document?.stars || 0,
     };
 
-    if (interaction.commandName === 'coinflip') {
+    if (interaction.commandName === CoinFlip.getName()) {
       CoinFlip.execute(interaction);
-    } else if (interaction.commandName === '8ball') {
+    } else if (interaction.commandName === EightBall.getName()) {
       EightBall.execute(interaction);
-    } else if (interaction.commandName === 'gamble') {
+    } else if (interaction.commandName === Gamble.getName()) {
       Gamble.execute(Bots, interaction, data);
-    } else if (interaction.commandName === 'help') {
+    } else if (interaction.commandName === Help.getName()) {
       Help.execute(interaction);
-    } else if (interaction.commandName === 'points') {
+    } else if (interaction.commandName === Points.getName()) {
       Points.execute(interaction, data);
     }
 
@@ -65,9 +65,9 @@ export const onInteractionCreate = async (
       stars: recipientDoc?.stars || 0,
     };
 
-    if (interaction.commandName === 'give') {
+    if (interaction.commandName === Give.getName()) {
       Give.execute(Bots, interaction, data, recipientData);
-    } else if (interaction.commandName === 'star') {
+    } else if (interaction.commandName === Star.getName()) {
       Star.execute(Bots, interaction, data, recipientData);
     }
 

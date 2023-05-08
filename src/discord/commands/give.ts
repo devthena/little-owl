@@ -1,10 +1,11 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { BotsProps, DiscordUserProps } from 'src/interfaces';
+import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 
 export const Give = {
   data: new SlashCommandBuilder()
-    .setName('give')
+    .setName(COMMAND_NAMES_DISCORD.GIVE)
     .setDescription('Give points to another user')
     .addUserOption(option =>
       option
@@ -85,5 +86,8 @@ export const Give = {
 
     await interaction.reply({ content: replies.success });
     return;
+  },
+  getName: (): string => {
+    return COMMAND_NAMES_DISCORD.GIVE;
   },
 };

@@ -1,11 +1,12 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { BotsProps, DiscordUserProps } from 'src/interfaces';
+import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 import { weightedRandom } from '../../utils';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
-    .setName('gamble')
+    .setName(COMMAND_NAMES_DISCORD.GAMBLE)
     .setDescription('Play your points for a chance to double it')
     .addStringOption(option =>
       option
@@ -128,5 +129,8 @@ export const Gamble = {
           { upsert: true }
         );
     }
+  },
+  getName: (): string => {
+    return COMMAND_NAMES_DISCORD.GAMBLE;
   },
 };

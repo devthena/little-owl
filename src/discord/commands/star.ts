@@ -4,11 +4,12 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import { BotsProps, DiscordUserProps } from 'src/interfaces';
+import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 
 export const Star = {
   data: new SlashCommandBuilder()
-    .setName('star')
+    .setName(COMMAND_NAMES_DISCORD.STAR)
     .setDescription('Give a star to a user as a form of endorsement')
     .addUserOption(option =>
       option
@@ -93,5 +94,8 @@ export const Star = {
     } catch (err) {
       console.error(err);
     }
+  },
+  getName: (): string => {
+    return COMMAND_NAMES_DISCORD.STAR;
   },
 };

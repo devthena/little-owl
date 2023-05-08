@@ -6,11 +6,12 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 
 export const Help = {
   data: new SlashCommandBuilder()
-    .setName('help')
+    .setName(COMMAND_NAMES_DISCORD.HELP)
     .setDescription('Display helpful links about commands and FAQ'),
   execute: async (interaction: CommandInteraction) => {
     const row = new ActionRowBuilder<ButtonBuilder>()
@@ -31,5 +32,8 @@ export const Help = {
       content: 'Here are some links you might be interested in:',
       components: [row],
     });
+  },
+  getName: (): string => {
+    return COMMAND_NAMES_DISCORD.HELP;
   },
 };
