@@ -4,8 +4,9 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
+import { COMMAND_NAMES_DISCORD } from './constants';
+
 const COMMAND_DESCRIPTION = 'Get a random answer to any question you have';
-const COMMAND_NAME = '8ball';
 const COMMAND_OPTION = 'question';
 const COMMAND_OPTION_DESCRIPTION = 'Enter your question.';
 const COMMAND_RESPONSES = [
@@ -33,7 +34,7 @@ const COMMAND_RESPONSES = [
 
 export const EightBall = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAME)
+    .setName(COMMAND_NAMES_DISCORD.EIGHTBALL)
     .setDescription(COMMAND_DESCRIPTION)
     .addStringOption((option: SlashCommandStringOption) =>
       option
@@ -50,5 +51,8 @@ export const EightBall = {
     } catch (err) {
       console.error(err);
     }
+  },
+  getName: (): string => {
+    return COMMAND_NAMES_DISCORD.EIGHTBALL;
   },
 };

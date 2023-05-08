@@ -1,5 +1,6 @@
 import { BotsProps, ObjectProps, TwitchUserProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
+import { COMMAND_NAMES_TWITCH } from '../commands/constants';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
 
@@ -75,9 +76,9 @@ export const onChat = async (
       points: document ? document.points : 0,
     };
 
-    if (command === 'gamble') {
+    if (command === COMMAND_NAMES_TWITCH.GAMBLE) {
       onGamble(Bots, channel, data, args);
-    } else if (command === 'points') {
+    } else if (command === COMMAND_NAMES_TWITCH.POINTS) {
       Bots.twitch.say(
         channel,
         `${userstate.username} you have ${data.points} ${
