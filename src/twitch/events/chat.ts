@@ -1,6 +1,6 @@
 import { BotsProps, ObjectProps, TwitchUserProps } from 'src/interfaces';
-import { CONFIG } from '../../constants';
 import { COMMAND_NAMES_TWITCH } from '../commands/constants';
+import { CONFIG } from '../../constants';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
 

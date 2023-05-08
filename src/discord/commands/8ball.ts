@@ -6,7 +6,7 @@ import {
 
 import { COMMAND_NAMES_DISCORD } from './constants';
 
-const COMMAND_DESCRIPTION = 'Get a random answer to any question you have';
+const COMMAND_DESCRIPTION = 'Play a game of Magic 8-Ball';
 const COMMAND_OPTION = 'question';
 const COMMAND_OPTION_DESCRIPTION = 'Enter your question.';
 const COMMAND_RESPONSES = [
