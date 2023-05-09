@@ -2,6 +2,8 @@ import { BotsProps, UserProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
 import { weightedRandom } from '../../utils';
 
+// @todo: add error handling for await statements
+
 export const onGamble = async (
   Bots: BotsProps,
   channel: string,

@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, UserProps } from 'src/interfaces';
 import { UserModel } from 'src/schemas';
 
+// @todo: add error handling for await statements
+
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;
   if (!message.channel.isTextBased()) return;

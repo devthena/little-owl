@@ -3,6 +3,8 @@ import { UserProps } from 'src/interfaces';
 import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 
+// @todo: add error handling for await statements
+
 export const Points = {
   data: new SlashCommandBuilder()
     .setName(COMMAND_NAMES_DISCORD.POINTS)

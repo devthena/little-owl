@@ -6,6 +6,8 @@ import { CONFIG } from '../../constants';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
 
+// @todo: add error handling for await statements
+
 export const onChat = async (
   Bots: BotsProps,
   channel: string,

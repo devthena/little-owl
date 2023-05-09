@@ -7,7 +7,6 @@ export const onBan = async (
   username: string,
   _reason: string
 ) => {
-  // TODO: Remove user information from the database
   logEvent({
     Bots,
     type: 'leave',

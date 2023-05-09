@@ -12,6 +12,8 @@ import {
   Star,
 } from '../commands';
 
+// @todo: add error handling for await statements
+
 export const onInteractionCreate = async (
   Bots: BotsProps,
   interaction: CommandInteraction

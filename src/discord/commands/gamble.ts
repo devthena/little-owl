@@ -4,6 +4,8 @@ import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 import { weightedRandom } from '../../utils';
 
+// @todo: add error handling for await statements
+
 export const Gamble = {
   data: new SlashCommandBuilder()
     .setName(COMMAND_NAMES_DISCORD.GAMBLE)

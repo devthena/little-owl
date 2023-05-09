@@ -7,6 +7,8 @@ import { BotsProps, UserProps } from 'src/interfaces';
 import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 
+// @todo: add error handling for await statements
+
 export const Star = {
   data: new SlashCommandBuilder()
     .setName(COMMAND_NAMES_DISCORD.STAR)
