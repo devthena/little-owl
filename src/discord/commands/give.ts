@@ -74,14 +74,14 @@ export const Give = {
       ?.collection(Bots.env.MONGODB_USERS)
       .updateOne(
         { discord_id: recipient.discord_id },
-        { $set: { points: (recipient.cash += amount) } }
+        { $set: { cash: (recipient.cash += amount) } }
       );
 
     await Bots.db
       ?.collection(Bots.env.MONGODB_USERS)
       .updateOne(
         { discord_id: user.discord_id },
-        { $set: { points: (user.cash -= amount) } }
+        { $set: { cash: (user.cash -= amount) } }
       );
 
     await interaction.reply({ content: replies.success });
