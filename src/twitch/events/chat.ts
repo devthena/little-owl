@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
-import { UserModel } from 'src/schemas';
-import { COMMAND_NAMES_TWITCH } from '../commands/constants';
 import { CONFIG } from '../../constants';
+import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
+import { COMMAND_NAMES_TWITCH } from '../commands/constants';
 
 // @todo: add error handling for await statements
 

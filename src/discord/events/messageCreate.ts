@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { UserModel } from 'src/schemas';
+import { UserModel } from '../../schemas';
 
 // @todo: add error handling for await statements
 
