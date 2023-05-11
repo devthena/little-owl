@@ -61,7 +61,10 @@ const Bots: BotsProps = {
   }),
   env: {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    MONGODB_USERS: 'users',
+    MONGODB_USERS:
+      (process.env.STAGING
+        ? process.env.MONGODB_USERS_STAGE
+        : process.env.MONGODB_USERS_PROD) || '',
     SERVER_ID: process.env.SERVER_ID || '',
   },
   twitch: new tmi.Client({

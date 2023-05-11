@@ -23,6 +23,7 @@
   },
   "scripts": {
     "bot:register": "ts-node src/discord/register.ts",
+    "dev": "STAGING=true ts-node src/index.ts",
     "start": "ts-node src/index.ts"
   }
 }
