@@ -9,6 +9,8 @@ import {
 import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
 
+// @todo: add error handling for await statements
+
 export const Help = {
   data: new SlashCommandBuilder()
     .setName(COMMAND_NAMES_DISCORD.HELP)

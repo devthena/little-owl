@@ -3,9 +3,11 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import { BotsProps, DiscordUserProps } from 'src/interfaces';
+import { BotsProps, UserProps } from 'src/interfaces';
 import { COMMAND_NAMES_DISCORD } from './constants';
 import { CONFIG } from '../../constants';
+
+// @todo: add error handling for await statements
 
 export const Star = {
   data: new SlashCommandBuilder()
@@ -20,8 +22,8 @@ export const Star = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: DiscordUserProps,
-    recipient: DiscordUserProps
+    user: UserProps,
+    recipient: UserProps
   ) => {
     if (!CONFIG.STAR.ENABLED) {
       await interaction.reply({
@@ -37,7 +39,7 @@ export const Star = {
     };
 
     const now = new Date();
-    const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    // const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
 
     if (user.discord_id === recipient.discord_id) {
       await interaction.reply({
@@ -47,53 +49,34 @@ export const Star = {
       return;
     }
 
-    if (user.last_star === today) {
-      await interaction.reply({ content: replies.invalidMax, ephemeral: true });
-      return;
-    }
+    // @todo: Use activity collection to determine and set last_star value
 
-    try {
-      if (Bots.env.MONGODB_USERS.length) {
-        await Bots.db?.collection(Bots.env.MONGODB_USERS).updateOne(
-          { discord_id: user.discord_id },
-          {
-            $set: {
-              discord_name: user.discord_name,
-              discord_tag: user.discord_tag,
-              last_star: today,
-            },
-          },
-          { upsert: true }
-        );
+    // if (user.last_star === today) {
+    //   await interaction.reply({ content: replies.invalidMax, ephemeral: true });
+    //   return;
+    // }
 
-        await Bots.db?.collection(Bots.env.MONGODB_USERS).updateOne(
-          { discord_id: recipient.discord_id },
-          {
-            $set: {
-              discord_name: recipient.discord_name,
-              discord_tag: recipient.discord_tag,
-            },
-            $inc: {
-              stars: 1,
-            },
-          },
-          { upsert: true }
-        );
-      }
+    // await Bots.db
+    //   ?.collection(Bots.env.MONGODB_ACTIVITIES_USER)
+    //   .updateOne(
+    //     { discord_id: user.discord_id },
+    //     { $set: { last_star: today } }
+    //   );
 
-      const botEmbed = new EmbedBuilder()
-        .setTitle(
-          `${recipient.discord_name} got a star from ${user.discord_name}!`
-        )
-        .setDescription(
-          'Give stars to members of the community as a form of endorsement! :sparkles:'
-        )
-        .setFooter({ text: `Star given on ${now}` });
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne({ discord_id: recipient.discord_id }, { $inc: { stars: 1 } });
 
-      await interaction.reply({ embeds: [botEmbed] });
-    } catch (err) {
-      console.error(err);
-    }
+    const botEmbed = new EmbedBuilder()
+      .setTitle(
+        `${recipient.discord_username} got a star from ${user.discord_username}!`
+      )
+      .setDescription(
+        'Give stars to members of the community as a form of endorsement! :sparkles:'
+      )
+      .setFooter({ text: `Star given on ${now}` });
+
+    await interaction.reply({ embeds: [botEmbed] });
   },
   getName: (): string => {
     return COMMAND_NAMES_DISCORD.STAR;

@@ -18,19 +18,15 @@ export interface StringObjectProps {
   [key: string]: string;
 }
 
-export interface DiscordUserProps {
-  discord_id: string;
-  discord_name: string;
-  discord_tag: string;
-  last_message?: string;
-  last_star?: string;
-  points: number;
+export interface UserProps {
+  user_id: string;
+  discord_id: string | null;
+  discord_username: string | null;
+  twitch_id: string | null;
+  twitch_username: string | null;
+  accounts_linked: boolean;
+  cash: number;
+  bank: number;
   stars: number;
-}
-
-export interface TwitchUserProps {
-  twitch_id: string;
-  username: string;
-  points: number;
-  last_chat?: string;
+  power_ups: string[];
 }

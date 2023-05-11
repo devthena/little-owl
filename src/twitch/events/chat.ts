@@ -1,8 +1,12 @@
-import { BotsProps, ObjectProps, TwitchUserProps } from 'src/interfaces';
-import { COMMAND_NAMES_TWITCH } from '../commands/constants';
+import { v4 as uuidv4 } from 'uuid';
+import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
+import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
+import { COMMAND_NAMES_TWITCH } from '../commands/constants';
+
+// @todo: add error handling for await statements
 
 export const onChat = async (
   Bots: BotsProps,
@@ -12,6 +16,34 @@ export const onChat = async (
   self: boolean
 ) => {
   if (self) return;
+
+  const document = await Bots.db
+    ?.collection(Bots.env.MONGODB_USERS)
+    .findOne({ twitch_id: userstate['user-id'] });
+
+  const userData: UserProps = document
+    ? {
+        user_id: document.user_id,
+        twitch_id: document.twitch_id,
+        twitch_username: document.twitch_username,
+        discord_id: document.discord_id,
+        discord_username: document.discord_username,
+        accounts_linked: document.accounts_linked,
+        cash: document.cash,
+        bank: document.bank,
+        stars: document.stars,
+        power_ups: document.power_ups,
+      }
+    : {
+        ...UserModel,
+        user_id: uuidv4(),
+        twitch_id: userstate['user-id'],
+        twitch_username: userstate.username,
+      };
+
+  if (!document) {
+    await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+  }
 
   const redeemId = userstate['custom-reward-id'];
 
@@ -45,44 +77,27 @@ export const onChat = async (
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
     });
 
-    await Bots.db?.collection(Bots.env.MONGODB_CHAT).updateOne(
-      { twitch_id: userstate['user-id'] },
-      {
-        $set: {
-          username: userstate.username,
-        },
-        $inc: {
-          points: points,
-        },
-      },
-      { upsert: true }
-    );
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne(
+        { twitch_id: userstate['user-id'] },
+        { $inc: { cash: points } }
+      );
 
     return;
   }
 
-  // TODO: Implement custom commands for the bot
   if (message.startsWith(CONFIG.PREFIX)) {
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    const document = await Bots.db
-      ?.collection(Bots.env.MONGODB_CHAT)
-      .findOne({ twitch_id: userstate['user-id'] });
-
-    const data: TwitchUserProps = {
-      twitch_id: userstate['user-id'],
-      username: userstate.username,
-      points: document ? document.points : 0,
-    };
-
     if (command === COMMAND_NAMES_TWITCH.GAMBLE) {
-      onGamble(Bots, channel, data, args);
+      onGamble(Bots, channel, userData, args);
     } else if (command === COMMAND_NAMES_TWITCH.POINTS) {
       Bots.twitch.say(
         channel,
-        `${userstate.username} you have ${data.points} ${
-          data.points > 1 ? CONFIG.CURRENCY.PLURAL : CONFIG.CURRENCY.SINGLE
+        `${userstate.username} you have ${userData.cash} ${
+          userData.cash > 1 ? CONFIG.CURRENCY.PLURAL : CONFIG.CURRENCY.SINGLE
         }.`
       );
     }
@@ -95,21 +110,11 @@ export const onChat = async (
 
   const isValid = words.length > 2 && words.some(word => pattern.test(word));
 
-  // TODO: Add logic to detect spam messages
+  // @todo: Add logic to detect spam messages
 
   if (!isValid) return;
 
-  await Bots.db?.collection(Bots.env.MONGODB_CHAT).updateOne(
-    { twitch_id: userstate['user-id'] },
-    {
-      $set: {
-        username: userstate.username,
-        last_chat: message,
-      },
-      $inc: {
-        points: 1,
-      },
-    },
-    { upsert: true }
-  );
+  await Bots.db
+    ?.collection(Bots.env.MONGODB_USERS)
+    .updateOne({ twitch_id: userstate['user-id'] }, { $inc: { cash: 1 } });
 };

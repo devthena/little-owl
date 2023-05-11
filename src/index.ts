@@ -50,10 +50,10 @@ const Bots: BotsProps = {
   discord: new djs.Client({
     intents: [
       djs.GatewayIntentBits.DirectMessages,
-      djs.GatewayIntentBits.GuildModeration,
       djs.GatewayIntentBits.GuildMembers,
       djs.GatewayIntentBits.GuildMessageReactions,
       djs.GatewayIntentBits.GuildMessages,
+      djs.GatewayIntentBits.GuildModeration,
       djs.GatewayIntentBits.GuildPresences,
       djs.GatewayIntentBits.Guilds,
       djs.GatewayIntentBits.MessageContent,
@@ -61,11 +61,10 @@ const Bots: BotsProps = {
   }),
   env: {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID || '',
-    DISCORD_TOKEN: process.env.DISCORD_TOKEN || '',
-    MONGODB_USERS: process.env.MONGODB_USERS || '',
-    MONGODB_CHAT: process.env.MONGODB_CHAT || '',
-    MONGODB_VIEW: process.env.MONGODB_VIEW || '',
+    MONGODB_USERS:
+      (process.env.STAGING
+        ? process.env.MONGODB_USERS_STAGE
+        : process.env.MONGODB_USERS_PROD) || '',
     SERVER_ID: process.env.SERVER_ID || '',
   },
   twitch: new tmi.Client({
