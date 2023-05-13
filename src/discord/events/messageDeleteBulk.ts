@@ -29,7 +29,7 @@ export const onMessageDeleteBulk = async (
 
     logEvent({
       Bots,
-      type: LogEventType.Delete,
+      type: LogEventType.Deleted,
       description: logMessage,
       authorIcon: message.guild?.iconURL() || undefined,
       thumbnail: message.author.displayAvatarURL() || undefined,

@@ -5,7 +5,7 @@ import { BotsProps, StringObjectProps } from 'src/interfaces';
 export enum LogEventType {
   Activity = 'activity',
   Alert = 'alert',
-  Delete = 'delete',
+  Deleted = 'deleted',
   Error = 'error',
   Leave = 'leave',
   User = 'user',

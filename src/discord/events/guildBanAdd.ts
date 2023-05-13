@@ -20,7 +20,7 @@ export const onGuildBanAdd = async (Bots: BotsProps, guildBan: GuildBan) => {
     .then(() => {
       logEvent({
         Bots,
-        type: LogEventType.Delete,
+        type: LogEventType.Deleted,
         description: `Record with discord_id=${user.tag} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
         thumbnail: user.displayAvatarURL() || undefined,
         footer: `Discord User ID: ${user.id}`,

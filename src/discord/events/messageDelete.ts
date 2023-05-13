@@ -17,7 +17,7 @@ export const onMessageDelete = async (Bots: BotsProps, message: Message) => {
 
   logEvent({
     Bots,
-    type: LogEventType.Delete,
+    type: LogEventType.Deleted,
     description: logMessage,
     authorIcon: message.guild?.iconURL() || undefined,
     thumbnail: message.author.displayAvatarURL() || undefined,

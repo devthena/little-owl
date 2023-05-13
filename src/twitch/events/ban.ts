@@ -19,7 +19,7 @@ export const onBan = async (
     .then(() => {
       logEvent({
         Bots,
-        type: LogEventType.Delete,
+        type: LogEventType.Deleted,
         description: `Record with username=${username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
         footer: `Twitch Username: ${username}`,
       });
