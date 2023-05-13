@@ -51,7 +51,7 @@ export const onGamble = async (
       points += user.cash;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} won ${user.cash} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
+        `${user.twitch_username} won ${user.cash} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points}.`
       );
     } else {
       points = 0;
@@ -64,13 +64,13 @@ export const onGamble = async (
       points += halfPoints;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
+        `${user.twitch_username} won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points}.`
       );
     } else {
       points -= halfPoints;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`
+        `${user.twitch_username} lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points}.`
       );
     }
   } else if (amount <= user.cash) {
@@ -78,13 +78,13 @@ export const onGamble = async (
       points += amount;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`
+        `${user.twitch_username} won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points}.`
       );
     } else {
       points -= amount;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`
+        `${user.twitch_username} lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points}.`
       );
     }
   } else if (amount > user.cash) {
