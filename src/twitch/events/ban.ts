@@ -1,5 +1,5 @@
 import { BotsProps } from 'src/interfaces';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onBan = async (
   Bots: BotsProps,
@@ -9,7 +9,7 @@ export const onBan = async (
 ) => {
   logEvent({
     Bots,
-    type: 'leave',
+    type: LogEventType.Leave,
     description: `${username} has been banned from ${channel}!`,
   });
 
@@ -19,7 +19,7 @@ export const onBan = async (
     .then(() => {
       logEvent({
         Bots,
-        type: 'delete',
+        type: LogEventType.Delete,
         description: `Record with username=${username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
         footer: `Twitch Username: ${username}`,
       });
@@ -27,7 +27,7 @@ export const onBan = async (
     .catch(() => {
       logEvent({
         Bots,
-        type: 'error',
+        type: LogEventType.Error,
         description: `Error deleting record with username=${username} from collection ${Bots.env.MONGODB_USERS}.`,
         footer: `Twitch Username: ${username}`,
       });

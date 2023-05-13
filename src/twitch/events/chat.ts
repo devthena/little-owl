@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
 import { UserModel } from '../../schemas';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 import { onGamble } from '../commands';
 import { COMMAND_NAMES_TWITCH } from '../commands/constants';
 
@@ -71,7 +71,7 @@ export const onChat = async (
 
     logEvent({
       Bots,
-      type: 'activity',
+      type: LogEventType.Activity,
       description: `${userstate.username} has redeemed conversion of ${
         points * 10
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,

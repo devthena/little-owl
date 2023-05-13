@@ -2,6 +2,15 @@ import { EmbedBuilder } from 'discord.js';
 import { CONFIG } from '../constants';
 import { BotsProps, StringObjectProps } from 'src/interfaces';
 
+export enum LogEventType {
+  Activity = 'activity',
+  Alert = 'alert',
+  Delete = 'delete',
+  Error = 'error',
+  Leave = 'leave',
+  User = 'user',
+}
+
 interface LogProps {
   Bots: BotsProps;
   type: string;

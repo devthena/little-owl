@@ -1,5 +1,5 @@
 import { BotsProps, ObjectProps } from 'src/interfaces';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onSubMysteryGift = (
   Bots: BotsProps,
@@ -12,7 +12,7 @@ export const onSubMysteryGift = (
   // TODO: Update description with more information
   logEvent({
     Bots,
-    type: 'alert',
+    type: LogEventType.Alert,
     description: `${username} is gifting ${numOfSubs} subscription${
       numOfSubs > 1 ? 's' : ''
     } in the channel!`,
