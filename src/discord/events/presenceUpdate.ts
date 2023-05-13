@@ -49,7 +49,7 @@ export const onPresenceUpdate = async (
             logEvent({
               Bots,
               type: 'activity',
-              description: `${newPresence.member?.user.tag} aka ${newPresence.member?.displayName} has started streaming.`,
+              description: `${newPresence.member?.user.username} aka ${newPresence.member?.displayName} has started streaming.`,
               footer: `Discord User ID: ${newPresence.member?.id}`,
             });
           })
