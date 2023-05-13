@@ -6,7 +6,6 @@ export const onGuildBanAdd = async (Bots: BotsProps, guildBan: GuildBan) => {
   const { user, reason } = guildBan;
   const reasonStr = reason ? `\nReason: ${reason}` : '';
 
-  console.log(user);
   logEvent({
     Bots,
     type: 'leave',
