@@ -1,5 +1,5 @@
 import { BotsProps, ObjectProps } from 'src/interfaces';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onTimeout = (
   Bots: BotsProps,
@@ -11,7 +11,7 @@ export const onTimeout = (
 ) => {
   logEvent({
     Bots,
-    type: 'leave',
+    type: LogEventType.Leave,
     description: `${username} has been timed out for ${duration}s.\n\nReason: ${reason}`,
   });
 };

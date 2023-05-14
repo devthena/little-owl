@@ -1,5 +1,5 @@
 import { BotsProps, ObjectProps } from 'src/interfaces';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onSubscription = (
   Bots: BotsProps,
@@ -11,7 +11,7 @@ export const onSubscription = (
 ) => {
   logEvent({
     Bots,
-    type: 'alert',
+    type: LogEventType.Alert,
     description: `${username} has subscribed to the channel!\n\nMessage: ${message}`,
   });
 };
