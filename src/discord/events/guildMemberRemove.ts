@@ -11,7 +11,7 @@ export const onGuildMemberRemove = async (
   logEvent({
     Bots,
     type: LogEventType.Leave,
-    description: `${member.user.tag} aka ${member.displayName} has left or has been kicked from the server.`,
+    description: `${member.user.username} aka ${member.displayName} has left or has been kicked from the server.`,
     thumbnail: member.displayAvatarURL() || undefined,
     footer: `Discord User ID: ${member.id}`,
   });

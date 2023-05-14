@@ -9,7 +9,7 @@ export const onJoin = async (
   self: boolean
 ) => {
   if (self) return console.log('* Twitch LittleOwl is online *');
-  else if (IGNORE_LIST.includes(username)) return;
+  if (IGNORE_LIST.includes(username)) return;
 
   logEvent({
     Bots,

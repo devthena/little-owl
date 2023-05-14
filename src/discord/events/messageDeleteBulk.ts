@@ -15,7 +15,7 @@ export const onMessageDeleteBulk = async (
   messages.map(message => {
     if (/bot-/.test(channel.name)) return;
 
-    let logMessage = `Message Deleted In: ${channel}\nAuthor: ${message.author.tag}`;
+    let logMessage = `Message Deleted In: ${channel}\nAuthor: ${message.author.username}`;
     const text = message.cleanContent.length > 0 ? message.cleanContent : null;
 
     if (text) logMessage += `\n\nContent: ${text}`;

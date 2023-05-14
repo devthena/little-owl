@@ -3,7 +3,7 @@ import { BotsProps } from 'src/interfaces';
 import { LogEventType, logEvent } from '../../utils';
 
 export const onMessageDelete = async (Bots: BotsProps, message: Message) => {
-  let logMessage = `Message Deleted In: ${message.channel}\nAuthor: ${message.author.tag}`;
+  let logMessage = `Message Deleted In: ${message.channel}\nAuthor: ${message.author.username}`;
   const text = message.cleanContent.length > 0 ? message.cleanContent : null;
 
   if (text) logMessage += `\n\nContent: ${text}`;

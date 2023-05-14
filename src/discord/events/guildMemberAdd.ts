@@ -22,7 +22,7 @@ export const onGuildMemberAdd = async (
       logEvent({
         Bots,
         type: LogEventType.Activity,
-        description: `${member.user.tag} aka ${member.displayName} has joined the server.`,
+        description: `${member.user.username} aka ${member.displayName} has joined the server.`,
         footer: `Discord User ID: ${member.id}`,
       });
     })
