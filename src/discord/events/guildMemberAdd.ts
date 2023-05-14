@@ -1,7 +1,7 @@
 import { GuildMember } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onGuildMemberAdd = async (
   Bots: BotsProps,
@@ -21,8 +21,8 @@ export const onGuildMemberAdd = async (
     .then(_data => {
       logEvent({
         Bots,
-        type: 'activity',
-        description: `${member.user.tag} aka ${member.displayName} has joined the server.`,
+        type: LogEventType.Activity,
+        description: `${member.user.username} aka ${member.displayName} has joined the server.`,
         footer: `Discord User ID: ${member.id}`,
       });
     })

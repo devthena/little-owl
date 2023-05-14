@@ -5,7 +5,7 @@ import {
   Snowflake,
 } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onMessageDeleteBulk = async (
   Bots: BotsProps,
@@ -15,7 +15,7 @@ export const onMessageDeleteBulk = async (
   messages.map(message => {
     if (/bot-/.test(channel.name)) return;
 
-    let logMessage = `Message Deleted In: ${channel}\nAuthor: ${message.author.tag}`;
+    let logMessage = `Message Deleted In: ${channel}\nAuthor: ${message.author.username}`;
     const text = message.cleanContent.length > 0 ? message.cleanContent : null;
 
     if (text) logMessage += `\n\nContent: ${text}`;
@@ -29,7 +29,7 @@ export const onMessageDeleteBulk = async (
 
     logEvent({
       Bots,
-      type: 'deleted',
+      type: LogEventType.Deleted,
       description: logMessage,
       authorIcon: message.guild?.iconURL() || undefined,
       thumbnail: message.author.displayAvatarURL() || undefined,

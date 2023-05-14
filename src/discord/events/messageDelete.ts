@@ -1,9 +1,9 @@
 import { Message } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onMessageDelete = async (Bots: BotsProps, message: Message) => {
-  let logMessage = `Message Deleted In: ${message.channel}\nAuthor: ${message.author.tag}`;
+  let logMessage = `Message Deleted In: ${message.channel}\nAuthor: ${message.author.username}`;
   const text = message.cleanContent.length > 0 ? message.cleanContent : null;
 
   if (text) logMessage += `\n\nContent: ${text}`;
@@ -17,7 +17,7 @@ export const onMessageDelete = async (Bots: BotsProps, message: Message) => {
 
   logEvent({
     Bots,
-    type: 'deleted',
+    type: LogEventType.Deleted,
     description: logMessage,
     authorIcon: message.guild?.iconURL() || undefined,
     thumbnail: message.author.displayAvatarURL() || undefined,

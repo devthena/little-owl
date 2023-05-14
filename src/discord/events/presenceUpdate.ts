@@ -1,7 +1,7 @@
 import { ActivityType, EmbedBuilder, Presence } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
 import { CONFIG } from '../../constants';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onPresenceUpdate = async (
   Bots: BotsProps,
@@ -48,8 +48,8 @@ export const onPresenceUpdate = async (
           .then(_data => {
             logEvent({
               Bots,
-              type: 'activity',
-              description: `${newPresence.member?.user.tag} aka ${newPresence.member?.displayName} has started streaming.`,
+              type: LogEventType.Activity,
+              description: `${newPresence.member?.user.username} aka ${newPresence.member?.displayName} has started streaming.`,
               footer: `Discord User ID: ${newPresence.member?.id}`,
             });
           })

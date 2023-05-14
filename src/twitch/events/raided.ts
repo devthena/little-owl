@@ -1,5 +1,5 @@
 import { BotsProps } from 'src/interfaces';
-import { logEvent } from '../../utils';
+import { LogEventType, logEvent } from '../../utils';
 
 export const onRaided = (
   Bots: BotsProps,
@@ -9,7 +9,7 @@ export const onRaided = (
 ) => {
   logEvent({
     Bots,
-    type: 'alert',
+    type: LogEventType.Alert,
     description: `${username} has raided the chat with ${viewers} viewers!`,
   });
 };
