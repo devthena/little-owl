@@ -1,12 +1,12 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { COMMAND_NAMES_DISCORD } from './constants';
+import { DiscordCommandName } from 'src/enums';
 import { weightedRandom } from '../../utils';
 
 // @todo: add error handling for await statements
 
 export const CoinFlip = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAMES_DISCORD.COINFLIP)
+    .setName(DiscordCommandName.CoinFlip)
     .setDescription('Flip a coin!'),
   execute: async (interaction: CommandInteraction) => {
     const probability = { Heads: 0.5, Tails: 0.5 };
@@ -15,6 +15,6 @@ export const CoinFlip = {
     await interaction.reply(`You got... ${result}! :coin:`);
   },
   getName: (): string => {
-    return COMMAND_NAMES_DISCORD.COINFLIP;
+    return DiscordCommandName.CoinFlip;
   },
 };

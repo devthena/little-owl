@@ -1,11 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CURRENCY } from 'src/constants';
-import { LogEventType, TwitchChannelRewardId } from 'src/enums';
+import {
+  LogEventType,
+  TwitchChannelRewardId,
+  TwitchCommandName,
+} from 'src/enums';
 import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
 import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
-import { COMMAND_NAMES_TWITCH } from '../commands/constants';
 
 // @todo: add error handling for await statements
 
@@ -92,9 +95,9 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    if (command === COMMAND_NAMES_TWITCH.GAMBLE) {
+    if (command === TwitchCommandName.Gamble) {
       onGamble(Bots, channel, userData, args);
-    } else if (command === COMMAND_NAMES_TWITCH.POINTS) {
+    } else if (command === TwitchCommandName.Points) {
       Bots.twitch.say(
         channel,
         `${userstate.username} you have ${userData.cash} ${

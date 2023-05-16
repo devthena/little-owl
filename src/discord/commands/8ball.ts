@@ -4,7 +4,7 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { COMMAND_NAMES_DISCORD } from './constants';
+import { DiscordCommandName } from 'src/enums';
 
 const COMMAND_DESCRIPTION = 'Play a game of Magic 8-Ball';
 const COMMAND_OPTION = 'question';
@@ -34,7 +34,7 @@ const COMMAND_RESPONSES = [
 
 export const EightBall = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAMES_DISCORD.EIGHTBALL)
+    .setName(DiscordCommandName.EightBall)
     .setDescription(COMMAND_DESCRIPTION)
     .addStringOption((option: SlashCommandStringOption) =>
       option
@@ -53,6 +53,6 @@ export const EightBall = {
     }
   },
   getName: (): string => {
-    return COMMAND_NAMES_DISCORD.EIGHTBALL;
+    return DiscordCommandName.EightBall;
   },
 };

@@ -4,14 +4,14 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import { STAR } from 'src/configs';
+import { DiscordCommandName } from 'src/enums';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { COMMAND_NAMES_DISCORD } from './constants';
 
 // @todo: add error handling for await statements
 
 export const Star = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAMES_DISCORD.STAR)
+    .setName(DiscordCommandName.Star)
     .setDescription('Give a star to a user as a form of endorsement')
     .addUserOption(option =>
       option
@@ -79,6 +79,6 @@ export const Star = {
     await interaction.reply({ embeds: [botEmbed] });
   },
   getName: (): string => {
-    return COMMAND_NAMES_DISCORD.STAR;
+    return DiscordCommandName.Star;
   },
 };

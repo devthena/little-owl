@@ -1,15 +1,15 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { GAMBLE } from 'src/configs';
 import { CURRENCY } from 'src/constants';
+import { DiscordCommandName } from 'src/enums';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { COMMAND_NAMES_DISCORD } from './constants';
 import { weightedRandom } from '../../utils';
 
 // @todo: add error handling for await statements
 
 export const Gamble = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAMES_DISCORD.GAMBLE)
+    .setName(DiscordCommandName.Gamble)
     .setDescription('Play your points for a chance to double it')
     .addStringOption(option =>
       option
@@ -128,6 +128,6 @@ export const Gamble = {
       .updateOne({ discord_id: user.discord_id }, { $set: { cash: points } });
   },
   getName: (): string => {
-    return COMMAND_NAMES_DISCORD.GAMBLE;
+    return DiscordCommandName.Gamble;
   },
 };

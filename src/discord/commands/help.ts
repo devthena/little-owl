@@ -5,14 +5,13 @@ import {
   CommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
-import { WebURL } from 'src/enums';
-import { COMMAND_NAMES_DISCORD } from './constants';
+import { DiscordCommandName, WebURL } from 'src/enums';
 
 // @todo: add error handling for await statements
 
 export const Help = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAMES_DISCORD.HELP)
+    .setName(DiscordCommandName.Help)
     .setDescription('Display helpful links about commands and FAQ'),
   execute: async (interaction: CommandInteraction) => {
     const row = new ActionRowBuilder<ButtonBuilder>()
@@ -35,6 +34,6 @@ export const Help = {
     });
   },
   getName: (): string => {
-    return COMMAND_NAMES_DISCORD.HELP;
+    return DiscordCommandName.Help;
   },
 };

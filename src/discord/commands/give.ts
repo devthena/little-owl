@@ -1,14 +1,14 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { GIVE } from 'src/configs';
 import { CURRENCY } from 'src/constants';
+import { DiscordCommandName } from 'src/enums';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { COMMAND_NAMES_DISCORD } from './constants';
 
 // @todo: add error handling for await statements
 
 export const Give = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAMES_DISCORD.GIVE)
+    .setName(DiscordCommandName.Give)
     .setDescription('Give points to another user')
     .addUserOption(option =>
       option
@@ -91,6 +91,6 @@ export const Give = {
     return;
   },
   getName: (): string => {
-    return COMMAND_NAMES_DISCORD.GIVE;
+    return DiscordCommandName.Give;
   },
 };
