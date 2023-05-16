@@ -1,7 +1,7 @@
 import { ActivityType, EmbedBuilder, Presence } from 'discord.js';
-import { LIVE_ROLE, STREAM_ALERTS } from 'src/configs';
-import { LogEventType } from 'src/enums';
 import { BotsProps } from 'src/interfaces';
+import { LIVE_ROLE, STREAM_ALERTS } from '../../configs';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const onPresenceUpdate = async (

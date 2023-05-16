@@ -1,8 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { GAMBLE } from 'src/configs';
-import { CURRENCY } from 'src/constants';
-import { DiscordCommandName } from 'src/enums';
 import { BotsProps, UserProps } from 'src/interfaces';
+import { GAMBLE } from '../../configs';
+import { CURRENCY } from '../../constants';
+import { DiscordCommandName } from '../../enums';
 import { weightedRandom } from '../../utils';
 
 // @todo: add error handling for await statements

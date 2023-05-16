@@ -1,8 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { GIVE } from 'src/configs';
-import { CURRENCY } from 'src/constants';
-import { DiscordCommandName } from 'src/enums';
 import { BotsProps, UserProps } from 'src/interfaces';
+import { GIVE } from '../../configs';
+import { CURRENCY } from '../../constants';
+import { DiscordCommandName } from '../../enums';
 
 // @todo: add error handling for await statements
 

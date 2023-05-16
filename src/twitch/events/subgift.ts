@@ -1,5 +1,5 @@
-import { LogEventType } from 'src/enums';
 import { BotsProps, ObjectProps } from 'src/interfaces';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const onSubGift = (

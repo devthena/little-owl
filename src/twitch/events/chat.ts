@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import { CURRENCY } from 'src/constants';
+import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
+import { CURRENCY } from '../../constants';
 import {
   LogEventType,
   TwitchChannelRewardId,
   TwitchCommandName,
-} from 'src/enums';
-import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
+} from '../../enums';
 import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';

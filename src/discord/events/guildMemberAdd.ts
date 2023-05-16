@@ -1,7 +1,7 @@
 import { GuildMember } from 'discord.js';
-import { DEFAULT_ROLE } from 'src/configs';
-import { LogEventType } from 'src/enums';
 import { BotsProps } from 'src/interfaces';
+import { DEFAULT_ROLE } from '../../configs';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const onGuildMemberAdd = async (

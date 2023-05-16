@@ -4,7 +4,7 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { DiscordCommandName } from 'src/enums';
+import { DiscordCommandName } from '../../enums';
 
 const COMMAND_DESCRIPTION = 'Play a game of Magic 8-Ball';
 const COMMAND_OPTION = 'question';

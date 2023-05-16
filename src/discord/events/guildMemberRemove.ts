@@ -1,6 +1,6 @@
 import { GuildMember } from 'discord.js';
-import { LogEventType } from 'src/enums';
 import { BotsProps } from 'src/interfaces';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const onGuildMemberRemove = async (

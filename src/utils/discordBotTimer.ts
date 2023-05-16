@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { BOT_ACTIVITIES } from 'src/constants';
+import { BOT_ACTIVITIES } from '../constants';
 
 let timer: NodeJS.Timeout | null = null;
 let pointer: number = 0;

@@ -1,6 +1,6 @@
-import { GAMBLE } from 'src/configs';
-import { CURRENCY } from 'src/constants';
 import { BotsProps, UserProps } from 'src/interfaces';
+import { GAMBLE } from '../../configs';
+import { CURRENCY } from '../../constants';
 import { weightedRandom } from '../../utils';
 
 // @todo: add error handling for await statements

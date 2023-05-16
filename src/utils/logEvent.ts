@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
-import { LogChannelId } from 'src/enums';
 import { LogProps, StringObjectProps } from 'src/interfaces';
+import { LogChannelId } from '../enums';
 
 const channelMap: StringObjectProps = {
   activity: LogChannelId.Activity,

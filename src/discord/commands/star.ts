@@ -3,9 +3,9 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import { STAR } from 'src/configs';
-import { DiscordCommandName } from 'src/enums';
 import { BotsProps, UserProps } from 'src/interfaces';
+import { DiscordCommandName } from '../../enums';
+import { STAR } from '../../configs';
 
 // @todo: add error handling for await statements
 

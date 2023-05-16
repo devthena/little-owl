@@ -5,7 +5,8 @@ import {
   CommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
-import { DiscordCommandName, WebURL } from 'src/enums';
+
+import { DiscordCommandName, WebURL } from '../../enums';
 
 // @todo: add error handling for await statements
 

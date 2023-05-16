@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { DiscordCommandName } from 'src/enums';
+import { DiscordCommandName } from '../../enums';
 import { weightedRandom } from '../../utils';
 
 // @todo: add error handling for await statements
