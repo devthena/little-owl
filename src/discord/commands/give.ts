@@ -84,7 +84,9 @@ export const Give = {
         { $set: { cash: (user.cash -= amount) } }
       );
 
-    await interaction.reply({ content: replies.success });
+    await interaction.reply({
+      content: `${replies.success}. Your cash balance: ${user.cash} :coin:`,
+    });
     return;
   },
   getName: (): string => {

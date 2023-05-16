@@ -82,7 +82,7 @@ export const Gamble = {
       if (result === 'win') {
         points += user.cash;
         await interaction.reply({
-          content: `You won ${user.cash} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`,
+          content: `You won ${user.cash} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
         });
       } else {
         points = 0;
@@ -94,24 +94,24 @@ export const Gamble = {
       if (result === 'win') {
         points += halfPoints;
         await interaction.reply({
-          content: `You won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`,
+          content: `You won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
         });
       } else {
         points -= halfPoints;
         await interaction.reply({
-          content: `You lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`,
+          content: `You lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
         });
       }
     } else if (amount <= user.cash) {
       if (result === 'win') {
         points += amount;
         await interaction.reply({
-          content: `You won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag:`,
+          content: `You won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
         });
       } else {
         points -= amount;
         await interaction.reply({
-          content: `You lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`,
+          content: `You lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
         });
       }
     } else if (amount > user.cash) {
