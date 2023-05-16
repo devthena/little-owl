@@ -1,3 +1,13 @@
+export enum AdminChannelId {
+  Message = '1012125638683009144',
+  Stage = '1012125600242208819',
+}
+
+export enum DiscordChannelId {
+  Announcements = '299246589568876544',
+  Stage = '1103567084174200883',
+}
+
 export enum DiscordCommandName {
   CoinFlip = 'coinflip',
   EightBall = '8ball',
