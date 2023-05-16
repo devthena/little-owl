@@ -59,7 +59,7 @@ export const onPresenceUpdate = async (
 
       // stream announcement for server owner
       if (
-        CONFIG.CHANNELS.ALERTS.ENABLED &&
+        CONFIG.STREAM_ALERTS.ENABLED &&
         newPresence.guild.ownerId === newPresence.member?.id
       ) {
         const streamActivity = newPresence.activities.find(
@@ -67,7 +67,7 @@ export const onPresenceUpdate = async (
         );
 
         const streamAlertChannelExists = newPresence.guild.channels.cache.find(
-          channel => channel.id === CONFIG.CHANNELS.ALERTS.ID
+          channel => channel.id === CONFIG.STREAM_ALERTS.CHANNEL_ID
         );
 
         if (
@@ -96,7 +96,7 @@ export const onPresenceUpdate = async (
           if (liveImage) botEmbed.setImage(liveImage);
 
           const streamAlertChannel = newPresence.guild.channels.cache.get(
-            CONFIG.CHANNELS.ALERTS.ID
+            CONFIG.STREAM_ALERTS.CHANNEL_ID
           );
 
           if (!streamAlertChannel || !streamAlertChannel.isTextBased()) return;
@@ -112,7 +112,7 @@ export const onPresenceUpdate = async (
 
               setTimeout(() => {
                 Bots.cooldowns.streamAlert = false;
-              }, CONFIG.CHANNELS.ALERTS.COOLDOWN_MS);
+              }, CONFIG.STREAM_ALERTS.COOLDOWN_MS);
             });
         }
       }

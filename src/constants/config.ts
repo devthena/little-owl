@@ -1,10 +1,5 @@
 export const CONFIG = {
   CHANNELS: {
-    ALERTS: {
-      COOLDOWN_MS: 43200000,
-      ENABLED: true,
-      ID: '901898913047511071',
-    },
     LOGS: {
       ACTIVITIES: '1012123780132372570',
       ALERTS: '1012124179371405353',
@@ -13,7 +8,6 @@ export const CONFIG = {
       LEAVERS: '1012123821580496966',
       USERS: '1022346939502698566',
     },
-    MAIN: '763283162792198174',
   },
   CURRENCY: {
     EMOJI: ':coin:',
@@ -47,6 +41,11 @@ export const CONFIG = {
     },
   },
   STAR: {
+    ENABLED: true,
+  },
+  STREAM_ALERTS: {
+    CHANNEL_ID: '901898913047511071',
+    COOLDOWN_MS: 43200000,
     ENABLED: true,
   },
   URLS: {
