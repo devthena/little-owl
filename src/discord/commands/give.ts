@@ -85,7 +85,7 @@ export const Give = {
       );
 
     await interaction.reply({
-      content: `${replies.success}. Your cash balance: ${user.cash} :coin:.`,
+      content: `${replies.success}. Your cash balance: ${user.cash} :coin:`,
     });
     return;
   },
