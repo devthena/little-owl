@@ -5,9 +5,8 @@ import {
   CommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
-
+import { WebURL } from 'src/enums';
 import { COMMAND_NAMES_DISCORD } from './constants';
-import { CONFIG } from '../../constants';
 
 // @todo: add error handling for await statements
 
@@ -21,13 +20,13 @@ export const Help = {
         new ButtonBuilder()
           .setLabel('Commands')
           .setStyle(ButtonStyle.Link)
-          .setURL(CONFIG.URLS.COMMANDS)
+          .setURL(WebURL.Commands)
       )
       .addComponents(
         new ButtonBuilder()
           .setLabel('FAQ')
           .setStyle(ButtonStyle.Link)
-          .setURL(CONFIG.URLS.FAQ)
+          .setURL(WebURL.FAQ)
       );
 
     await interaction.reply({

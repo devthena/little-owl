@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
+import { CURRENCY } from 'src/constants';
+import { LogEventType, TwitchChannelRewardId } from 'src/enums';
 import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
-import { CONFIG } from '../../constants';
 import { UserModel } from '../../schemas';
-import { LogEventType, logEvent } from '../../utils';
+import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
 import { COMMAND_NAMES_TWITCH } from '../commands/constants';
 
@@ -51,13 +52,13 @@ export const onChat = async (
     let points = 0;
 
     switch (redeemId) {
-      case CONFIG.REWARDS.CONVERT100:
+      case TwitchChannelRewardId.Convert100:
         points = 100;
         break;
-      case CONFIG.REWARDS.CONVERT500:
+      case TwitchChannelRewardId.Convert500:
         points = 500;
         break;
-      case CONFIG.REWARDS.CONVERT1000:
+      case TwitchChannelRewardId.Convert1k:
         points = 1000;
         break;
     }
@@ -66,7 +67,7 @@ export const onChat = async (
 
     Bots.twitch.say(
       channel,
-      `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
+      `${userstate.username} has redeemed ${points} ${CURRENCY.PLURAL}!`
     );
 
     logEvent({
@@ -74,7 +75,7 @@ export const onChat = async (
       type: LogEventType.Activity,
       description: `${userstate.username} has redeemed conversion of ${
         points * 10
-      } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
+      } channel points to ${points} ${CURRENCY.PLURAL}!`,
     });
 
     await Bots.db
@@ -87,7 +88,7 @@ export const onChat = async (
     return;
   }
 
-  if (message.startsWith(CONFIG.PREFIX)) {
+  if (message.startsWith('!')) {
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
@@ -97,7 +98,7 @@ export const onChat = async (
       Bots.twitch.say(
         channel,
         `${userstate.username} you have ${userData.cash} ${
-          userData.cash > 1 ? CONFIG.CURRENCY.PLURAL : CONFIG.CURRENCY.SINGLE
+          userData.cash > 1 ? CURRENCY.PLURAL : CURRENCY.SINGLE
         }.`
       );
     }

@@ -1,5 +1,6 @@
+import { LogEventType } from 'src/enums';
 import { BotsProps, ObjectProps } from 'src/interfaces';
-import { LogEventType, logEvent } from '../../utils';
+import { logEvent } from '../../utils';
 
 export const onResub = (
   Bots: BotsProps,
@@ -10,7 +11,7 @@ export const onResub = (
   _userstate: ObjectProps,
   _methods: ObjectProps
 ) => {
-  // TODO: Add logic for variations of resub event
+  // @todo: Add logic for variations of resub event
   logEvent({
     Bots,
     type: LogEventType.Alert,

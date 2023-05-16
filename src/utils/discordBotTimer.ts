@@ -1,19 +1,16 @@
-import { ActivityType, Client } from 'discord.js';
-import { BOT_ACTIVITIES, CONFIG } from '../constants';
+import { Client } from 'discord.js';
+import { BOT_ACTIVITIES } from 'src/constants';
 
 let timer: NodeJS.Timeout | null = null;
 let pointer: number = 0;
 
 export const discordBotTimer = (Bot: Client) => {
   if (pointer < BOT_ACTIVITIES.length) {
-    let activity = ActivityType.Playing;
+    const activityName = BOT_ACTIVITIES[pointer].name;
+    const activityType = BOT_ACTIVITIES[pointer].type;
 
-    if (BOT_ACTIVITIES[pointer].type == 2) activity = ActivityType.Listening;
-    else if (BOT_ACTIVITIES[pointer].type == 3)
-      activity = ActivityType.Watching;
-
-    Bot.user?.setActivity(BOT_ACTIVITIES[pointer].name, {
-      type: activity,
+    Bot.user?.setActivity(activityName, {
+      type: activityType,
     });
 
     pointer++;
@@ -23,5 +20,5 @@ export const discordBotTimer = (Bot: Client) => {
   if (timer) clearTimeout(timer);
   timer = setTimeout(() => {
     discordBotTimer(Bot);
-  }, CONFIG.POLL_RATE_MS);
+  }, 1800000);
 };

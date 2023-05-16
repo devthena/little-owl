@@ -1,5 +1,6 @@
+import { LogEventType } from 'src/enums';
 import { BotsProps, ObjectProps } from 'src/interfaces';
-import { LogEventType, logEvent } from '../../utils';
+import { logEvent } from '../../utils';
 
 export const onSubMysteryGift = (
   Bots: BotsProps,
@@ -9,7 +10,7 @@ export const onSubMysteryGift = (
   _methods: ObjectProps,
   _userstate: ObjectProps
 ) => {
-  // TODO: Update description with more information
+  // @todo: Update description with more information
   logEvent({
     Bots,
     type: LogEventType.Alert,

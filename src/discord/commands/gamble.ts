@@ -1,7 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { GAMBLE } from 'src/configs';
+import { CURRENCY } from 'src/constants';
 import { BotsProps, UserProps } from 'src/interfaces';
 import { COMMAND_NAMES_DISCORD } from './constants';
-import { CONFIG } from '../../constants';
 import { weightedRandom } from '../../utils';
 
 // @todo: add error handling for await statements
@@ -21,7 +22,7 @@ export const Gamble = {
     interaction: CommandInteraction,
     user: UserProps
   ) => {
-    if (!CONFIG.GAMES.GAMBLE.ENABLED) {
+    if (!GAMBLE.ENABLED) {
       await interaction.reply({
         content: 'Gambling is not enabled in this server.',
         ephemeral: true,
@@ -31,10 +32,10 @@ export const Gamble = {
 
     const replies = {
       invalidInput: 'Enter a specific amount, "all", or "half".',
-      invalidNegative: `You should gamble at least 1 ${CONFIG.CURRENCY.SINGLE}.`,
-      lostAll: `You lost all of your ${CONFIG.CURRENCY.PLURAL}. :money_with_wings:`,
-      noPoints: `You have no ${CONFIG.CURRENCY.SINGLE} to gamble.`,
-      notEnough: `You don't have that much ${CONFIG.CURRENCY.PLURAL} to gamble.`,
+      invalidNegative: `You should gamble at least 1 ${CURRENCY.SINGLE}.`,
+      lostAll: `You lost all of your ${CURRENCY.PLURAL}. :money_with_wings:`,
+      noPoints: `You have no ${CURRENCY.SINGLE} to gamble.`,
+      notEnough: `You don't have that much ${CURRENCY.PLURAL} to gamble.`,
     };
 
     if (user.cash < 1) {
@@ -71,8 +72,8 @@ export const Gamble = {
     }
 
     const probability = {
-      win: CONFIG.GAMES.GAMBLE.WIN_PERCENT / 100,
-      loss: 1 - CONFIG.GAMES.GAMBLE.WIN_PERCENT / 100,
+      win: GAMBLE.WIN_PERCENT / 100,
+      loss: 1 - GAMBLE.WIN_PERCENT / 100,
     };
 
     let points = user.cash;
@@ -82,7 +83,7 @@ export const Gamble = {
       if (result === 'win') {
         points += user.cash;
         await interaction.reply({
-          content: `You won ${user.cash} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
+          content: `You won ${user.cash} ${CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
         });
       } else {
         points = 0;
@@ -94,24 +95,24 @@ export const Gamble = {
       if (result === 'win') {
         points += halfPoints;
         await interaction.reply({
-          content: `You won ${halfPoints} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
+          content: `You won ${halfPoints} ${CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
         });
       } else {
         points -= halfPoints;
         await interaction.reply({
-          content: `You lost ${halfPoints} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
+          content: `You lost ${halfPoints} ${CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
         });
       }
     } else if (amount <= user.cash) {
       if (result === 'win') {
         points += amount;
         await interaction.reply({
-          content: `You won ${amount} ${CONFIG.CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
+          content: `You won ${amount} ${CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
         });
       } else {
         points -= amount;
         await interaction.reply({
-          content: `You lost ${amount} ${CONFIG.CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
+          content: `You lost ${amount} ${CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
         });
       }
     } else if (amount > user.cash) {

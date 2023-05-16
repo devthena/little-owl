@@ -1,5 +1,6 @@
+import { LogEventType } from 'src/enums';
 import { BotsProps, ObjectProps } from 'src/interfaces';
-import { LogEventType, logEvent } from '../../utils';
+import { logEvent } from '../../utils';
 
 export const onSubscription = (
   Bots: BotsProps,

@@ -1,6 +1,7 @@
 import { GuildBan } from 'discord.js';
+import { LogEventType } from 'src/enums';
 import { BotsProps } from 'src/interfaces';
-import { LogEventType, logEvent } from '../../utils';
+import { logEvent } from '../../utils';
 
 export const onGuildBanAdd = async (Bots: BotsProps, guildBan: GuildBan) => {
   const { user, reason } = guildBan;
