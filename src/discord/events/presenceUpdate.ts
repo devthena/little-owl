@@ -1,7 +1,8 @@
 import { ActivityType, EmbedBuilder, Presence } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
-import { CONFIG } from '../../constants';
-import { LogEventType, logEvent } from '../../utils';
+import { LIVE_ROLE, STREAM_ALERTS } from '../../configs';
+import { LogEventType } from '../../enums';
+import { logEvent } from '../../utils';
 
 export const onPresenceUpdate = async (
   Bots: BotsProps,
@@ -11,7 +12,7 @@ export const onPresenceUpdate = async (
   if (!newPresence.guild?.available) return;
 
   const liveRole = newPresence.guild.roles.cache.find(
-    role => CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
+    role => LIVE_ROLE.ENABLED && role.id === LIVE_ROLE.ID
   );
 
   // member has gone offline
@@ -59,7 +60,7 @@ export const onPresenceUpdate = async (
 
       // stream announcement for server owner
       if (
-        CONFIG.STREAM_ALERTS.ENABLED &&
+        STREAM_ALERTS.ENABLED &&
         newPresence.guild.ownerId === newPresence.member?.id
       ) {
         const streamActivity = newPresence.activities.find(
@@ -67,7 +68,7 @@ export const onPresenceUpdate = async (
         );
 
         const streamAlertChannelExists = newPresence.guild.channels.cache.find(
-          channel => channel.id === CONFIG.STREAM_ALERTS.CHANNEL_ID
+          channel => channel.id === STREAM_ALERTS.CHANNEL_ID
         );
 
         if (
@@ -96,7 +97,7 @@ export const onPresenceUpdate = async (
           if (liveImage) botEmbed.setImage(liveImage);
 
           const streamAlertChannel = newPresence.guild.channels.cache.get(
-            CONFIG.STREAM_ALERTS.CHANNEL_ID
+            STREAM_ALERTS.CHANNEL_ID
           );
 
           if (!streamAlertChannel || !streamAlertChannel.isTextBased()) return;
@@ -112,7 +113,7 @@ export const onPresenceUpdate = async (
 
               setTimeout(() => {
                 Bots.cooldowns.streamAlert = false;
-              }, CONFIG.STREAM_ALERTS.COOLDOWN_MS);
+              }, STREAM_ALERTS.COOLDOWN_MS);
             });
         }
       }

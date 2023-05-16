@@ -1,6 +1,7 @@
 import { BotsProps } from 'src/interfaces';
 import { IGNORE_LIST } from '../../constants';
-import { LogEventType, logEvent } from '../../utils';
+import { LogEventType } from '../../enums';
+import { logEvent } from '../../utils';
 
 export const onJoin = async (
   Bots: BotsProps,

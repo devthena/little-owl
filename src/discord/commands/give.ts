@@ -1,13 +1,14 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { COMMAND_NAMES_DISCORD } from './constants';
-import { CONFIG } from '../../constants';
+import { GIVE } from '../../configs';
+import { CURRENCY } from '../../constants';
+import { DiscordCommandName } from '../../enums';
 
 // @todo: add error handling for await statements
 
 export const Give = {
   data: new SlashCommandBuilder()
-    .setName(COMMAND_NAMES_DISCORD.GIVE)
+    .setName(DiscordCommandName.Give)
     .setDescription('Give points to another user')
     .addUserOption(option =>
       option
@@ -27,7 +28,7 @@ export const Give = {
     user: UserProps,
     recipient: UserProps
   ) => {
-    if (!CONFIG.GIVE.ENABLED) {
+    if (!GIVE.ENABLED) {
       await interaction.reply({
         content: 'Giving points is not enabled in this server.',
         ephemeral: true,
@@ -39,9 +40,9 @@ export const Give = {
     const replies = {
       invalidLowerBound: `Amount must be at least 1.`,
       invalidRecipient: `Enter a valid recipient.`,
-      noPoints: `Sorry, you have no ${CONFIG.CURRENCY.SINGLE} to give. :neutral_face:`,
-      notEnough: `Sorry, you don't have that many ${CONFIG.CURRENCY.PLURAL} to give. :neutral_face:`,
-      success: `You gave ${recipient.discord_username} ${amount} ${CONFIG.CURRENCY.PLURAL}.`,
+      noPoints: `Sorry, you have no ${CURRENCY.SINGLE} to give. :neutral_face:`,
+      notEnough: `Sorry, you don't have that many ${CURRENCY.PLURAL} to give. :neutral_face:`,
+      success: `You gave ${recipient.discord_username} ${amount} ${CURRENCY.PLURAL}.`,
     };
 
     if (user.cash < 1) {
@@ -90,6 +91,6 @@ export const Give = {
     return;
   },
   getName: (): string => {
-    return COMMAND_NAMES_DISCORD.GIVE;
+    return DiscordCommandName.Give;
   },
 };

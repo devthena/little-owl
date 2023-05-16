@@ -1,32 +1,14 @@
 import { EmbedBuilder } from 'discord.js';
-import { CONFIG } from '../constants';
-import { BotsProps, StringObjectProps } from 'src/interfaces';
-
-export enum LogEventType {
-  Activity = 'activity',
-  Alert = 'alert',
-  Deleted = 'deleted',
-  Error = 'error',
-  Leave = 'leave',
-  User = 'user',
-}
-
-interface LogProps {
-  Bots: BotsProps;
-  type: string;
-  description: string;
-  authorIcon?: string;
-  thumbnail?: string;
-  footer?: string;
-}
+import { LogProps, StringObjectProps } from 'src/interfaces';
+import { LogChannelId } from '../enums';
 
 const channelMap: StringObjectProps = {
-  activity: CONFIG.CHANNELS.LOGS.ACTIVITIES,
-  alert: CONFIG.CHANNELS.LOGS.ALERTS,
-  deleted: CONFIG.CHANNELS.LOGS.DELETED,
-  error: CONFIG.CHANNELS.LOGS.ERRORS,
-  leave: CONFIG.CHANNELS.LOGS.LEAVERS,
-  user: CONFIG.CHANNELS.LOGS.USERS,
+  activity: LogChannelId.Activity,
+  alert: LogChannelId.Alert,
+  deleted: LogChannelId.Deleted,
+  error: LogChannelId.Error,
+  leave: LogChannelId.Leave,
+  user: LogChannelId.User,
 };
 
 export const logEvent = (props: LogProps) => {

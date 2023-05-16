@@ -10,6 +10,15 @@ export interface BotsProps {
   twitch: tmi.Client;
 }
 
+export interface LogProps {
+  Bots: BotsProps;
+  type: string;
+  description: string;
+  authorIcon?: string;
+  thumbnail?: string;
+  footer?: string;
+}
+
 export interface ObjectProps {
   [key: string]: any;
 }
