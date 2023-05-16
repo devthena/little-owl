@@ -14,8 +14,8 @@ export const onPresenceUpdate = async (
     role => CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
   );
 
-  // member went offline
-  if (newPresence.status === 'offline') {
+  // member has gone offline
+  if (newPresence.status === 'offline' || newPresence.status === 'invisible') {
     if (
       liveRole &&
       newPresence.member?.manageable &&
@@ -23,6 +23,7 @@ export const onPresenceUpdate = async (
     ) {
       newPresence.member?.roles.remove(liveRole).catch(console.error);
     }
+    return;
   }
 
   if (newPresence.activities.length) {
@@ -58,7 +59,7 @@ export const onPresenceUpdate = async (
 
       // stream announcement for server owner
       if (
-        CONFIG.CHANNELS.ALERTS.ENABLED &&
+        CONFIG.STREAM_ALERTS.ENABLED &&
         newPresence.guild.ownerId === newPresence.member?.id
       ) {
         const streamActivity = newPresence.activities.find(
@@ -66,7 +67,7 @@ export const onPresenceUpdate = async (
         );
 
         const streamAlertChannelExists = newPresence.guild.channels.cache.find(
-          channel => channel.id === CONFIG.CHANNELS.ALERTS.ID
+          channel => channel.id === CONFIG.STREAM_ALERTS.CHANNEL_ID
         );
 
         if (
@@ -79,9 +80,7 @@ export const onPresenceUpdate = async (
           if (streamActivity.details) liveMessage += streamActivity.details;
           if (streamActivity.url) liveMessage += `\n\n${streamActivity.url}`;
 
-          const liveImage = streamActivity.assets
-            ? streamActivity.assets.largeImageURL()
-            : null;
+          const liveImage = streamActivity.assets?.largeImageURL();
 
           const botEmbed = new EmbedBuilder()
             .setAuthor({
@@ -90,13 +89,14 @@ export const onPresenceUpdate = async (
             })
             .setTitle(`Now Streaming ${streamActivity.state}`)
             .setDescription(liveMessage)
-            .setImage(liveImage)
             .setFooter({
               text: `Posted on ${streamActivity.createdAt.toDateString()}`,
             });
 
+          if (liveImage) botEmbed.setImage(liveImage);
+
           const streamAlertChannel = newPresence.guild.channels.cache.get(
-            CONFIG.CHANNELS.ALERTS.ID
+            CONFIG.STREAM_ALERTS.CHANNEL_ID
           );
 
           if (!streamAlertChannel || !streamAlertChannel.isTextBased()) return;
@@ -112,26 +112,20 @@ export const onPresenceUpdate = async (
 
               setTimeout(() => {
                 Bots.cooldowns.streamAlert = false;
-              }, CONFIG.CHANNELS.ALERTS.COOLDOWN_MS);
+              }, CONFIG.STREAM_ALERTS.COOLDOWN_MS);
             });
         }
       }
-    } else if (hasBeenStreaming && !isStreaming) {
-      if (
-        liveRole &&
-        newPresence.member?.manageable &&
-        newPresence.member?.roles.cache.has(liveRole.id)
-      ) {
-        newPresence.member?.roles.remove(liveRole).catch(console.error);
-      }
-    } else {
-      if (
-        liveRole &&
-        newPresence.member?.manageable &&
-        newPresence.member?.roles.cache.has(liveRole.id)
-      ) {
-        newPresence.member?.roles.remove(liveRole).catch(console.error);
-      }
+      return;
+    }
+
+    // member has ended their stream
+    if (
+      liveRole &&
+      newPresence.member?.manageable &&
+      newPresence.member?.roles.cache.has(liveRole.id)
+    ) {
+      newPresence.member?.roles.remove(liveRole).catch(console.error);
     }
   }
 };
