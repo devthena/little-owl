@@ -5,6 +5,8 @@ export enum AdminChannelId {
 
 export enum DiscordChannelId {
   Announcements = '299246589568876544',
+  Casino = '378726545432248330',
+  LittleOwl = '763283162792198174',
   Stage = '1103567084174200883',
 }
 
