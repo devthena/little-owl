@@ -1,6 +1,7 @@
 import { CommandInteraction } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, UserProps } from 'src/interfaces';
+import { DiscordChannelId } from '../../enums';
 import { UserModel } from '../../schemas';
 import {
   CoinFlip,
@@ -26,9 +27,13 @@ export const onInteractionCreate = async (
 
     if (interaction.commandName === CoinFlip.getName()) {
       return CoinFlip.execute(interaction);
-    } else if (interaction.commandName === EightBall.getName()) {
+    }
+
+    if (interaction.commandName === EightBall.getName()) {
       return EightBall.execute(interaction);
-    } else if (interaction.commandName === Help.getName()) {
+    }
+
+    if (interaction.commandName === Help.getName()) {
       return Help.execute(interaction);
     }
 
@@ -61,9 +66,30 @@ export const onInteractionCreate = async (
     }
 
     if (interaction.commandName === Gamble.getName()) {
-      return Gamble.execute(Bots, interaction, userData);
-    } else if (interaction.commandName === Points.getName()) {
-      return Points.execute(interaction, userData);
+      if (interaction.channelId !== DiscordChannelId.Casino) {
+        await interaction.reply({
+          content: 'Please use the #casino channel to gamble your points.',
+          ephemeral: true,
+        });
+      } else {
+        Gamble.execute(Bots, interaction, userData);
+      }
+      return;
+    }
+
+    if (interaction.commandName === Points.getName()) {
+      if (
+        interaction.channelId !== DiscordChannelId.Casino &&
+        interaction.channelId !== DiscordChannelId.LittleOwl
+      ) {
+        await interaction.reply({
+          content: 'Please use one of the bot channels to check your balance.',
+          ephemeral: true,
+        });
+      } else {
+        Points.execute(interaction, userData);
+      }
+      return;
     }
 
     const recipient = interaction.options.getUser('user');
@@ -102,7 +128,9 @@ export const onInteractionCreate = async (
 
     if (interaction.commandName === Give.getName()) {
       return Give.execute(Bots, interaction, userData, recipientData);
-    } else if (interaction.commandName === Star.getName()) {
+    }
+
+    if (interaction.commandName === Star.getName()) {
       return Star.execute(Bots, interaction, userData, recipientData);
     }
   }
