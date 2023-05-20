@@ -7,6 +7,7 @@
   "author": "AthenaUS <theathenaus@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "date-fns": "^2.30.0",
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
     "mongodb": "^5.2.0",
