@@ -50,13 +50,15 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
     ?.collection(Bots.env.MONGODB_USERS)
     .findOne({ discord_id: message.member.id });
 
+  const incAmount = isValidAttachment ? 2 : 1;
+
   if (!document) {
     const userData: UserProps = {
       ...UserModel,
       user_id: uuidv4(),
       discord_id: message.member.id,
       discord_username: message.member.user.username,
-      cash: 1,
+      cash: incAmount,
     };
 
     await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
@@ -65,5 +67,8 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
   await Bots.db
     ?.collection(Bots.env.MONGODB_USERS)
-    .updateOne({ discord_id: message.member.id }, { $inc: { cash: 1 } });
+    .updateOne(
+      { discord_id: message.member.id },
+      { $inc: { cash: incAmount } }
+    );
 };
