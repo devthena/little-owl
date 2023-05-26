@@ -26,15 +26,15 @@ export const onInteractionCreate = async (
     }
 
     if (interaction.commandName === CoinFlip.getName()) {
-      return CoinFlip.execute(interaction);
+      return CoinFlip.execute(Bots, interaction);
     }
 
     if (interaction.commandName === EightBall.getName()) {
-      return EightBall.execute(interaction);
+      return EightBall.execute(Bots, interaction);
     }
 
     if (interaction.commandName === Help.getName()) {
-      return Help.execute(interaction);
+      return Help.execute(Bots, interaction);
     }
 
     const document = await Bots.db
@@ -87,7 +87,7 @@ export const onInteractionCreate = async (
           ephemeral: true,
         });
       } else {
-        Points.execute(interaction, userData);
+        Points.execute(Bots, interaction, userData);
       }
       return;
     }

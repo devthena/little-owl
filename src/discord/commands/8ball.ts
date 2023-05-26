@@ -4,7 +4,9 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { DiscordCommandName } from '../../enums';
+import { BotsProps } from 'src/interfaces';
+import { DiscordCommandName, LogEventType } from '../../enums';
+import { logEvent } from '../../utils';
 
 const COMMAND_DESCRIPTION = 'Play a game of Magic 8-Ball';
 const COMMAND_OPTION = 'question';
@@ -42,13 +44,18 @@ export const EightBall = {
         .setDescription(COMMAND_OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
     const randomNum = Math.floor(Math.random() * COMMAND_RESPONSES.length);
     const answer = COMMAND_RESPONSES[randomNum];
 
     try {
       await interaction.reply(`:8ball: says.. ${answer}`);
     } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Discord Command Error (8Ball): ` + JSON.stringify(err),
+      });
       console.error(err);
     }
   },
