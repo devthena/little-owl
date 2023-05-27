@@ -1,8 +1,10 @@
 import { CommandInteraction } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { DiscordChannelId } from '../../enums';
+import { DiscordChannelId, LogEventType } from '../../enums';
 import { UserModel } from '../../schemas';
+import { logEvent } from '../../utils';
+
 import {
   CoinFlip,
   EightBall,
@@ -13,15 +15,23 @@ import {
   Star,
 } from '../commands';
 
-// @todo: add error handling for await statements
-
 export const onInteractionCreate = async (
   Bots: BotsProps,
   interaction: CommandInteraction
 ) => {
   if (interaction.isChatInputCommand()) {
     if (!interaction.member) {
-      await interaction.reply('User does not exist.');
+      try {
+        await interaction.reply('User does not exist.');
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description:
+            `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
       return;
     }
 
@@ -39,7 +49,17 @@ export const onInteractionCreate = async (
 
     const document = await Bots.db
       ?.collection(Bots.env.MONGODB_USERS)
-      .findOne({ discord_id: interaction.member.user.id });
+      .findOne({ discord_id: interaction.member.user.id })
+      .catch(err => {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description:
+            `Discord Database Error (interactionCreate): ` +
+            JSON.stringify(err),
+        });
+        console.error(err);
+      });
 
     const userData: UserProps = document
       ? {
@@ -62,15 +82,35 @@ export const onInteractionCreate = async (
         };
 
     if (!document) {
-      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+      try {
+        await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description:
+            `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
     }
 
     if (interaction.commandName === Gamble.getName()) {
       if (interaction.channelId !== DiscordChannelId.Casino) {
-        await interaction.reply({
-          content: 'Please use the #casino channel to gamble your points.',
-          ephemeral: true,
-        });
+        try {
+          await interaction.reply({
+            content: 'Please use the #casino channel to gamble your points.',
+            ephemeral: true,
+          });
+        } catch (err) {
+          logEvent({
+            Bots,
+            type: LogEventType.Error,
+            description:
+              `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
+          });
+          console.error(err);
+        }
       } else {
         Gamble.execute(Bots, interaction, userData);
       }
@@ -82,10 +122,21 @@ export const onInteractionCreate = async (
         interaction.channelId !== DiscordChannelId.Casino &&
         interaction.channelId !== DiscordChannelId.LittleOwl
       ) {
-        await interaction.reply({
-          content: 'Please use one of the bot channels to check your balance.',
-          ephemeral: true,
-        });
+        try {
+          await interaction.reply({
+            content:
+              'Please use one of the bot channels to check your balance.',
+            ephemeral: true,
+          });
+        } catch (err) {
+          logEvent({
+            Bots,
+            type: LogEventType.Error,
+            description:
+              `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
+          });
+          console.error(err);
+        }
       } else {
         Points.execute(Bots, interaction, userData);
       }
@@ -98,7 +149,17 @@ export const onInteractionCreate = async (
 
     const recipientDoc = await Bots.db
       ?.collection(Bots.env.MONGODB_USERS)
-      .findOne({ discord_id: recipient.id });
+      .findOne({ discord_id: recipient.id })
+      .catch(err => {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description:
+            `Discord Database Error (interactionCreate): ` +
+            JSON.stringify(err),
+        });
+        console.error(err);
+      });
 
     const recipientData: UserProps = recipientDoc
       ? {
@@ -121,9 +182,19 @@ export const onInteractionCreate = async (
         };
 
     if (!recipientDoc) {
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .insertOne(recipientData);
+      try {
+        await Bots.db
+          ?.collection(Bots.env.MONGODB_USERS)
+          .insertOne(recipientData);
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description:
+            `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
     }
 
     if (interaction.commandName === Give.getName()) {
