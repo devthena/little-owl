@@ -1,10 +1,9 @@
 import { Message } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { AdminChannelId, DiscordChannelId } from '../../enums';
+import { AdminChannelId, DiscordChannelId, LogEventType } from '../../enums';
 import { UserModel } from '../../schemas';
-
-// @todo: add error handling for await statements
+import { logEvent } from '../../utils';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;
@@ -48,7 +47,16 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
   const document = await Bots.db
     ?.collection(Bots.env.MONGODB_USERS)
-    .findOne({ discord_id: message.member.id });
+    .findOne({ discord_id: message.member.id })
+    .catch(err => {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description:
+          `Discord Database Error (messageCreate): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    });
 
   const incAmount = isValidAttachment ? 2 : 1;
 
@@ -61,14 +69,34 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
       cash: incAmount,
     };
 
-    await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+    try {
+      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description:
+          `Discord Database Error (messageCreate): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
     return;
   }
 
-  await Bots.db
-    ?.collection(Bots.env.MONGODB_USERS)
-    .updateOne(
-      { discord_id: message.member.id },
-      { $inc: { cash: incAmount } }
-    );
+  try {
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne(
+        { discord_id: message.member.id },
+        { $inc: { cash: incAmount } }
+      );
+  } catch (err) {
+    logEvent({
+      Bots,
+      type: LogEventType.Error,
+      description:
+        `Discord Database Error (messageCreate): ` + JSON.stringify(err),
+    });
+    console.error(err);
+  }
 };
