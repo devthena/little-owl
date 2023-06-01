@@ -2,9 +2,8 @@ import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { BotsProps, UserProps } from 'src/interfaces';
 import { GIVE } from '../../configs';
 import { CURRENCY } from '../../constants';
-import { DiscordCommandName } from '../../enums';
-
-// @todo: add error handling for await statements
+import { DiscordCommandName, LogEventType } from '../../enums';
+import { logEvent } from '../../utils';
 
 export const Give = {
   data: new SlashCommandBuilder()
@@ -29,10 +28,19 @@ export const Give = {
     recipient: UserProps
   ) => {
     if (!GIVE.ENABLED) {
-      await interaction.reply({
-        content: 'Giving points is not enabled in this server.',
-        ephemeral: true,
-      });
+      try {
+        await interaction.reply({
+          content: 'Giving points is not enabled in this server.',
+          ephemeral: true,
+        });
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
       return;
     }
 
@@ -46,49 +54,105 @@ export const Give = {
     };
 
     if (user.cash < 1) {
-      await interaction.reply({ content: replies.noPoints, ephemeral: true });
+      try {
+        await interaction.reply({ content: replies.noPoints, ephemeral: true });
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
       return;
     }
 
     if (amount < 1) {
-      await interaction.reply({
-        content: replies.invalidLowerBound,
-        ephemeral: true,
-      });
+      try {
+        await interaction.reply({
+          content: replies.invalidLowerBound,
+          ephemeral: true,
+        });
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
       return;
     }
 
     if (user.cash < amount) {
-      await interaction.reply({ content: replies.notEnough, ephemeral: true });
+      try {
+        await interaction.reply({
+          content: replies.notEnough,
+          ephemeral: true,
+        });
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
       return;
     }
 
     if (user.discord_id === recipient.discord_id) {
-      await interaction.reply({
-        content: replies.invalidRecipient,
-        ephemeral: true,
-      });
+      try {
+        await interaction.reply({
+          content: replies.invalidRecipient,
+          ephemeral: true,
+        });
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
       return;
     }
 
-    await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .updateOne(
-        { discord_id: recipient.discord_id },
-        { $set: { cash: (recipient.cash += amount) } }
-      );
+    try {
+      await Bots.db
+        ?.collection(Bots.env.MONGODB_USERS)
+        .updateOne(
+          { discord_id: recipient.discord_id },
+          { $set: { cash: (recipient.cash += amount) } }
+        );
 
-    await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .updateOne(
-        { discord_id: user.discord_id },
-        { $set: { cash: (user.cash -= amount) } }
-      );
+      await Bots.db
+        ?.collection(Bots.env.MONGODB_USERS)
+        .updateOne(
+          { discord_id: user.discord_id },
+          { $set: { cash: (user.cash -= amount) } }
+        );
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Discord Database Error (Give): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
 
-    await interaction.reply({
-      content: `${replies.success}. Your cash balance: ${user.cash} :coin:`,
-    });
-    return;
+    try {
+      await interaction.reply({
+        content: `${replies.success}. Your cash balance: ${user.cash} :coin:`,
+      });
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Discord Command Error (Give): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
   },
   getName: (): string => {
     return DiscordCommandName.Give;

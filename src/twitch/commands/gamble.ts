@@ -1,9 +1,8 @@
 import { BotsProps, UserProps } from 'src/interfaces';
 import { GAMBLE } from '../../configs';
 import { CURRENCY } from '../../constants';
-import { weightedRandom } from '../../utils';
-
-// @todo: add error handling for await statements
+import { LogEventType } from '../../enums';
+import { logEvent, weightedRandom } from '../../utils';
 
 export const onGamble = async (
   Bots: BotsProps,
@@ -93,7 +92,16 @@ export const onGamble = async (
     return;
   }
 
-  await Bots.db
-    ?.collection(Bots.env.MONGODB_USERS)
-    .updateOne({ twitch_id: user.twitch_id }, { $set: { cash: points } });
+  try {
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne({ twitch_id: user.twitch_id }, { $set: { cash: points } });
+  } catch (err) {
+    logEvent({
+      Bots,
+      type: LogEventType.Error,
+      description: `Twitch Database Error (Gamble): ` + JSON.stringify(err),
+    });
+    console.error(err);
+  }
 };
