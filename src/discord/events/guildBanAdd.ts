@@ -15,25 +15,26 @@ export const onGuildBanAdd = async (Bots: BotsProps, guildBan: GuildBan) => {
     footer: `Discord User ID: ${user.id}`,
   });
 
-  await Bots.db
-    ?.collection(Bots.env.MONGODB_USERS)
-    .findOneAndDelete({ discord_id: user.id })
-    .then(() => {
-      logEvent({
-        Bots,
-        type: LogEventType.Deleted,
-        description: `Record with discord_id=${user.username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
-        thumbnail: user.displayAvatarURL() || undefined,
-        footer: `Discord User ID: ${user.id}`,
-      });
-    })
-    .catch(() => {
-      logEvent({
-        Bots,
-        type: LogEventType.Error,
-        description: `Error deleting record with discord_id=${user.username} from collection ${Bots.env.MONGODB_USERS}.`,
-        thumbnail: user.displayAvatarURL() || undefined,
-        footer: `Discord User ID: ${user.id}`,
-      });
+  try {
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .findOneAndDelete({ discord_id: user.id });
+
+    logEvent({
+      Bots,
+      type: LogEventType.Deleted,
+      description: `Record with discord_id=${user.username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
+      thumbnail: user.displayAvatarURL() || undefined,
+      footer: `Discord User ID: ${user.id}`,
     });
+  } catch (err) {
+    const description = `Discord Database Error (guildBanAdd):\nError deleting record with discord_id=${user.username} from collection ${Bots.env.MONGODB_USERS}.`;
+
+    logEvent({
+      Bots,
+      type: LogEventType.Error,
+      description: description + `\n\nDetails:\n${JSON.stringify(err)}`,
+      thumbnail: user.displayAvatarURL() || undefined,
+    });
+  }
 };

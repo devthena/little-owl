@@ -10,8 +10,6 @@ import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
 
-// @todo: add error handling for await statements
-
 export const onChat = async (
   Bots: BotsProps,
   channel: string,
@@ -23,7 +21,15 @@ export const onChat = async (
 
   const document = await Bots.db
     ?.collection(Bots.env.MONGODB_USERS)
-    .findOne({ twitch_id: userstate['user-id'] });
+    .findOne({ twitch_id: userstate['user-id'] })
+    .catch(err => {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    });
 
   const userData: UserProps = document
     ? {
@@ -46,7 +52,16 @@ export const onChat = async (
       };
 
   if (!document) {
-    await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+    try {
+      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
   }
 
   const redeemId = userstate['custom-reward-id'];
@@ -81,12 +96,21 @@ export const onChat = async (
       } channel points to ${points} ${CURRENCY.PLURAL}!`,
     });
 
-    await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .updateOne(
-        { twitch_id: userstate['user-id'] },
-        { $inc: { cash: points } }
-      );
+    try {
+      await Bots.db
+        ?.collection(Bots.env.MONGODB_USERS)
+        .updateOne(
+          { twitch_id: userstate['user-id'] },
+          { $inc: { cash: points } }
+        );
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
 
     return;
   }
@@ -118,7 +142,16 @@ export const onChat = async (
 
   if (!isValid) return;
 
-  await Bots.db
-    ?.collection(Bots.env.MONGODB_USERS)
-    .updateOne({ twitch_id: userstate['user-id'] }, { $inc: { cash: 1 } });
+  try {
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne({ twitch_id: userstate['user-id'] }, { $inc: { cash: 1 } });
+  } catch (err) {
+    logEvent({
+      Bots,
+      type: LogEventType.Error,
+      description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+    });
+    console.error(err);
+  }
 };
