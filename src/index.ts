@@ -11,8 +11,7 @@ require('dotenv').config();
 import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
 
-import { MongoClient } from 'mongodb';
-const dbClient = new MongoClient(process.env.MONGODB_URL || '');
+import mongoose from 'mongoose';
 
 import { BotsProps } from './interfaces';
 
@@ -79,14 +78,18 @@ const Bots: BotsProps = {
 
 const initBots = async () => {
   try {
-    await dbClient.connect();
+    const connectionString = `${process.env.MONGODB_URL}/${process.env.MONGODB_DB}`;
+    await mongoose.connect(connectionString, {
+      retryWrites: true,
+      w: 'majority',
+    });
   } catch (error) {
     return console.warn(error);
   }
 
   console.log('* Database connection successful *');
 
-  Bots.db = dbClient.db(process.env.MONGODB_DB);
+  Bots.db = mongoose.connection.db;
 
   Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
   Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
