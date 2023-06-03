@@ -91,12 +91,6 @@ export const Star = {
       const userModel = await User.findOne({
         discord_id: user.discord_id,
       });
-      const recipientUserModel = await User.findOne({
-        discord_id: recipient.discord_id,
-      });
-
-      console.log('userModel', userModel);
-      console.log('recipientUserModel', recipientUserModel);
 
       if (userModel && userModel.user_id) {
         const userActivity = await UserActivity.findOne({
@@ -129,9 +123,6 @@ export const Star = {
         { discord_id: recipient.discord_id },
         { $inc: { stars: 1 } }
       );
-
-      const y = await User.findOne({ discord_id: recipient.discord_id });
-      console.log('recipientUserModel after', y);
     } catch (err) {
       logEvent({
         Bots,
