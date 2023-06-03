@@ -7,6 +7,9 @@ import { BotsProps, UserProps } from 'src/interfaces';
 import { STAR } from '../../configs';
 import { DiscordCommandName, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
+import { format } from 'date-fns';
+
+import { Star as StarModel, User, UserActivity } from '../../models';
 
 export const Star = {
   data: new SlashCommandBuilder()
@@ -84,12 +87,51 @@ export const Star = {
       //     { $set: { last_star: today } }
       //   );
 
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: recipient.discord_id },
-          { $inc: { stars: 1 } }
-        );
+      // retrieve user from user collection
+      const userModel = await User.findOne({
+        discord_id: user.discord_id,
+      });
+      const recipientUserModel = await User.findOne({
+        discord_id: recipient.discord_id,
+      });
+
+      console.log('userModel', userModel);
+      console.log('recipientUserModel', recipientUserModel);
+
+      if (userModel && userModel.user_id) {
+        const userActivity = await UserActivity.findOne({
+          user_id: userModel.user_id,
+        });
+
+        if (!userActivity) {
+          const newStar = await StarModel.createStar();
+          const newUserActivityModel = new UserActivity({
+            user_id: userModel.user_id,
+            star: newStar,
+          });
+
+          await newUserActivityModel.save();
+        } else {
+          // update last star given
+          userActivity?.star?.updateLastGivenStarDS(
+            format(new Date(), 'yyyy-MM-dd')
+          );
+
+          // increment total given
+          userActivity?.star?.incrementTotalGiven();
+
+          // save collection
+          userActivity.save();
+        }
+      }
+
+      await User.updateOne(
+        { discord_id: recipient.discord_id },
+        { $inc: { stars: 1 } }
+      );
+
+      const y = await User.findOne({ discord_id: recipient.discord_id });
+      console.log('recipientUserModel after', y);
     } catch (err) {
       logEvent({
         Bots,

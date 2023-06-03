@@ -6,13 +6,11 @@ if (parseInt(version.slice(1).split('.')[0], 10) < 16) {
   );
 }
 
-require('dotenv').config();
-
 import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
 
 import mongoose from 'mongoose';
-
+import { connectToDatabase } from './db';
 import { BotsProps } from './interfaces';
 
 import {
@@ -41,7 +39,9 @@ import {
   onTimeout,
 } from './twitch/events';
 
-const Bots: BotsProps = {
+import { appConfig } from './config';
+
+export const Bots: BotsProps = {
   cooldowns: {
     streamAlerts: false,
   },
@@ -58,37 +58,25 @@ const Bots: BotsProps = {
       djs.GatewayIntentBits.MessageContent,
     ],
   }),
-  env: {
-    ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    MONGODB_USERS:
-      (process.env.STAGING
-        ? process.env.MONGODB_USERS_STAGE
-        : process.env.MONGODB_USERS_PROD) || '',
-    SERVER_ID: process.env.SERVER_ID || '',
-  },
+  env: appConfig.env,
   twitch: new tmi.Client({
     options: { debug: true },
     identity: {
-      username: process.env.USERNAME,
-      password: process.env.PASSWORD,
+      username: appConfig.twitch.identity.username,
+      password: appConfig.twitch.identity.password,
     },
-    channels: process.env.CHANNELS?.split(','),
+    channels: appConfig.twitch.channels,
   }),
 };
 
 const initBots = async () => {
   try {
-    const connectionString = `${process.env.MONGODB_URL}/${process.env.MONGODB_DB}`;
-    await mongoose.connect(connectionString, {
-      retryWrites: true,
-      w: 'majority',
-    });
+    await connectToDatabase();
   } catch (error) {
     return console.warn(error);
   }
 
   console.log('* Database connection successful *');
-
   Bots.db = mongoose.connection.db;
 
   Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
@@ -113,7 +101,7 @@ const initBots = async () => {
   Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
-  Bots.discord.login(process.env.DISCORD_TOKEN);
+  Bots.discord.login(appConfig.env.DISCORD_TOKEN);
   Bots.twitch.connect().catch(console.error);
 };
 

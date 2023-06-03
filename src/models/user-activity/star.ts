@@ -1,7 +1,22 @@
 import { format } from 'date-fns';
-import mongoose, { Schema } from 'mongoose';
+import { Schema, model, Model } from 'mongoose';
 
-export const starSchema = new Schema({
+interface IStar extends Document {
+  last: {
+    given_ds: string;
+  };
+  total: {
+    given: number;
+  };
+  updateLastGivenStarDS(newGivenDS: string): void;
+  incrementTotalGiven(): void;
+}
+
+interface IStarModel extends Model<IStar> {
+  createStar(): Promise<IStar>;
+}
+
+export const starSchema = new Schema<IStar>({
   last: {
     given_ds: {
       type: String,
@@ -16,22 +31,28 @@ export const starSchema = new Schema({
   },
 });
 
-starSchema.methods.getLastStar = function () {
-  return this.last;
+// static methods
+starSchema.statics.createStar = async function () {
+  const star = await this.create({
+    last: {
+      given_ds: format(new Date(), 'yyyy-MM-dd'),
+    },
+    total: {
+      given: 1,
+    },
+  });
+
+  return star;
 };
 
-starSchema.methods.getTotal = function () {
-  return this.total;
-};
-
-starSchema.methods.incrementTotal = function () {
+// instance methods
+starSchema.methods.incrementTotalGiven = function () {
   let currentTotal = this.total.given || 0;
-  this.total.given = currentTotal++;
+  this.total.given = ++currentTotal;
 };
 
-starSchema.methods.updateLastStarDs = function () {
-  const newDate = format(new Date(), 'yyyy-MM-dd');
-  this.last.given_ds = newDate;
+starSchema.methods.updateLastGivenStarDS = function (newGivenDS: string): void {
+  this.last.given_ds = newGivenDS;
 };
 
-export const Star = mongoose.model('Star', starSchema);
+export const Star: IStarModel = model<IStar, IStarModel>('Star', starSchema);
