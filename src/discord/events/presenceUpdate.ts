@@ -38,8 +38,8 @@ export const onPresenceUpdate = async (
         activity => activity.type === ActivityType.Streaming
       );
 
-    // member has started streaming
-    if (!hasBeenStreaming && isStreaming) {
+    if (isStreaming) {
+      // member has started streaming
       if (
         liveRole &&
         newPresence.member?.manageable &&
@@ -60,6 +60,7 @@ export const onPresenceUpdate = async (
 
       // stream announcement for server owner
       if (
+        !hasBeenStreaming &&
         STREAM_ALERTS.ENABLED &&
         newPresence.guild.ownerId === newPresence.member?.id
       ) {
@@ -112,7 +113,7 @@ export const onPresenceUpdate = async (
               Bots.cooldowns.streamAlerts = true;
 
               setTimeout(() => {
-                Bots.cooldowns.streamAlert = false;
+                Bots.cooldowns.streamAlerts = false;
               }, STREAM_ALERTS.COOLDOWN_MS);
             });
         }
@@ -128,5 +129,15 @@ export const onPresenceUpdate = async (
     ) {
       newPresence.member?.roles.remove(liveRole).catch(console.error);
     }
+
+    return;
+  }
+
+  if (
+    liveRole &&
+    newPresence.member?.manageable &&
+    newPresence.member?.roles.cache.has(liveRole.id)
+  ) {
+    newPresence.member?.roles.remove(liveRole).catch(console.error);
   }
 };
