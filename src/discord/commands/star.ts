@@ -4,12 +4,12 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import { BotsProps, UserProps } from 'src/interfaces';
-import { STAR } from '../../configs';
-import { DiscordCommandName, LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
+import { BotsProps, UserProps } from 'src/interfaces';
+import { DiscordCommandName, LogEventType } from '../../enums';
+import { STAR } from '../../configs';
 import { Star as StarModel, User, UserActivity } from '../../models';
+import { logEvent } from '../../utils';
 
 export const Star = {
   data: new SlashCommandBuilder()
