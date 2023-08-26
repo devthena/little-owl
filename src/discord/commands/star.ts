@@ -7,7 +7,7 @@ import {
 
 import { BotsProps, UserProps } from 'src/interfaces';
 import { DiscordCommandName, LogEventType } from '../../enums';
-import { STAR } from '../../config/configs';
+import { STAR } from '../../config';
 import { Star as StarModel, User, UserActivity } from '../../models';
 import { logEvent } from '../../utils';
 

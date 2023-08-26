@@ -1,5 +1,5 @@
 import { BotsProps, UserProps } from 'src/interfaces';
-import { GAMBLE } from '../../config/configs';
+import { GAMBLE } from '../../config';
 import { CURRENCY } from '../../constants';
 import { LogEventType } from '../../enums';
 import { logEvent, weightedRandom } from '../../utils';
