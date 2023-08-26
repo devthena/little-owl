@@ -1,13 +1,13 @@
 export enum AdminChannelId {
-  Message = '1114991302329761832',
-  Stage = '1114991388866658304',
+  Message = '1012125638683009144',
+  Stage = '1012125600242208819',
 }
 
 export enum DiscordChannelId {
-  Announcements = '1102083016228094134',
-  Casino = '1114990766742319146',
-  LittleOwl = '1102111560123555930',
-  Stage = '1114990971990573189',
+  Announcements = '299246589568876544',
+  Casino = '378726545432248330',
+  LittleOwl = '763283162792198174',
+  Stage = '1103567084174200883',
 }
 
 export enum DiscordCommandName {
@@ -21,12 +21,12 @@ export enum DiscordCommandName {
 }
 
 export enum LogChannelId {
-  Activity = '1102109095223377991',
-  Alert = '1102109339499638856',
-  Deleted = '1102109648254926919',
-  Error = '1102109723316191303',
-  Leave = '1102090021311352924',
-  User = '1102110023607390219',
+  Activity = '1012123780132372570',
+  Alert = '1012124179371405353',
+  Deleted = '1100242605020823603',
+  Error = '1100289494202200064',
+  Leave = '1012123821580496966',
+  User = '1022346939502698566',
 }
 
 export enum LogEventType {
