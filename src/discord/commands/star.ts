@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import {
   CommandInteraction,
   EmbedBuilder,
@@ -7,7 +8,6 @@ import { BotsProps, UserProps } from 'src/interfaces';
 import { STAR } from '../../configs';
 import { DiscordCommandName, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
-import { format } from 'date-fns';
 
 import { Star as StarModel, User, UserActivity } from '../../models';
 
@@ -91,6 +91,12 @@ export const Star = {
       const userModel = await User.findOne({
         discord_id: user.discord_id,
       });
+      const receipientUser = await User.findOne({
+        discord_id: recipient.discord_id,
+      });
+
+      console.log('donor', userModel);
+      console.log('receipient', receipientUser);
 
       if (userModel && userModel.user_id) {
         const userActivity = await UserActivity.findOne({

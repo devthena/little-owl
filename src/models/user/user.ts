@@ -1,8 +1,6 @@
-import { Schema, model, Document } from 'mongoose';
-import { connectToDatabase } from '../../db';
-import { appConfig } from '../../config';
+import { Document, Schema, model } from 'mongoose';
 
-connectToDatabase();
+import { appConfig } from '../../config';
 
 interface IUser extends Document {
   user_id: string;
@@ -14,7 +12,7 @@ interface IUser extends Document {
   cash: number;
   bank: number;
   stars: number;
-  power_ups: object;
+  power_ups: string[];
 }
 
 export const userSchema = new Schema<IUser>(
@@ -56,8 +54,8 @@ export const userSchema = new Schema<IUser>(
       default: 0,
     },
     power_ups: {
-      type: Object,
-      default: {},
+      type: [String],
+      default: [],
     },
   },
   {

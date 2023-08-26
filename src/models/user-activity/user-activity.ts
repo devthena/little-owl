@@ -1,9 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
 import mongoose, { Schema } from 'mongoose';
-import { connectToDatabase } from '../../db';
-import { appConfig } from '../../config';
+import { v4 as uuidv4 } from 'uuid';
 
-connectToDatabase();
+import { appConfig } from '../../config';
 import { starSchema } from './star';
 
 const userActivitySchema = new Schema(

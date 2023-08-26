@@ -1,5 +1,5 @@
+import { Model, Schema, model } from 'mongoose';
 import { format } from 'date-fns';
-import { Schema, model, Model } from 'mongoose';
 
 interface IStar extends Document {
   last: {
