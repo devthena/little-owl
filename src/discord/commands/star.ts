@@ -6,8 +6,8 @@ import {
 } from 'discord.js';
 
 import { BotsProps, UserProps } from 'src/interfaces';
-import { DiscordCommandName, LogEventType } from '../../enums';
 import { STAR } from '../../config';
+import { DiscordCommandName, LogEventType } from '../../enums';
 import { Star as StarModel, User, UserActivity } from '../../models';
 import { logEvent } from '../../utils';
 
@@ -94,9 +94,6 @@ export const Star = {
       const receipientUser = await User.findOne({
         discord_id: recipient.discord_id,
       });
-
-      console.log('donor', userModel);
-      console.log('receipient', receipientUser);
 
       if (userModel && userModel.user_id) {
         const userActivity = await UserActivity.findOne({
