@@ -10,7 +10,6 @@ import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
 
 import mongoose from 'mongoose';
-import { connectToDatabase } from './db';
 import { BotsProps } from './interfaces';
 
 import {
@@ -67,6 +66,18 @@ export const Bots: BotsProps = {
     },
     channels: appConfig.twitch.channels,
   }),
+};
+
+const connectToDatabase = async () => {
+  try {
+    const connectionString = `${process.env.MONGODB_URL}/${process.env.MONGODB_DB}`;
+    await mongoose.connect(connectionString, {
+      retryWrites: true,
+      w: 'majority',
+    });
+  } catch (error) {
+    console.error('Database connection error:', error);
+  }
 };
 
 const initBots = async () => {
