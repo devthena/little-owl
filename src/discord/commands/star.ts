@@ -100,7 +100,7 @@ export const Star = {
           user_id: userModel.user_id,
         });
 
-        if (!userActivity) {
+        if (!userActivity || !userActivity?.star) {
           const newStar = await StarModel.createStar();
           const newUserActivityModel = new UserActivity({
             user_id: userModel.user_id,
@@ -109,15 +109,10 @@ export const Star = {
 
           await newUserActivityModel.save();
         } else {
-          // update last star given
-          userActivity?.star?.updateLastGivenStarDS(
+          userActivity.star.updateLastGivenStarDS(
             format(new Date(), 'yyyy-MM-dd')
           );
-
-          // increment total given
-          userActivity?.star?.incrementTotalGiven();
-
-          // save collection
+          userActivity.star.incrementTotalGiven();
           userActivity.save();
         }
       }
