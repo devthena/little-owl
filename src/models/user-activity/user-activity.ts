@@ -7,7 +7,7 @@ const userActivitySchema = new Schema(
   {
     user_id: {
       type: String,
-      required: false,
+      required: true,
       default: uuidv4(),
     },
     star: {
