@@ -1,6 +1,6 @@
 import { GuildMember } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
-import { DEFAULT_ROLE } from '../../configs';
+import { DEFAULT_ROLE } from '../../config';
 import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 

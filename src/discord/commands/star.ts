@@ -1,11 +1,13 @@
+import { format } from 'date-fns';
 import {
   CommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import { BotsProps, UserProps } from 'src/interfaces';
-import { STAR } from '../../configs';
+import { BotsProps } from 'src/interfaces';
+import { STAR } from '../../config';
 import { DiscordCommandName, LogEventType } from '../../enums';
+import { Star as StarModel, IUser, UserActivity } from '../../models';
 import { logEvent } from '../../utils';
 
 export const Star = {
@@ -21,8 +23,8 @@ export const Star = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserProps,
-    recipient: UserProps
+    user: IUser,
+    recipient: IUser
   ) => {
     if (!STAR.ENABLED) {
       try {
@@ -84,12 +86,29 @@ export const Star = {
       //     { $set: { last_star: today } }
       //   );
 
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: recipient.discord_id },
-          { $inc: { stars: 1 } }
-        );
+      if (user.user_id) {
+        const userActivity = await UserActivity.findOne({
+          user_id: user.user_id,
+        });
+
+        if (!userActivity || !userActivity?.star) {
+          const newStar = await StarModel.createStar();
+          const newUserActivityModel = new UserActivity({
+            user_id: user.user_id,
+            star: newStar,
+          });
+
+          await newUserActivityModel.save();
+        } else {
+          userActivity.star.updateLastGivenStarDS(
+            format(new Date(), 'yyyy-MM-dd')
+          );
+          userActivity.star.incrementTotalGiven();
+          userActivity.save();
+        }
+      }
+
+      await recipient.incrementStars();
     } catch (err) {
       logEvent({
         Bots,
