@@ -5,8 +5,8 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
-import { STAR } from '../../config';
 import { DiscordCommandName, LogEventType } from '../../enums';
+import { STAR } from '../../config';
 import { Star as StarModel, IUser, UserActivity } from '../../models';
 import { logEvent } from '../../utils';
 
