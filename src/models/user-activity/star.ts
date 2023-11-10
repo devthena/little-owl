@@ -44,7 +44,6 @@ starSchema.statics.createStar = async function () {
   return star;
 };
 
-// instance methods
 starSchema.methods.incrementTotalGiven = function () {
   this.total.given += 1;
 };
