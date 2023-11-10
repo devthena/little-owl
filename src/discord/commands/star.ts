@@ -4,7 +4,6 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-
 import { BotsProps } from 'src/interfaces';
 import { STAR } from '../../config';
 import { DiscordCommandName, LogEventType } from '../../enums';
@@ -106,15 +105,10 @@ export const Star = {
           );
           userActivity.star.incrementTotalGiven();
           userActivity.save();
-          console.log('userActivity');
-          console.log(userActivity.toJSON());
         }
       }
 
       await recipient.incrementStars();
-
-      console.log('recipient');
-      console.log(recipient.toJSON());
     } catch (err) {
       logEvent({
         Bots,
