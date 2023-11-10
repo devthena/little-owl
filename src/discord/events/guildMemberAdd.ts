@@ -1,6 +1,6 @@
 import { GuildMember } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
-import { DEFAULT_ROLE } from '../../configs';
+import { DEFAULT_ROLE } from '../../config';
 import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
@@ -17,22 +17,15 @@ export const onGuildMemberAdd = async (
   if (!DEFAULT_ROLE.ID || !welcomeRole) return;
   if (member.roles.cache.some(roles => roles.id === DEFAULT_ROLE.ID)) return;
 
-  try {
-    await member.roles.add(welcomeRole.id || DEFAULT_ROLE.ID);
-
-    logEvent({
-      Bots,
-      type: LogEventType.Activity,
-      description: `${member.user.username} aka ${member.displayName} has joined the server.`,
-      footer: `Discord User ID: ${member.id}`,
-    });
-  } catch (err) {
-    const description = `Discord Event Error (guildMemberAdd):\nCannot add role for ${member.user.username} aka ${member.displayName}`;
-
-    logEvent({
-      Bots,
-      type: LogEventType.Error,
-      description: description + `\n\nDetails:\n${JSON.stringify(err)}`,
-    });
-  }
+  member.roles
+    .add(welcomeRole.id || DEFAULT_ROLE.ID)
+    .then(_data => {
+      logEvent({
+        Bots,
+        type: LogEventType.Activity,
+        description: `${member.user.username} aka ${member.displayName} has joined the server.`,
+        footer: `Discord User ID: ${member.id}`,
+      });
+    })
+    .catch(console.error);
 };

@@ -2,7 +2,7 @@ import { Document, Schema, model } from 'mongoose';
 
 import { appConfig } from '../../config';
 
-interface IUser extends Document {
+export interface IUser extends Document {
   user_id: string;
   discord_id: string;
   discord_username: string;
@@ -13,6 +13,7 @@ interface IUser extends Document {
   bank: number;
   stars: number;
   power_ups: string[];
+  incrementStars: (amount?: number) => Promise<void>;
 }
 
 export const userSchema = new Schema<IUser>(
@@ -62,5 +63,14 @@ export const userSchema = new Schema<IUser>(
     collection: appConfig.env.MONGODB_USERS,
   }
 );
+
+userSchema.methods.incrementStars = async function (amount?: number) {
+  if (typeof amount === 'undefined') {
+    this.stars += 1;
+  } else {
+    this.stars += amount;
+  }
+  await this.save();
+};
 
 export const User = model('User', userSchema);

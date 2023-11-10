@@ -1,10 +1,9 @@
 import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
-import { Db } from 'mongodb';
-
+import mongoose from 'mongoose';
 export interface BotsProps {
   cooldowns: ObjectProps;
-  db: Db | null;
+  db: mongoose.mongo.Db | null;
   discord: djs.Client<boolean>;
   env: StringObjectProps;
   twitch: tmi.Client;

@@ -5,10 +5,10 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { BotsProps, UserProps } from 'src/interfaces';
+import { BotsProps } from 'src/interfaces';
 import { STAR } from '../../config';
 import { DiscordCommandName, LogEventType } from '../../enums';
-import { Star as StarModel, User, UserActivity } from '../../models';
+import { Star as StarModel, IUser, UserActivity } from '../../models';
 import { logEvent } from '../../utils';
 
 export const Star = {
@@ -24,8 +24,8 @@ export const Star = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserProps,
-    recipient: UserProps
+    user: IUser,
+    recipient: IUser
   ) => {
     if (!STAR.ENABLED) {
       try {
@@ -87,23 +87,15 @@ export const Star = {
       //     { $set: { last_star: today } }
       //   );
 
-      // retrieve user from user collection
-      const userModel = await User.findOne({
-        discord_id: user.discord_id,
-      });
-      const receipientUser = await User.findOne({
-        discord_id: recipient.discord_id,
-      });
-
-      if (userModel && userModel.user_id) {
+      if (user.user_id) {
         const userActivity = await UserActivity.findOne({
-          user_id: userModel.user_id,
+          user_id: user.user_id,
         });
 
         if (!userActivity || !userActivity?.star) {
           const newStar = await StarModel.createStar();
           const newUserActivityModel = new UserActivity({
-            user_id: userModel.user_id,
+            user_id: user.user_id,
             star: newStar,
           });
 
@@ -114,13 +106,15 @@ export const Star = {
           );
           userActivity.star.incrementTotalGiven();
           userActivity.save();
+          console.log('userActivity');
+          console.log(userActivity.toJSON());
         }
       }
 
-      await User.updateOne(
-        { discord_id: recipient.discord_id },
-        { $inc: { stars: 1 } }
-      );
+      await recipient.incrementStars();
+
+      console.log('recipient');
+      console.log(recipient.toJSON());
     } catch (err) {
       logEvent({
         Bots,

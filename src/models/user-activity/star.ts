@@ -31,7 +31,6 @@ export const starSchema = new Schema<IStar>({
   },
 });
 
-// static methods
 starSchema.statics.createStar = async function () {
   const star = await this.create({
     last: {
@@ -47,8 +46,7 @@ starSchema.statics.createStar = async function () {
 
 // instance methods
 starSchema.methods.incrementTotalGiven = function () {
-  let currentTotal = this.total.given || 0;
-  this.total.given = ++currentTotal;
+  this.total.given += 1;
 };
 
 starSchema.methods.updateLastGivenStarDS = function (newGivenDS: string): void {

@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, UserProps } from 'src/interfaces';
 import { DiscordChannelId, LogEventType } from '../../enums';
-import { UserModel } from '../../schemas';
+import { User } from '../../models';
 import { logEvent } from '../../utils';
 
 import {
@@ -47,43 +47,31 @@ export const onInteractionCreate = async (
       return Help.execute(Bots, interaction);
     }
 
-    const document = await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .findOne({ discord_id: interaction.member.user.id })
-      .catch(err => {
-        logEvent({
-          Bots,
-          type: LogEventType.Error,
-          description:
-            `Discord Database Error (interactionCreate): ` +
-            JSON.stringify(err),
-        });
-        console.error(err);
-      });
+    let userModel;
 
-    const userData: UserProps = document
-      ? {
-          user_id: document.user_id,
-          twitch_id: document.twitch_id,
-          twitch_username: document.twitch_username,
-          discord_id: document.discord_id,
-          discord_username: document.discord_username,
-          accounts_linked: document.accounts_linked,
-          cash: document.cash,
-          bank: document.bank,
-          stars: document.stars,
-          power_ups: document.power_ups,
-        }
-      : {
-          ...UserModel,
+    try {
+      userModel = await User.findOne({
+        discord_id: interaction.member.user.id,
+      });
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description:
+          `Discord Database Error (interactionCreate): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
+
+    if (!userModel) {
+      try {
+        const newUser = new User({
           user_id: uuidv4(),
           discord_id: interaction.member.user.id,
           discord_username: interaction.member.user.username,
-        };
+        });
 
-    if (!document) {
-      try {
-        await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+        userModel = await newUser.save();
       } catch (err) {
         logEvent({
           Bots,
@@ -92,8 +80,23 @@ export const onInteractionCreate = async (
             `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
         });
         console.error(err);
+        return;
       }
     }
+
+    // @todo: need to get rid of this in the future
+    const userData: UserProps = {
+      user_id: userModel.user_id,
+      twitch_id: userModel.twitch_id,
+      twitch_username: userModel.twitch_username,
+      discord_id: userModel.discord_id,
+      discord_username: userModel.discord_username,
+      accounts_linked: userModel.accounts_linked,
+      cash: userModel.cash,
+      bank: userModel.bank,
+      stars: userModel.stars,
+      power_ups: userModel.power_ups,
+    };
 
     if (interaction.commandName === Gamble.getName()) {
       if (interaction.channelId !== DiscordChannelId.Casino) {
@@ -147,45 +150,31 @@ export const onInteractionCreate = async (
 
     if (!recipient) return;
 
-    const recipientDoc = await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .findOne({ discord_id: recipient.id })
-      .catch(err => {
-        logEvent({
-          Bots,
-          type: LogEventType.Error,
-          description:
-            `Discord Database Error (interactionCreate): ` +
-            JSON.stringify(err),
-        });
-        console.error(err);
+    let recipientUserModel;
+    try {
+      recipientUserModel = await User.findOne({
+        discord_id: recipient.id,
       });
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description:
+          `Discord Database Error (interactionCreate): ` + JSON.stringify(err),
+      });
+      console.error(err);
+      return;
+    }
 
-    const recipientData: UserProps = recipientDoc
-      ? {
-          user_id: recipientDoc.user_id,
-          twitch_id: recipientDoc.twitch_id,
-          twitch_username: recipientDoc.twitch_username,
-          discord_id: recipientDoc.discord_id,
-          discord_username: recipientDoc.discord_username,
-          accounts_linked: recipientDoc.accounts_linked,
-          cash: recipientDoc.cash,
-          bank: recipientDoc.bank,
-          stars: recipientDoc.stars,
-          power_ups: recipientDoc.power_ups,
-        }
-      : {
-          ...UserModel,
+    if (!recipientUserModel) {
+      try {
+        const newUser = new User({
           user_id: uuidv4(),
           discord_id: recipient.id,
           discord_username: recipient.username,
-        };
+        });
 
-    if (!recipientDoc) {
-      try {
-        await Bots.db
-          ?.collection(Bots.env.MONGODB_USERS)
-          .insertOne(recipientData);
+        recipientUserModel = await newUser.save();
       } catch (err) {
         logEvent({
           Bots,
@@ -194,15 +183,30 @@ export const onInteractionCreate = async (
             `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
         });
         console.error(err);
+        return;
       }
     }
+
+    // @todo: need to get rid of this in the future
+    const recipientData: UserProps = {
+      user_id: recipientUserModel.user_id,
+      twitch_id: recipientUserModel.twitch_id,
+      twitch_username: recipientUserModel.twitch_username,
+      discord_id: recipientUserModel.discord_id,
+      discord_username: recipientUserModel.discord_username,
+      accounts_linked: recipientUserModel.accounts_linked,
+      cash: recipientUserModel.cash,
+      bank: recipientUserModel.bank,
+      stars: recipientUserModel.stars,
+      power_ups: recipientUserModel.power_ups,
+    };
 
     if (interaction.commandName === Give.getName()) {
       return Give.execute(Bots, interaction, userData, recipientData);
     }
 
     if (interaction.commandName === Star.getName()) {
-      return Star.execute(Bots, interaction, userData, recipientData);
+      return Star.execute(Bots, interaction, userModel, recipientUserModel);
     }
   }
 };
