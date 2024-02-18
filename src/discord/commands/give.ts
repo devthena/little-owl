@@ -1,6 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { BotsProps, UserProps } from 'src/interfaces';
-import { GIVE } from '../../config';
+import { GIVE } from '../../configs';
 import { CURRENCY } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';

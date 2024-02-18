@@ -6,10 +6,14 @@ if (parseInt(version.slice(1).split('.')[0], 10) < 16) {
   );
 }
 
+require('dotenv').config();
+
 import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
 
-import mongoose from 'mongoose';
+import { MongoClient } from 'mongodb';
+const dbClient = new MongoClient(process.env.MONGODB_URL || '');
+
 import { BotsProps } from './interfaces';
 
 import {
@@ -38,9 +42,7 @@ import {
   onTimeout,
 } from './twitch/events';
 
-import { appConfig } from './config';
-
-export const Bots: BotsProps = {
+const Bots: BotsProps = {
   cooldowns: {
     streamAlerts: false,
   },
@@ -57,38 +59,34 @@ export const Bots: BotsProps = {
       djs.GatewayIntentBits.MessageContent,
     ],
   }),
-  env: appConfig.env,
+  env: {
+    ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
+    MONGODB_USERS:
+      (process.env.STAGING
+        ? process.env.MONGODB_USERS_STAGE
+        : process.env.MONGODB_USERS_PROD) || '',
+    SERVER_ID: process.env.SERVER_ID || '',
+  },
   twitch: new tmi.Client({
     options: { debug: true },
     identity: {
-      username: appConfig.twitch.identity.username,
-      password: appConfig.twitch.identity.password,
+      username: process.env.USERNAME,
+      password: process.env.PASSWORD,
     },
-    channels: appConfig.twitch.channels,
+    channels: process.env.CHANNELS?.split(','),
   }),
-};
-
-const connectToDatabase = async () => {
-  try {
-    const connectionString = `${process.env.MONGODB_URL}/${process.env.MONGODB_DB}`;
-    await mongoose.connect(connectionString, {
-      retryWrites: true,
-      w: 'majority',
-    });
-  } catch (error) {
-    console.error('Database connection error:', error);
-  }
 };
 
 const initBots = async () => {
   try {
-    await connectToDatabase();
+    await dbClient.connect();
   } catch (error) {
     return console.warn(error);
   }
 
   console.log('* Database connection successful *');
-  Bots.db = mongoose.connection.db;
+
+  Bots.db = dbClient.db(process.env.MONGODB_DB);
 
   Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
   Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
@@ -112,7 +110,7 @@ const initBots = async () => {
   Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
-  Bots.discord.login(appConfig.env.DISCORD_TOKEN);
+  Bots.discord.login(process.env.DISCORD_TOKEN);
   Bots.twitch.connect().catch(console.error);
 };
 
