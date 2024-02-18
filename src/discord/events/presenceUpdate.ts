@@ -1,6 +1,6 @@
 import { ActivityType, EmbedBuilder, Presence } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
-import { LIVE_ROLE, STREAM_ALERTS } from '../../config';
+import { LIVE_ROLE, STREAM_ALERTS } from '../../configs';
 import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
