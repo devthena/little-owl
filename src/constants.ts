@@ -28,8 +28,8 @@ export const COLORS: StringObjectProps = {
 
 export const CURRENCY = {
   EMOJI: ':coin:',
-  PLURAL: 'drachmai',
-  SINGLE: 'drachma',
+  PLURAL: 'coins',
+  SINGLE: 'coin',
 };
 
 export const IGNORE_LIST = [
