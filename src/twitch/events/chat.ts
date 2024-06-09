@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
-import { BotsProps, ObjectProps, UserProps } from 'src/interfaces';
-import { CURRENCY } from '../../constants';
+import { BotsProps, ObjectProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
+import { CURRENCY, NEW_USER } from '../../constants';
 import {
   LogEventType,
   TwitchChannelRewardId,
   TwitchCommandName,
 } from '../../enums';
-import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
 
@@ -20,7 +20,7 @@ export const onChat = async (
   if (self) return;
 
   const document = await Bots.db
-    ?.collection(Bots.env.MONGODB_USERS)
+    ?.collection<UserObject>(Bots.env.MONGODB_USERS)
     .findOne({ twitch_id: userstate['user-id'] })
     .catch(err => {
       logEvent({
@@ -31,25 +31,12 @@ export const onChat = async (
       console.error(err);
     });
 
-  const userData: UserProps = document
-    ? {
-        user_id: document.user_id,
-        twitch_id: document.twitch_id,
-        twitch_username: document.twitch_username,
-        discord_id: document.discord_id,
-        discord_username: document.discord_username,
-        accounts_linked: document.accounts_linked,
-        cash: document.cash,
-        bank: document.bank,
-        stars: document.stars,
-        power_ups: document.power_ups,
-      }
-    : {
-        ...UserModel,
-        user_id: uuidv4(),
-        twitch_id: userstate['user-id'],
-        twitch_username: userstate.username,
-      };
+  const userData: UserObject = document ?? {
+    ...NEW_USER,
+    user_id: uuidv4(),
+    twitch_id: userstate['user-id'],
+    twitch_username: userstate.username,
+  };
 
   if (!document) {
     try {

@@ -26,16 +26,3 @@ export interface ObjectProps {
 export interface StringObjectProps {
   [key: string]: string;
 }
-
-export interface UserProps {
-  user_id: string;
-  discord_id: string | null;
-  discord_username: string | null;
-  twitch_id: string | null;
-  twitch_username: string | null;
-  accounts_linked: boolean;
-  cash: number;
-  bank: number;
-  stars: number;
-  power_ups: string[];
-}

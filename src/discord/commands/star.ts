@@ -3,7 +3,9 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import { BotsProps, UserProps } from 'src/interfaces';
+
+import { BotsProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
 import { STAR } from '../../configs';
 import { DiscordCommandName, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
@@ -21,8 +23,8 @@ export const Star = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserProps,
-    recipient: UserProps
+    user: UserObject,
+    recipient: UserObject
   ) => {
     if (!STAR.ENABLED) {
       try {
@@ -104,7 +106,7 @@ export const Star = {
         `${recipient.discord_username} got a star from ${user.discord_username}!`
       )
       .setDescription(
-        'Give stars to members of the community as a form of endorsement! :sparkles:'
+        'Give stars to someone as a form of endorsement! :sparkles:'
       )
       .setFooter({ text: `Star given on ${now}` });
 

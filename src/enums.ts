@@ -8,6 +8,7 @@ export enum DiscordChannelId {
   Casino = '378726545432248330',
   LittleOwl = '763283162792198174',
   Stage = '1103567084174200883',
+  Test = '1103567084174200883',
 }
 
 export enum DiscordCommandName {

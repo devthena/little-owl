@@ -1,5 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { BotsProps, UserProps } from 'src/interfaces';
+import { BotsProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
 import { GIVE } from '../../configs';
 import { CURRENCY } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
@@ -24,8 +25,8 @@ export const Give = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserProps,
-    recipient: UserProps
+    user: UserObject,
+    recipient: UserObject
   ) => {
     if (!GIVE.ENABLED) {
       try {

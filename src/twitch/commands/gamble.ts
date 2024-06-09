@@ -1,4 +1,5 @@
-import { BotsProps, UserProps } from 'src/interfaces';
+import { BotsProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
 import { GAMBLE } from '../../configs';
 import { CURRENCY, TWITCH_GAMBLE_EMOTES } from '../../constants';
 import { LogEventType } from '../../enums';
@@ -7,7 +8,7 @@ import { logEvent, weightedRandom } from '../../utils';
 export const onGamble = async (
   Bots: BotsProps,
   channel: string,
-  user: UserProps,
+  user: UserObject,
   args: string[]
 ) => {
   if (!GAMBLE.ENABLED) return;

@@ -1,8 +1,10 @@
 import { Message } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
-import { BotsProps, UserProps } from 'src/interfaces';
+
+import { BotsProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
+import { NEW_USER } from '../../constants';
 import { AdminChannelId, DiscordChannelId, LogEventType } from '../../enums';
-import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
@@ -61,11 +63,12 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   const incAmount = isValidAttachment ? 2 : 1;
 
   if (!document) {
-    const userData: UserProps = {
-      ...UserModel,
+    const userData: UserObject = {
+      ...NEW_USER,
       user_id: uuidv4(),
       discord_id: message.member.id,
       discord_username: message.member.user.username,
+      discord_name: message.member.user.globalName,
       cash: incAmount,
     };
 

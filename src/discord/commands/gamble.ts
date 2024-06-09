@@ -1,5 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { BotsProps, UserProps } from 'src/interfaces';
+import { BotsProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
 import { GAMBLE } from '../../configs';
 import { CURRENCY } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
@@ -18,7 +19,7 @@ export const Gamble = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserProps
+    user: UserObject
   ) => {
     if (!GAMBLE.ENABLED) {
       try {

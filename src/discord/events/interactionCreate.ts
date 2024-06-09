@@ -1,8 +1,10 @@
 import { CommandInteraction } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
-import { BotsProps, UserProps } from 'src/interfaces';
+
+import { BotsProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
+import { NEW_USER } from '../../constants';
 import { DiscordChannelId, LogEventType } from '../../enums';
-import { UserModel } from '../../schemas';
 import { logEvent } from '../../utils';
 
 import {
@@ -48,7 +50,7 @@ export const onInteractionCreate = async (
     }
 
     const document = await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
+      ?.collection<UserObject>(Bots.env.MONGODB_USERS)
       .findOne({ discord_id: interaction.member.user.id })
       .catch(err => {
         logEvent({
@@ -61,25 +63,13 @@ export const onInteractionCreate = async (
         console.error(err);
       });
 
-    const userData: UserProps = document
-      ? {
-          user_id: document.user_id,
-          twitch_id: document.twitch_id,
-          twitch_username: document.twitch_username,
-          discord_id: document.discord_id,
-          discord_username: document.discord_username,
-          accounts_linked: document.accounts_linked,
-          cash: document.cash,
-          bank: document.bank,
-          stars: document.stars,
-          power_ups: document.power_ups,
-        }
-      : {
-          ...UserModel,
-          user_id: uuidv4(),
-          discord_id: interaction.member.user.id,
-          discord_username: interaction.member.user.username,
-        };
+    const userData: UserObject = document ?? {
+      ...NEW_USER,
+      user_id: uuidv4(),
+      discord_id: interaction.member.user.id,
+      discord_username: interaction.member.user.username,
+      discord_name: interaction.user.globalName,
+    };
 
     if (!document) {
       try {
@@ -96,7 +86,10 @@ export const onInteractionCreate = async (
     }
 
     if (interaction.commandName === Gamble.getName()) {
-      if (interaction.channelId !== DiscordChannelId.Casino) {
+      if (
+        interaction.channelId !== DiscordChannelId.Casino &&
+        interaction.channelId !== DiscordChannelId.Test
+      ) {
         try {
           await interaction.reply({
             content: 'Please use the #casino channel to gamble your points.',
@@ -120,7 +113,8 @@ export const onInteractionCreate = async (
     if (interaction.commandName === Points.getName()) {
       if (
         interaction.channelId !== DiscordChannelId.Casino &&
-        interaction.channelId !== DiscordChannelId.LittleOwl
+        interaction.channelId !== DiscordChannelId.LittleOwl &&
+        interaction.channelId !== DiscordChannelId.Test
       ) {
         try {
           await interaction.reply({
@@ -148,7 +142,7 @@ export const onInteractionCreate = async (
     if (!recipient) return;
 
     const recipientDoc = await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
+      ?.collection<UserObject>(Bots.env.MONGODB_USERS)
       .findOne({ discord_id: recipient.id })
       .catch(err => {
         logEvent({
@@ -161,25 +155,13 @@ export const onInteractionCreate = async (
         console.error(err);
       });
 
-    const recipientData: UserProps = recipientDoc
-      ? {
-          user_id: recipientDoc.user_id,
-          twitch_id: recipientDoc.twitch_id,
-          twitch_username: recipientDoc.twitch_username,
-          discord_id: recipientDoc.discord_id,
-          discord_username: recipientDoc.discord_username,
-          accounts_linked: recipientDoc.accounts_linked,
-          cash: recipientDoc.cash,
-          bank: recipientDoc.bank,
-          stars: recipientDoc.stars,
-          power_ups: recipientDoc.power_ups,
-        }
-      : {
-          ...UserModel,
-          user_id: uuidv4(),
-          discord_id: recipient.id,
-          discord_username: recipient.username,
-        };
+    const recipientData: UserObject = recipientDoc ?? {
+      ...NEW_USER,
+      user_id: uuidv4(),
+      discord_id: recipient.id,
+      discord_username: recipient.username,
+      discord_name: recipient.globalName,
+    };
 
     if (!recipientDoc) {
       try {

@@ -52,3 +52,16 @@ export const TWITCH_GAMBLE_EMOTES = {
   WIN: 'PopNemo',
   LOST: 'TearGlove',
 };
+
+export const NEW_USER = {
+  user_id: null,
+  discord_id: null,
+  discord_username: null,
+  discord_name: null,
+  twitch_id: null,
+  twitch_username: null,
+  cash: 500,
+  bank: 0,
+  stars: 0,
+  power_ups: [],
+};
