@@ -1,6 +1,8 @@
 import { Routes } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import {
+  AccountLink,
+  AccountUnlink,
   CoinFlip,
   EightBall,
   Gamble,
@@ -33,6 +35,8 @@ const register = (): void => {
   const commandsStage = [];
 
   // commands ready for production should be added here
+  commands.push(AccountLink.data.toJSON());
+  commands.push(AccountUnlink.data.toJSON());
   commands.push(CoinFlip.data.toJSON());
   commands.push(EightBall.data.toJSON());
   commands.push(Gamble.data.toJSON());

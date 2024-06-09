@@ -8,6 +8,8 @@ import { DiscordChannelId, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 import {
+  AccountLink,
+  AccountUnlink,
   CoinFlip,
   EightBall,
   Gamble,
@@ -83,6 +85,14 @@ export const onInteractionCreate = async (
         });
         console.error(err);
       }
+    }
+
+    if (interaction.commandName === AccountLink.getName()) {
+      return AccountLink.execute(Bots, interaction, userData);
+    }
+
+    if (interaction.commandName === AccountUnlink.getName()) {
+      return AccountUnlink.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Gamble.getName()) {

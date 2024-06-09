@@ -12,6 +12,8 @@ export enum DiscordChannelId {
 }
 
 export enum DiscordCommandName {
+  AccountLink = 'link',
+  AccountUnlink = 'unlink',
   CoinFlip = 'coinflip',
   EightBall = '8ball',
   Gamble = 'gamble',
