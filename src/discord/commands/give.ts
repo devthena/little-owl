@@ -46,10 +46,10 @@ export const Give = {
 
     const amount = Number(interaction.options.get('amount')?.value) || 0;
     const replies = {
-      invalidLowerBound: `Amount must be at least 1.`,
-      invalidRecipient: `Enter a valid recipient.`,
+      invalidLowerBound: `You should give at least 1 ${CURRENCY.SINGLE}.`,
+      invalidRecipient: `You can't give yourself ${CURRENCY.PLURAL}. :neutral_face:`,
       noPoints: `Sorry, you have no ${CURRENCY.SINGLE} to give. :neutral_face:`,
-      notEnough: `Sorry, you don't have that many ${CURRENCY.PLURAL} to give. :neutral_face:`,
+      notEnough: `Sorry, you don't have enough ${CURRENCY.PLURAL} to give. :neutral_face:`,
       success: `You gave ${recipient.discord_username} ${amount} ${CURRENCY.PLURAL}.`,
     };
 
@@ -143,7 +143,7 @@ export const Give = {
 
     try {
       await interaction.reply({
-        content: `${replies.success}. Your cash balance: ${user.cash} :coin:`,
+        content: `${replies.success} Your cash balance: ${user.cash} :coin:`,
       });
     } catch (err) {
       logEvent({

@@ -41,8 +41,8 @@ export const Gamble = {
       invalidInput: 'Enter a specific amount, "all", or "half".',
       invalidNegative: `You should gamble at least 1 ${CURRENCY.SINGLE}.`,
       lostAll: `You lost all of your ${CURRENCY.PLURAL}. :money_with_wings:`,
-      noPoints: `You have no ${CURRENCY.SINGLE} to gamble.`,
-      notEnough: `You don't have that much ${CURRENCY.PLURAL} to gamble.`,
+      noPoints: `You have no ${CURRENCY.SINGLE} to gamble. :neutral_face:`,
+      notEnough: `You don't have enough ${CURRENCY.PLURAL} to gamble. :neutral_face:`,
     };
 
     if (user.cash < 1) {
