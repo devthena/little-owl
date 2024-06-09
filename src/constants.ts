@@ -47,3 +47,8 @@ export const STATUS_COLORS: StringObjectProps = {
   JOIN: COLORS.GREEN,
   LEAVE: COLORS.YELLOW,
 };
+
+export const TWITCH_GAMBLE_EMOTES = {
+  WIN: 'PopNemo',
+  LOST: 'TearGlove',
+};
