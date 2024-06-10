@@ -63,5 +63,4 @@ export const NEW_USER = {
   cash: 500,
   bank: 0,
   stars: 0,
-  power_ups: [],
 };

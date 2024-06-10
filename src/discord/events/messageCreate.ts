@@ -69,7 +69,7 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
       discord_id: message.member.id,
       discord_username: message.member.user.username,
       discord_name: message.member.user.globalName,
-      cash: incAmount,
+      cash: NEW_USER.cash + incAmount,
     };
 
     try {
