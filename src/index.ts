@@ -17,8 +17,14 @@ const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 import { BotsProps } from './interfaces';
 
 import {
+  onGuildBanAdd,
+  onGuildMemberAdd,
+  onGuildMemberRemove,
   onInteractionCreate,
   onMessageCreate,
+  onMessageDelete,
+  onMessageDeleteBulk,
+  onPresenceUpdate,
   onReady,
 } from './discord/events';
 
@@ -37,14 +43,17 @@ import {
 } from './twitch/events';
 
 const Bots: BotsProps = {
+  cooldowns: {
+    streamAlerts: false,
+  },
   db: null,
   discord: new djs.Client({
     intents: [
       djs.GatewayIntentBits.DirectMessages,
-      djs.GatewayIntentBits.GuildBans,
       djs.GatewayIntentBits.GuildMembers,
       djs.GatewayIntentBits.GuildMessageReactions,
       djs.GatewayIntentBits.GuildMessages,
+      djs.GatewayIntentBits.GuildModeration,
       djs.GatewayIntentBits.GuildPresences,
       djs.GatewayIntentBits.Guilds,
       djs.GatewayIntentBits.MessageContent,
@@ -52,12 +61,11 @@ const Bots: BotsProps = {
   }),
   env: {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID || '',
-    DISCORD_TOKEN: process.env.DISCORD_TOKEN || '',
+    MONGODB_USERS:
+      (process.env.STAGING
+        ? process.env.MONGODB_USERS_STAGE
+        : process.env.MONGODB_USERS_PROD) || '',
     SERVER_ID: process.env.SERVER_ID || '',
-    MONGODB_USERS: process.env.MONGODB_USERS || '',
-    MONGODB_CHAT: process.env.MONGODB_CHAT || '',
-    MONGODB_VIEW: process.env.MONGODB_VIEW || '',
   },
   twitch: new tmi.Client({
     options: { debug: true },
@@ -80,9 +88,15 @@ const initBots = async () => {
 
   Bots.db = dbClient.db(process.env.MONGODB_DB);
 
-  Bots.discord.on('ready', onReady.bind(null, Bots.discord));
+  Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
+  Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
+  Bots.discord.on('guildMemberRemove', onGuildMemberRemove.bind(null, Bots));
   Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
   Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
+  Bots.discord.on('messageDelete', onMessageDelete.bind(null, Bots));
+  Bots.discord.on('messageDeleteBulk', onMessageDeleteBulk.bind(null, Bots));
+  Bots.discord.on('presenceUpdate', onPresenceUpdate.bind(null, Bots));
+  Bots.discord.on('ready', onReady.bind(null, Bots.discord));
 
   Bots.twitch.on('ban', onBan.bind(null, Bots));
   Bots.twitch.on('chat', onChat.bind(null, Bots));

@@ -1,4 +1,5 @@
 import { BotsProps, ObjectProps } from 'src/interfaces';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const onCheer = (
@@ -7,9 +8,9 @@ export const onCheer = (
   userstate: ObjectProps,
   message: string
 ) => {
-  logEvent(
+  logEvent({
     Bots,
-    'alert',
-    `${userstate.username} cheered ${userstate.bits} in the chat!\n\nMessage: ${message}`
-  );
+    type: LogEventType.Alert,
+    description: `${userstate.username} cheered ${userstate.bits} in the chat!\n\nMessage: ${message}`,
+  });
 };

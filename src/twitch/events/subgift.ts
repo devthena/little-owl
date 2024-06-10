@@ -1,4 +1,5 @@
 import { BotsProps, ObjectProps } from 'src/interfaces';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const onSubGift = (
@@ -10,6 +11,10 @@ export const onSubGift = (
   _methods: ObjectProps,
   _userstate: ObjectProps
 ) => {
-  // TODO: Add logic for variations of subgift events
-  logEvent(Bots, 'alert', `${username} gifted a subscription to ${recipient}!`);
+  // @todo: Add logic for variations of subgift events
+  logEvent({
+    Bots,
+    type: LogEventType.Alert,
+    description: `${username} gifted a subscription to ${recipient}!`,
+  });
 };

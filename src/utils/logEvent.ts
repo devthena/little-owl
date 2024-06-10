@@ -1,31 +1,34 @@
 import { EmbedBuilder } from 'discord.js';
-import { CONFIG } from '../constants';
-import { BotsProps, StringObjectProps } from 'src/interfaces';
+import { LogProps, StringObjectProps } from 'src/interfaces';
+import { LogChannelId } from '../enums';
 
 const channelMap: StringObjectProps = {
-  activity: CONFIG.CHANNELS.LOGS.ACTIVITIES,
-  alert: CONFIG.CHANNELS.LOGS.ALERTS,
-  timeout: CONFIG.CHANNELS.LOGS.TIMEOUTS,
-  user: CONFIG.CHANNELS.LOGS.USERS,
+  activity: LogChannelId.Activity,
+  alert: LogChannelId.Alert,
+  deleted: LogChannelId.Deleted,
+  error: LogChannelId.Error,
+  leave: LogChannelId.Leave,
+  user: LogChannelId.User,
 };
 
-export const logEvent = (
-  Bots: BotsProps,
-  type: string,
-  description: string
-) => {
-  const server = Bots.discord.guilds.cache.get(Bots.env.ADMIN_SERVER_ID);
+export const logEvent = (props: LogProps) => {
+  const server = props.Bots.discord.guilds.cache.get(
+    props.Bots.env.ADMIN_SERVER_ID
+  );
 
   if (server && server.available) {
-    const channel = server.channels.cache.get(channelMap[type]);
+    const channel = server.channels.cache.get(channelMap[props.type]);
 
     if (channel) {
       const botEmbed = new EmbedBuilder()
         .setAuthor({
           name: `${server.name} Server`,
-          iconURL: server.iconURL() || '',
+          iconURL: props.authorIcon || server.iconURL() || '',
         })
-        .setDescription(description);
+        .setDescription(props.description);
+
+      if (props.thumbnail) botEmbed.setThumbnail(props.thumbnail);
+      if (props.footer) botEmbed.setFooter({ text: props.footer });
 
       if (channel.isTextBased()) channel.send({ embeds: [botEmbed] });
     }

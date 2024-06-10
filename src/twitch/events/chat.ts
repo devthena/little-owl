@@ -1,5 +1,12 @@
-import { BotsProps, ObjectProps, TwitchUserProps } from 'src/interfaces';
-import { CONFIG } from '../../constants';
+import { v4 as uuidv4 } from 'uuid';
+import { BotsProps, ObjectProps } from 'src/interfaces';
+import { UserObject } from 'src/schemas';
+import { CURRENCY, NEW_USER } from '../../constants';
+import {
+  LogEventType,
+  TwitchChannelRewardId,
+  TwitchCommandName,
+} from '../../enums';
 import { logEvent } from '../../utils';
 import { onGamble } from '../commands';
 
@@ -12,19 +19,51 @@ export const onChat = async (
 ) => {
   if (self) return;
 
+  const document = await Bots.db
+    ?.collection<UserObject>(Bots.env.MONGODB_USERS)
+    .findOne({ twitch_id: userstate['user-id'] })
+    .catch(err => {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    });
+
+  const userData: UserObject = document ?? {
+    ...NEW_USER,
+    user_id: uuidv4(),
+    twitch_id: userstate['user-id'],
+    twitch_username: userstate.username,
+  };
+
+  if (!document) {
+    try {
+      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
+  }
+
   const redeemId = userstate['custom-reward-id'];
 
   if (redeemId) {
     let points = 0;
 
     switch (redeemId) {
-      case CONFIG.REWARDS.CONVERT100:
+      case TwitchChannelRewardId.Convert100:
         points = 100;
         break;
-      case CONFIG.REWARDS.CONVERT500:
+      case TwitchChannelRewardId.Convert500:
         points = 500;
         break;
-      case CONFIG.REWARDS.CONVERT1000:
+      case TwitchChannelRewardId.Convert1k:
         points = 1000;
         break;
     }
@@ -33,55 +72,47 @@ export const onChat = async (
 
     Bots.twitch.say(
       channel,
-      `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
+      `${userstate.username} has redeemed ${points} ${CURRENCY.PLURAL}!`
     );
 
-    logEvent(
+    logEvent({
       Bots,
-      'activity',
-      `${userstate.username} has redeemed conversion of ${
+      type: LogEventType.Activity,
+      description: `${userstate.username} has redeemed conversion of ${
         points * 10
-      } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`
-    );
+      } channel points to ${points} ${CURRENCY.PLURAL}!`,
+    });
 
-    await Bots.db?.collection(Bots.env.MONGODB_CHAT).updateOne(
-      { twitch_id: userstate['user-id'] },
-      {
-        $set: {
-          username: userstate.username,
-        },
-        $inc: {
-          points: points,
-        },
-      },
-      { upsert: true }
-    );
+    try {
+      await Bots.db
+        ?.collection(Bots.env.MONGODB_USERS)
+        .updateOne(
+          { twitch_id: userstate['user-id'] },
+          { $inc: { cash: points } }
+        );
+    } catch (err) {
+      logEvent({
+        Bots,
+        type: LogEventType.Error,
+        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+      });
+      console.error(err);
+    }
 
     return;
   }
 
-  // TODO: Implement custom commands for the bot
-  if (message.startsWith(CONFIG.PREFIX)) {
+  if (message.startsWith('!')) {
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    const document = await Bots.db
-      ?.collection(Bots.env.MONGODB_CHAT)
-      .findOne({ twitch_id: userstate['user-id'] });
-
-    const data: TwitchUserProps = {
-      twitch_id: userstate['user-id'],
-      username: userstate.username,
-      points: document ? document.points : 0,
-    };
-
-    if (command === 'gamble') {
-      onGamble(Bots, channel, data, args);
-    } else if (command === 'points') {
+    if (command === TwitchCommandName.Gamble) {
+      onGamble(Bots, channel, userData, args);
+    } else if (command === TwitchCommandName.Points) {
       Bots.twitch.say(
         channel,
-        `${userstate.username} you have ${data.points} ${
-          data.points > 1 ? CONFIG.CURRENCY.PLURAL : CONFIG.CURRENCY.SINGLE
+        `${userstate.username} you have ${userData.cash} ${
+          userData.cash > 1 ? CURRENCY.PLURAL : CURRENCY.SINGLE
         }.`
       );
     }
@@ -94,21 +125,20 @@ export const onChat = async (
 
   const isValid = words.length > 2 && words.some(word => pattern.test(word));
 
-  // TODO: Add logic to detect spam messages
+  // @todo: Add logic to detect spam messages
 
   if (!isValid) return;
 
-  await Bots.db?.collection(Bots.env.MONGODB_CHAT).updateOne(
-    { twitch_id: userstate['user-id'] },
-    {
-      $set: {
-        username: userstate.username,
-        last_chat: message,
-      },
-      $inc: {
-        points: 1,
-      },
-    },
-    { upsert: true }
-  );
+  try {
+    await Bots.db
+      ?.collection(Bots.env.MONGODB_USERS)
+      .updateOne({ twitch_id: userstate['user-id'] }, { $inc: { cash: 1 } });
+  } catch (err) {
+    logEvent({
+      Bots,
+      type: LogEventType.Error,
+      description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+    });
+    console.error(err);
+  }
 };
