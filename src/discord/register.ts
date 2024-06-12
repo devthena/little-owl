@@ -41,10 +41,10 @@ const register = (): void => {
   commands.push(EightBall.data.toJSON());
   commands.push(Gamble.data.toJSON());
   commands.push(Give.data.toJSON());
+  commands.push(Help.data.toJSON());
   commands.push(Points.data.toJSON());
 
   // commands in development for testing should be added here
-  commandsStage.push(Help.data.toJSON());
   commandsStage.push(Star.data.toJSON());
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
