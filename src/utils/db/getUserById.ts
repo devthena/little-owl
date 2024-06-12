@@ -18,7 +18,7 @@ export const getUserById = async (
       logEvent({
         Bots,
         type: LogEventType.Error,
-        description: `getUserById Database Error: ` + JSON.stringify(err),
+        description: `Database Error (getUserById): ` + JSON.stringify(err),
       });
       console.error(err);
     });

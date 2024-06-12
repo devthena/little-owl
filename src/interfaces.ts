@@ -1,6 +1,7 @@
 import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
 import { Db } from 'mongodb';
+import { LogEventType } from './enums';
 
 export interface BotsProps {
   cooldowns: ObjectProps;
@@ -12,7 +13,7 @@ export interface BotsProps {
 
 export interface LogProps {
   Bots: BotsProps;
-  type: string;
+  type: LogEventType;
   description: string;
   authorIcon?: string;
   thumbnail?: string;

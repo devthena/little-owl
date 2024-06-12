@@ -18,7 +18,7 @@ export const getUserByName = async (
       logEvent({
         Bots,
         type: LogEventType.Error,
-        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
+        description: `Database Error (getUserByName): ` + JSON.stringify(err),
       });
       console.error(err);
     });

@@ -1,34 +1,59 @@
-import { EmbedBuilder } from 'discord.js';
-import { LogProps, StringObjectProps } from 'src/interfaces';
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
+import { LogProps } from 'src/interfaces';
 import { LogChannelId } from '../enums';
+import { COLORS } from '../constants';
 
-const channelMap: StringObjectProps = {
-  activity: LogChannelId.Activity,
-  alert: LogChannelId.Alert,
-  deleted: LogChannelId.Deleted,
-  error: LogChannelId.Error,
-  leave: LogChannelId.Leave,
-  user: LogChannelId.User,
+const typeMap = {
+  activity: {
+    channel: LogChannelId.Activity,
+    color: COLORS.BLUE,
+  },
+  alert: {
+    channel: LogChannelId.Alert,
+    color: COLORS.PINK,
+  },
+  deleted: {
+    channel: LogChannelId.Deleted,
+    color: COLORS.RED,
+  },
+  error: {
+    channel: LogChannelId.Error,
+    color: COLORS.RED,
+  },
+  leave: {
+    channel: LogChannelId.Leave,
+    color: COLORS.YELLOW,
+  },
+  user: {
+    channel: LogChannelId.User,
+    color: COLORS.BLUE,
+  },
 };
 
-export const logEvent = (props: LogProps) => {
-  const server = props.Bots.discord.guilds.cache.get(
-    props.Bots.env.ADMIN_SERVER_ID
-  );
+export const logEvent = ({
+  Bots,
+  type,
+  description,
+  authorIcon,
+  thumbnail,
+  footer,
+}: LogProps) => {
+  const server = Bots.discord.guilds.cache.get(Bots.env.ADMIN_SERVER_ID);
 
   if (server && server.available) {
-    const channel = server.channels.cache.get(channelMap[props.type]);
+    const channel = server.channels.cache.get(typeMap[type].channel);
 
     if (channel) {
       const botEmbed = new EmbedBuilder()
+        .setColor(typeMap[type].color as ColorResolvable)
         .setAuthor({
           name: `${server.name} Server`,
-          iconURL: props.authorIcon || server.iconURL() || '',
+          iconURL: authorIcon || server.iconURL() || '',
         })
-        .setDescription(props.description);
+        .setDescription(description);
 
-      if (props.thumbnail) botEmbed.setThumbnail(props.thumbnail);
-      if (props.footer) botEmbed.setFooter({ text: props.footer });
+      if (thumbnail) botEmbed.setThumbnail(thumbnail);
+      if (footer) botEmbed.setFooter({ text: footer });
 
       if (channel.isTextBased()) channel.send({ embeds: [botEmbed] });
     }
