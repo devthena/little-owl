@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, ObjectProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { CURRENCY, NEW_USER } from '../../constants';
+import { CURRENCY, IGNORE_LIST, NEW_USER } from '../../constants';
 import {
   LogEventType,
+  ParthenonURL,
   TwitchChannelRewardId,
   TwitchCommandName,
 } from '../../enums';
@@ -18,6 +19,7 @@ export const onChat = async (
   self: boolean
 ) => {
   if (self) return;
+  if (IGNORE_LIST.includes(userstate.username)) return;
 
   const document = await Bots.db
     ?.collection<UserObject>(Bots.env.MONGODB_USERS)
@@ -106,14 +108,16 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    if (command === TwitchCommandName.Gamble) {
+    if (command === TwitchCommandName.Commands) {
+      Bots.twitch.say(channel, ParthenonURL.Commands);
+    } else if (command === TwitchCommandName.Gamble) {
       onGamble(Bots, channel, userData, args);
     } else if (command === TwitchCommandName.Points) {
       Bots.twitch.say(
         channel,
         `${userstate.username} you have ${userData.cash} ${
           userData.cash > 1 ? CURRENCY.PLURAL : CURRENCY.SINGLE
-        }.`
+        }`
       );
     }
 

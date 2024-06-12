@@ -7,7 +7,7 @@ import {
 } from 'discord.js';
 
 import { BotsProps } from 'src/interfaces';
-import { DiscordCommandName, LogEventType, WebURL } from '../../enums';
+import { DiscordCommandName, LogEventType, ParthenonURL } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const Help = {
@@ -20,13 +20,13 @@ export const Help = {
         new ButtonBuilder()
           .setLabel('Commands')
           .setStyle(ButtonStyle.Link)
-          .setURL(WebURL.Commands)
+          .setURL(ParthenonURL.Commands)
       )
       .addComponents(
         new ButtonBuilder()
           .setLabel('FAQ')
           .setStyle(ButtonStyle.Link)
-          .setURL(WebURL.FAQ)
+          .setURL(ParthenonURL.FAQ)
       );
 
     try {

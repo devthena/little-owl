@@ -48,11 +48,12 @@ export enum TwitchChannelRewardId {
 }
 
 export enum TwitchCommandName {
+  Commands = 'commands',
   Gamble = 'gamble',
   Points = 'points',
 }
 
-export enum WebURL {
+export enum ParthenonURL {
   Commands = 'https://parthenon.app/commands',
   FAQ = 'https://parthenon.app/faq',
 }
