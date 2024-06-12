@@ -9,7 +9,7 @@ import {
   TwitchCommandName,
 } from '../../enums';
 import { logEvent } from '../../utils';
-import { getUserById, getUserByName } from '../../utils/db';
+import { addUser, getUserById, getUserByName } from '../../utils/db';
 import { onGamble, onGive } from '../commands';
 
 export const onChat = async (
@@ -31,18 +31,7 @@ export const onChat = async (
     twitch_username: userstate.username,
   };
 
-  if (!document) {
-    try {
-      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
-    } catch (err) {
-      logEvent({
-        Bots,
-        type: LogEventType.Error,
-        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
-      });
-      console.error(err);
-    }
-  }
+  if (!document) await addUser(Bots, userData);
 
   const redeemId = userstate['custom-reward-id'];
 

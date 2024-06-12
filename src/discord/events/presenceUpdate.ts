@@ -4,11 +4,12 @@ import {
   EmbedBuilder,
   Presence,
 } from 'discord.js';
+
 import { BotsProps } from 'src/interfaces';
 import { LIVE_ROLE, STREAM_ALERTS } from '../../configs';
+import { COLORS } from '../../constants';
 import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
-import { COLORS } from 'src/constants';
 
 export const onPresenceUpdate = async (
   Bots: BotsProps,

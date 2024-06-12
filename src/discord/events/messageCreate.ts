@@ -6,6 +6,7 @@ import { UserObject } from 'src/schemas';
 import { NEW_USER } from '../../constants';
 import { AdminChannelId, DiscordChannelId, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
+import { addUser, getUserById } from '../../utils/db';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;
@@ -47,19 +48,7 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
   if (!isValid) return;
 
-  const document = await Bots.db
-    ?.collection(Bots.env.MONGODB_USERS)
-    .findOne({ discord_id: message.member.id })
-    .catch(err => {
-      logEvent({
-        Bots,
-        type: LogEventType.Error,
-        description:
-          `Discord Database Error (messageCreate): ` + JSON.stringify(err),
-      });
-      console.error(err);
-    });
-
+  const document = await getUserById(Bots, message.member.id);
   const incAmount = isValidAttachment ? 2 : 1;
 
   if (!document) {
@@ -72,18 +61,7 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
       cash: NEW_USER.cash + incAmount,
     };
 
-    try {
-      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
-    } catch (err) {
-      logEvent({
-        Bots,
-        type: LogEventType.Error,
-        description:
-          `Discord Database Error (messageCreate): ` + JSON.stringify(err),
-      });
-      console.error(err);
-    }
-    return;
+    return await addUser(Bots, userData);
   }
 
   try {

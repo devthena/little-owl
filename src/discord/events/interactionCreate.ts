@@ -6,6 +6,7 @@ import { UserObject } from 'src/schemas';
 import { NEW_USER } from '../../constants';
 import { DiscordChannelId, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
+import { addUser, getUserById } from '../../utils/db';
 
 import {
   AccountLink,
@@ -51,19 +52,7 @@ export const onInteractionCreate = async (
       return Help.execute(Bots, interaction);
     }
 
-    const document = await Bots.db
-      ?.collection<UserObject>(Bots.env.MONGODB_USERS)
-      .findOne({ discord_id: interaction.member.user.id })
-      .catch(err => {
-        logEvent({
-          Bots,
-          type: LogEventType.Error,
-          description:
-            `Discord Database Error (interactionCreate): ` +
-            JSON.stringify(err),
-        });
-        console.error(err);
-      });
+    const document = await getUserById(Bots, interaction.member.user.id);
 
     const userData: UserObject = document ?? {
       ...NEW_USER,
@@ -73,19 +62,7 @@ export const onInteractionCreate = async (
       discord_name: interaction.user.globalName,
     };
 
-    if (!document) {
-      try {
-        await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
-      } catch (err) {
-        logEvent({
-          Bots,
-          type: LogEventType.Error,
-          description:
-            `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
-        });
-        console.error(err);
-      }
-    }
+    if (!document) await addUser(Bots, userData);
 
     if (interaction.commandName === AccountLink.getName()) {
       return AccountLink.execute(Bots, interaction, userData);
@@ -151,19 +128,7 @@ export const onInteractionCreate = async (
 
     if (!recipient) return;
 
-    const recipientDoc = await Bots.db
-      ?.collection<UserObject>(Bots.env.MONGODB_USERS)
-      .findOne({ discord_id: recipient.id })
-      .catch(err => {
-        logEvent({
-          Bots,
-          type: LogEventType.Error,
-          description:
-            `Discord Database Error (interactionCreate): ` +
-            JSON.stringify(err),
-        });
-        console.error(err);
-      });
+    const recipientDoc = await getUserById(Bots, recipient.id);
 
     const recipientData: UserObject = recipientDoc ?? {
       ...NEW_USER,
@@ -173,21 +138,7 @@ export const onInteractionCreate = async (
       discord_name: recipient.globalName,
     };
 
-    if (!recipientDoc) {
-      try {
-        await Bots.db
-          ?.collection(Bots.env.MONGODB_USERS)
-          .insertOne(recipientData);
-      } catch (err) {
-        logEvent({
-          Bots,
-          type: LogEventType.Error,
-          description:
-            `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
-        });
-        console.error(err);
-      }
-    }
+    if (!recipientDoc) await addUser(Bots, recipientData);
 
     if (interaction.commandName === Give.getName()) {
       return Give.execute(Bots, interaction, userData, recipientData);
