@@ -4,7 +4,7 @@ import { UserObject } from 'src/schemas';
 import { GIVE } from '../../configs';
 import { CURRENCY } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
+import { getCurrency, logEvent } from '../../utils';
 
 export const Give = {
   data: new SlashCommandBuilder()
@@ -47,11 +47,13 @@ export const Give = {
 
     const amount = Number(interaction.options.get('amount')?.value) || 0;
     const replies = {
-      invalidLowerBound: `You should give at least 1 ${CURRENCY.SINGLE}.`,
+      invalidNegative: `You should give at least 1 ${CURRENCY.SINGLE}.`,
       invalidRecipient: `You can't give yourself ${CURRENCY.PLURAL}. :neutral_face:`,
       noPoints: `Sorry, you have no ${CURRENCY.SINGLE} to give. :neutral_face:`,
       notEnough: `Sorry, you don't have enough ${CURRENCY.PLURAL} to give. :neutral_face:`,
-      success: `You gave ${recipient.discord_username} ${amount} ${CURRENCY.PLURAL}.`,
+      success: `You gave ${
+        recipient.discord_name || recipient.discord_username
+      } ${amount} ${getCurrency(amount)}.`,
     };
 
     if (user.cash < 1) {
@@ -71,7 +73,7 @@ export const Give = {
     if (amount < 1) {
       try {
         await interaction.reply({
-          content: replies.invalidLowerBound,
+          content: replies.invalidNegative,
           ephemeral: true,
         });
       } catch (err) {
@@ -144,7 +146,7 @@ export const Give = {
 
     try {
       await interaction.reply({
-        content: `${replies.success} Your cash balance: ${user.cash} :coin:`,
+        content: `${replies.success} Current balance: ${user.cash} :coin:`,
       });
     } catch (err) {
       logEvent({

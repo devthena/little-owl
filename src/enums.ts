@@ -41,6 +41,11 @@ export enum LogEventType {
   User = 'user',
 }
 
+export enum ParthenonURL {
+  Commands = 'https://parthenon.app/commands',
+  FAQ = 'https://parthenon.app/faq',
+}
+
 export enum TwitchChannelRewardId {
   Convert100 = 'af2d04b1-2cc6-4f09-a555-954ff7e3aadb',
   Convert500 = 'a54efdc9-caa9-45ba-9d48-822333d4c30b',
@@ -48,11 +53,8 @@ export enum TwitchChannelRewardId {
 }
 
 export enum TwitchCommandName {
+  Commands = 'commands',
   Gamble = 'gamble',
+  Give = 'give',
   Points = 'points',
-}
-
-export enum WebURL {
-  Commands = 'https://parthenon.app/commands',
-  FAQ = 'https://parthenon.app/faq',
 }

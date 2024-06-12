@@ -1,14 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 import { BotsProps, ObjectProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { CURRENCY, NEW_USER } from '../../constants';
+import { CURRENCY, IGNORE_LIST, NEW_USER } from '../../constants';
 import {
   LogEventType,
+  ParthenonURL,
   TwitchChannelRewardId,
   TwitchCommandName,
 } from '../../enums';
-import { logEvent } from '../../utils';
-import { onGamble } from '../commands';
+import { getCurrency, logEvent } from '../../utils';
+import { addUser, getUserById, getUserByName } from '../../utils/db';
+import { onGamble, onGive } from '../commands';
 
 export const onChat = async (
   Bots: BotsProps,
@@ -18,18 +20,9 @@ export const onChat = async (
   self: boolean
 ) => {
   if (self) return;
+  if (IGNORE_LIST.includes(userstate.username)) return;
 
-  const document = await Bots.db
-    ?.collection<UserObject>(Bots.env.MONGODB_USERS)
-    .findOne({ twitch_id: userstate['user-id'] })
-    .catch(err => {
-      logEvent({
-        Bots,
-        type: LogEventType.Error,
-        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
-      });
-      console.error(err);
-    });
+  const document = await getUserById(Bots, userstate['user-id'], true);
 
   const userData: UserObject = document ?? {
     ...NEW_USER,
@@ -38,18 +31,7 @@ export const onChat = async (
     twitch_username: userstate.username,
   };
 
-  if (!document) {
-    try {
-      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(userData);
-    } catch (err) {
-      logEvent({
-        Bots,
-        type: LogEventType.Error,
-        description: `Twitch Database Error (Chat): ` + JSON.stringify(err),
-      });
-      console.error(err);
-    }
-  }
+  if (!document) await addUser(Bots, userData);
 
   const redeemId = userstate['custom-reward-id'];
 
@@ -106,18 +88,43 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    if (command === TwitchCommandName.Gamble) {
-      onGamble(Bots, channel, userData, args);
-    } else if (command === TwitchCommandName.Points) {
-      Bots.twitch.say(
+    // commands that do not expect an argument
+
+    if (command === TwitchCommandName.Commands) {
+      return Bots.twitch.say(channel, ParthenonURL.Commands);
+    }
+
+    if (command === TwitchCommandName.Points) {
+      return Bots.twitch.say(
         channel,
-        `${userstate.username} you have ${userData.cash} ${
-          userData.cash > 1 ? CURRENCY.PLURAL : CURRENCY.SINGLE
-        }.`
+        `${userstate.username} you have ${userData.cash} ${getCurrency(
+          userData.cash
+        )}`
       );
     }
 
-    return;
+    // commands that expect at least one (1) argument
+
+    if (command === TwitchCommandName.Gamble) {
+      return onGamble(Bots, channel, userData, args);
+    }
+
+    // commands that expect a recipient in the argument
+
+    const recipient = args[0].slice(0, 1) === '@' ? args[0].slice(1) : null;
+    const value = parseInt(args[1], 10);
+
+    if (!recipient) return;
+    if (isNaN(value)) return;
+    if (value < 1) return;
+
+    const recipientData = await getUserByName(Bots, recipient, true);
+
+    if (!recipientData) return;
+
+    if (command === TwitchCommandName.Give) {
+      return onGive(Bots, channel, userData, recipientData, value);
+    }
   }
 
   const words = message.split(/ +/g);

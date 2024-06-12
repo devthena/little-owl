@@ -4,7 +4,7 @@ import { UserObject } from 'src/schemas';
 import { GAMBLE } from '../../configs';
 import { CURRENCY } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
-import { logEvent, weightedRandom } from '../../utils';
+import { getCurrency, logEvent, weightedRandom } from '../../utils';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
@@ -111,7 +111,9 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You won ${user.cash} ${CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
+            content: `You won ${user.cash} ${getCurrency(
+              user.cash
+            )}! :moneybag: Current balance: ${points} :coin:`,
           });
         } catch (err) {
           logEvent({
@@ -145,7 +147,9 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You won ${halfPoints} ${CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
+            content: `You won ${halfPoints} ${getCurrency(
+              halfPoints
+            )}! :moneybag: Current balance: ${points} :coin:`,
           });
         } catch (err) {
           logEvent({
@@ -161,7 +165,9 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You lost ${halfPoints} ${CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
+            content: `You lost ${halfPoints} ${getCurrency(
+              halfPoints
+            )}. :money_with_wings: Current balance: ${points} :coin:`,
           });
         } catch (err) {
           logEvent({
@@ -179,7 +185,9 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You won ${amount} ${CURRENCY.PLURAL}! :moneybag: Your cash balance: ${points} :coin:`,
+            content: `You won ${amount} ${getCurrency(
+              amount
+            )}! :moneybag: Current balance: ${points} :coin:`,
           });
         } catch (err) {
           logEvent({
@@ -195,7 +203,9 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You lost ${amount} ${CURRENCY.PLURAL}. :money_with_wings: Your cash balance: ${points} :coin:`,
+            content: `You lost ${amount} ${getCurrency(
+              amount
+            )}. :money_with_wings: Current balance: ${points} :coin:`,
           });
         } catch (err) {
           logEvent({

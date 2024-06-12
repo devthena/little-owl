@@ -11,6 +11,7 @@ import { UserObject } from 'src/schemas';
 import { NEW_USER } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
+import { addUser } from '../../utils/db';
 
 const COMMAND_DESCRIPTION =
   'Unlink your accounts (All coins stay in your Discord account)';
@@ -67,7 +68,7 @@ export const AccountUnlink = {
         cash: 0,
       };
 
-      await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(twitchData);
+      await addUser(Bots, twitchData);
 
       await Bots.db
         ?.collection(Bots.env.MONGODB_USERS)

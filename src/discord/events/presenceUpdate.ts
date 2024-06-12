@@ -1,6 +1,13 @@
-import { ActivityType, EmbedBuilder, Presence } from 'discord.js';
+import {
+  ActivityType,
+  ColorResolvable,
+  EmbedBuilder,
+  Presence,
+} from 'discord.js';
+
 import { BotsProps } from 'src/interfaces';
 import { LIVE_ROLE, STREAM_ALERTS } from '../../configs';
+import { COLORS } from '../../constants';
 import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
@@ -85,12 +92,14 @@ export const onPresenceUpdate = async (
           const liveImage = streamActivity.assets?.largeImageURL();
 
           const botEmbed = new EmbedBuilder()
+            .setColor(COLORS.BLUE as ColorResolvable)
             .setAuthor({
               name: newPresence.member.displayName,
               iconURL: newPresence.member.displayAvatarURL(),
             })
             .setTitle(`Now Streaming ${streamActivity.state}`)
             .setDescription(liveMessage)
+            .setThumbnail(newPresence.member.avatarURL())
             .setFooter({
               text: `Posted on ${streamActivity.createdAt.toDateString()}`,
             });
