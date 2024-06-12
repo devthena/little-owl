@@ -1,9 +1,9 @@
 import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { GAMBLE } from '../../configs';
+import { GIVE } from '../../configs';
 import { CURRENCY } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
+import { getCurrency, logEvent } from '../../utils';
 
 export const onGive = async (
   Bots: BotsProps,
@@ -12,23 +12,26 @@ export const onGive = async (
   recipient: UserObject,
   value: number
 ) => {
-  if (!GAMBLE.ENABLED) return;
+  if (!GIVE.ENABLED) return;
 
   const replies = {
     noPoints: `${user.twitch_username} you have no ${CURRENCY.SINGLE} to give.`,
     notEnough: `${user.twitch_username} you don't have that much ${CURRENCY.PLURAL} to give.`,
-    success: `${user.twitch_username} gave ${value} ${CURRENCY.PLURAL} to ${recipient.twitch_username}`,
+    success: `${user.twitch_username} gave ${value} ${getCurrency(value)} to ${
+      recipient.twitch_username
+    }`,
   };
 
   if (user.cash < 1) return Bots.twitch.say(channel, replies.noPoints);
   if (user.cash < value) return Bots.twitch.say(channel, replies.notEnough);
 
-  let userPoints = user.cash - value;
-
   try {
     await Bots.db
       ?.collection(Bots.env.MONGODB_USERS)
-      .updateOne({ twitch_id: user.twitch_id }, { $set: { cash: userPoints } });
+      .updateOne(
+        { twitch_id: user.twitch_id },
+        { $set: { cash: user.cash - value } }
+      );
 
     await Bots.db
       ?.collection(Bots.env.MONGODB_USERS)

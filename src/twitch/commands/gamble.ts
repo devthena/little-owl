@@ -3,7 +3,7 @@ import { UserObject } from 'src/schemas';
 import { GAMBLE } from '../../configs';
 import { CURRENCY, TWITCH_GAMBLE_EMOTES } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent, weightedRandom } from '../../utils';
+import { getCurrency, logEvent, weightedRandom } from '../../utils';
 
 export const onGamble = async (
   Bots: BotsProps,
@@ -43,7 +43,9 @@ export const onGamble = async (
       points += user.cash;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} won ${user.cash} ${CURRENCY.PLURAL}! ${TWITCH_GAMBLE_EMOTES.WIN} Your cash balance: ${points}`
+        `${user.twitch_username} won ${user.cash} ${getCurrency(user.cash)}! ${
+          TWITCH_GAMBLE_EMOTES.WIN
+        } Current balance: ${points} ${getCurrency(points)}`
       );
     } else {
       points = 0;
@@ -56,13 +58,21 @@ export const onGamble = async (
       points += halfPoints;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} won ${halfPoints} ${CURRENCY.PLURAL}! ${TWITCH_GAMBLE_EMOTES.WIN} Your cash balance: ${points}`
+        `${user.twitch_username} won ${halfPoints} ${getCurrency(
+          halfPoints
+        )}! ${
+          TWITCH_GAMBLE_EMOTES.WIN
+        } Current balance: ${points} ${getCurrency(points)}`
       );
     } else {
       points -= halfPoints;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} lost ${halfPoints} ${CURRENCY.PLURAL}. ${TWITCH_GAMBLE_EMOTES.LOST} Your cash balance: ${points}`
+        `${user.twitch_username} lost ${halfPoints} ${getCurrency(
+          halfPoints
+        )}. ${
+          TWITCH_GAMBLE_EMOTES.LOST
+        } Current balance: ${points} ${getCurrency(points)}`
       );
     }
   } else if (amount <= user.cash) {
@@ -70,13 +80,17 @@ export const onGamble = async (
       points += amount;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} won ${amount} ${CURRENCY.PLURAL}! ${TWITCH_GAMBLE_EMOTES.WIN} Your cash balance: ${points}`
+        `${user.twitch_username} won ${amount} ${getCurrency(amount)}! ${
+          TWITCH_GAMBLE_EMOTES.WIN
+        } Current balance: ${points} ${getCurrency(points)}`
       );
     } else {
       points -= amount;
       Bots.twitch.say(
         channel,
-        `${user.twitch_username} lost ${amount} ${CURRENCY.PLURAL}. ${TWITCH_GAMBLE_EMOTES.LOST} Your cash balance: ${points}`
+        `${user.twitch_username} lost ${amount} ${getCurrency(amount)}. ${
+          TWITCH_GAMBLE_EMOTES.LOST
+        } Current balance: ${points} ${getCurrency(points)}`
       );
     }
   } else if (amount > user.cash) {

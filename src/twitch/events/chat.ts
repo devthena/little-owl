@@ -8,7 +8,7 @@ import {
   TwitchChannelRewardId,
   TwitchCommandName,
 } from '../../enums';
-import { logEvent } from '../../utils';
+import { getCurrency, logEvent } from '../../utils';
 import { addUser, getUserById, getUserByName } from '../../utils/db';
 import { onGamble, onGive } from '../commands';
 
@@ -97,9 +97,9 @@ export const onChat = async (
     if (command === TwitchCommandName.Points) {
       return Bots.twitch.say(
         channel,
-        `${userstate.username} you have ${userData.cash} ${
-          userData.cash > 1 ? CURRENCY.PLURAL : CURRENCY.SINGLE
-        }`
+        `${userstate.username} you have ${userData.cash} ${getCurrency(
+          userData.cash
+        )}`
       );
     }
 
@@ -116,6 +116,7 @@ export const onChat = async (
 
     if (!recipient) return;
     if (isNaN(value)) return;
+    if (value < 1) return;
 
     const recipientData = await getUserByName(Bots, recipient, true);
 
