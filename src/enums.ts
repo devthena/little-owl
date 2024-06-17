@@ -23,6 +23,10 @@ export enum DiscordCommandName {
   Star = 'star',
 }
 
+export enum GameCode {
+  Wordle = 'wdl',
+}
+
 export enum LogChannelId {
   Activity = '1012123780132372570',
   Alert = '1012124179371405353',
