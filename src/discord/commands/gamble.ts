@@ -2,7 +2,7 @@ import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
 import { GAMBLE } from '../../configs';
-import { CURRENCY } from '../../constants';
+import { CURRENCY, GAMBLE_LIMIT } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
 import { getCurrency, logEvent, weightedRandom } from '../../utils';
 
@@ -42,8 +42,9 @@ export const Gamble = {
       invalidInput: 'Enter a specific amount, "all", or "half".',
       invalidNegative: `You should gamble at least 1 ${CURRENCY.SINGLE}.`,
       lostAll: `You lost all of your ${CURRENCY.PLURAL}. :money_with_wings:`,
+      maxReached: `You can only gamble up to ${GAMBLE_LIMIT} ${CURRENCY.PLURAL}. :neutral_face:`,
       noPoints: `You have no ${CURRENCY.SINGLE} to gamble. :neutral_face:`,
-      notEnough: `You don't have enough ${CURRENCY.PLURAL} to gamble. :neutral_face:`,
+      notEnough: `You don't have enough ${CURRENCY.PLURAL} to gamble that amount. :neutral_face:`,
     };
 
     if (user.cash < 1) {
@@ -80,22 +81,26 @@ export const Gamble = {
       return;
     }
 
-    if (amount < 1) {
-      try {
-        await interaction.reply({
-          content: replies.invalidNegative,
-          ephemeral: true,
-        });
-      } catch (err) {
-        logEvent({
-          Bots,
-          type: LogEventType.Error,
-          description: `Discord Command Error (Gamble): ` + JSON.stringify(err),
-        });
-        console.error(err);
+    const isOverLimit = async (amount: number) => {
+      if (amount > GAMBLE_LIMIT) {
+        try {
+          await interaction.reply({
+            content: replies.maxReached,
+            ephemeral: true,
+          });
+        } catch (err) {
+          logEvent({
+            Bots,
+            type: LogEventType.Error,
+            description:
+              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+          });
+          console.error(err);
+        }
+        return true;
       }
-      return;
-    }
+      return false;
+    };
 
     const probability = {
       win: GAMBLE.WIN_PERCENT / 100,
@@ -106,6 +111,8 @@ export const Gamble = {
     const result = weightedRandom(probability);
 
     if (arg === 'all') {
+      if (await isOverLimit(points)) return;
+
       if (result === 'win') {
         points += user.cash;
 
@@ -141,6 +148,7 @@ export const Gamble = {
       }
     } else if (arg === 'half') {
       const halfPoints = Math.round(user.cash / 2);
+      if (await isOverLimit(halfPoints)) return;
 
       if (result === 'win') {
         points += halfPoints;
@@ -179,7 +187,23 @@ export const Gamble = {
           console.error(err);
         }
       }
+    } else if (amount < 1) {
+      try {
+        await interaction.reply({
+          content: replies.invalidNegative,
+          ephemeral: true,
+        });
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description: `Discord Command Error (Gamble): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
     } else if (amount <= user.cash) {
+      if (await isOverLimit(amount)) return;
+
       if (result === 'win') {
         points += amount;
 

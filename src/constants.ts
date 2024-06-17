@@ -32,6 +32,8 @@ export const CURRENCY = {
   SINGLE: 'coin',
 };
 
+export const GAMBLE_LIMIT = 10000;
+
 export const IGNORE_LIST = [
   'commanderroot',
   'nightbot',
