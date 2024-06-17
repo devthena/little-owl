@@ -19,6 +19,7 @@ export enum DiscordCommandName {
   Gamble = 'gamble',
   Give = 'give',
   Help = 'help',
+  Leaderboard = 'leaderboard',
   Points = 'points',
   Star = 'star',
 }

@@ -8,6 +8,7 @@ import {
   Gamble,
   Give,
   Help,
+  Leaderboard,
   Points,
   Star,
 } from './commands';
@@ -42,6 +43,7 @@ const register = (): void => {
   commands.push(Gamble.data.toJSON());
   commands.push(Give.data.toJSON());
   commands.push(Help.data.toJSON());
+  commands.push(Leaderboard.data.toJSON());
   commands.push(Points.data.toJSON());
 
   // commands in development for testing should be added here

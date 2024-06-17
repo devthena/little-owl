@@ -3,6 +3,7 @@ export * from './coinflip';
 export * from './gamble';
 export * from './give';
 export * from './help';
+export * from './leaderboard';
 export * from './link';
 export * from './points';
 export * from './star';
