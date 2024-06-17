@@ -61,6 +61,10 @@ const Bots: BotsProps = {
   }),
   env: {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
+    MONGODB_STATS:
+      (process.env.STAGING
+        ? process.env.MONGODB_STATS_STAGE
+        : process.env.MONGODB_STATS_PROD) || '',
     MONGODB_USERS:
       (process.env.STAGING
         ? process.env.MONGODB_USERS_STAGE

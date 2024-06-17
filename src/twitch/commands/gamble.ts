@@ -1,7 +1,7 @@
 import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
 import { GAMBLE } from '../../configs';
-import { CURRENCY, TWITCH_GAMBLE_EMOTES } from '../../constants';
+import { CURRENCY, GAMBLE_LIMIT, TWITCH_GAMBLE_EMOTES } from '../../constants';
 import { LogEventType } from '../../enums';
 import { getCurrency, logEvent, weightedRandom } from '../../utils';
 
@@ -15,8 +15,9 @@ export const onGamble = async (
 
   const replies = {
     lostAll: `${user.twitch_username} lost all of their ${CURRENCY.PLURAL}. ${TWITCH_GAMBLE_EMOTES.LOST}`,
+    maxReached: `You can only gamble up to ${GAMBLE_LIMIT} ${CURRENCY.PLURAL}. :neutral_face:`,
     noPoints: `${user.twitch_username} you have no ${CURRENCY.SINGLE} to gamble.`,
-    notEnough: `${user.twitch_username} you don't have enough ${CURRENCY.PLURAL} to gamble.`,
+    notEnough: `${user.twitch_username} you don't have enough ${CURRENCY.PLURAL} to gamble that amount.`,
   };
 
   if (user.cash < 1) {
@@ -38,7 +39,17 @@ export const onGamble = async (
   let points = user.cash;
   const result = weightedRandom(probability);
 
+  const isOverLimit = (amount: number) => {
+    if (amount > GAMBLE_LIMIT) {
+      Bots.twitch.say(channel, replies.maxReached);
+      return true;
+    }
+    return false;
+  };
+
   if (value === 'all') {
+    if (isOverLimit(points)) return;
+
     if (result === 'win') {
       points += user.cash;
       Bots.twitch.say(
@@ -53,6 +64,7 @@ export const onGamble = async (
     }
   } else if (value === 'half') {
     const halfPoints = Math.round(user.cash / 2);
+    if (isOverLimit(halfPoints)) return;
 
     if (result === 'win') {
       points += halfPoints;
@@ -76,6 +88,8 @@ export const onGamble = async (
       );
     }
   } else if (amount <= user.cash) {
+    if (isOverLimit(amount)) return;
+
     if (result === 'win') {
       points += amount;
       Bots.twitch.say(

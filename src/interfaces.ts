@@ -27,3 +27,11 @@ export interface ObjectProps {
 export interface StringObjectProps {
   [key: string]: string;
 }
+
+export interface WordleObject {
+  currentStreak: number;
+  distribution: number[];
+  maxStreak: number;
+  totalPlayed: number;
+  totalWon: number;
+}
