@@ -16,6 +16,7 @@ import {
   Gamble,
   Give,
   Help,
+  Leaderboard,
   Points,
   Star,
 } from '../commands';
@@ -50,6 +51,10 @@ export const onInteractionCreate = async (
 
     if (interaction.commandName === Help.getName()) {
       return Help.execute(Bots, interaction);
+    }
+
+    if (interaction.commandName === Leaderboard.getName()) {
+      return Leaderboard.execute(Bots, interaction);
     }
 
     const document = await getUserById(Bots, interaction.member.user.id);
