@@ -1,8 +1,8 @@
 import { version } from 'process';
 
-if (parseInt(version.slice(1).split('.')[0], 10) < 16) {
+if (parseInt(version.slice(1).split('.')[0], 10) < 20) {
   throw new Error(
-    'Node 16.0.0 or higher is required. Update Node on your system.'
+    'Node 20.0.0 or higher is required. Update Node on your system.'
   );
 }
 
