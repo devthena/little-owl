@@ -87,6 +87,12 @@ export const AccountLink = {
         .deleteOne({ user_id: code });
 
       await interaction.reply({ content: replies.success, ephemeral: true });
+
+      logEvent({
+        Bots,
+        type: LogEventType.Activity,
+        description: `${user.discord_username} aka ${user.discord_name} has linked their account: ${twitchUser.twitch_username}`,
+      });
     } catch (err) {
       logEvent({
         Bots,
