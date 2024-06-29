@@ -78,6 +78,12 @@ export const AccountUnlink = {
         );
 
       await interaction.reply({ content: replies.success, ephemeral: true });
+
+      logEvent({
+        Bots,
+        type: LogEventType.Activity,
+        description: `${user.discord_username} aka ${user.discord_name} has unlinked their account: ${user.twitch_username}`,
+      });
     } catch (err) {
       logEvent({
         Bots,
