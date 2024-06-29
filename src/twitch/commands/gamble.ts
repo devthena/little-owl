@@ -15,9 +15,9 @@ export const onGamble = async (
 
   const replies = {
     lostAll: `${user.twitch_username} lost all of their ${CURRENCY.PLURAL}. ${TWITCH_GAMBLE_EMOTES.LOST}`,
-    maxReached: `You can only gamble up to ${GAMBLE_LIMIT} ${CURRENCY.PLURAL}. :neutral_face:`,
-    noPoints: `${user.twitch_username} you have no ${CURRENCY.SINGLE} to gamble.`,
-    notEnough: `${user.twitch_username} you don't have enough ${CURRENCY.PLURAL} to gamble that amount.`,
+    maxReached: `You can only gamble up to ${GAMBLE_LIMIT} ${CURRENCY.PLURAL}. ${TWITCH_GAMBLE_EMOTES.MAX}`,
+    noPoints: `${user.twitch_username} you have no ${CURRENCY.SINGLE} to gamble. ${TWITCH_GAMBLE_EMOTES.LOST}`,
+    notEnough: `${user.twitch_username} you don't have enough ${CURRENCY.PLURAL} to gamble that amount. ${TWITCH_GAMBLE_EMOTES.MAX}`,
   };
 
   if (user.cash < 1) {

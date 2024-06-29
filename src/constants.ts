@@ -53,6 +53,7 @@ export const STATUS_COLORS: StringObjectProps = {
 export const TWITCH_GAMBLE_EMOTES = {
   WIN: 'PopNemo',
   LOST: 'TearGlove',
+  MAX: 'GivePLZ',
 };
 
 export const NEW_USER = {
