@@ -63,6 +63,4 @@ export const NEW_USER = {
   twitch_id: null,
   twitch_username: null,
   cash: 500,
-  bank: 0,
-  stars: 0,
 };
