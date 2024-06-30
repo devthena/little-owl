@@ -45,6 +45,7 @@ const register = (): void => {
   commands.push(Help.data.toJSON());
   commands.push(Leaderboard.data.toJSON());
   commands.push(Points.data.toJSON());
+  commands.push(Star.data.toJSON());
 
   // commands in development for testing should be added here
   commandsStage.push(Star.data.toJSON());

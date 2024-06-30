@@ -61,14 +61,9 @@ const Bots: BotsProps = {
   }),
   env: {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    MONGODB_STATS:
-      (process.env.STAGING
-        ? process.env.MONGODB_STATS_STAGE
-        : process.env.MONGODB_STATS_PROD) || '',
-    MONGODB_USERS:
-      (process.env.STAGING
-        ? process.env.MONGODB_USERS_STAGE
-        : process.env.MONGODB_USERS_PROD) || '',
+    MONGODB_STARS: process.env.MONGODB_STARS || '',
+    MONGODB_STATS: process.env.MONGODB_STATS || '',
+    MONGODB_USERS: process.env.MONGODB_USERS || '',
     SERVER_ID: process.env.SERVER_ID || '',
   },
   twitch: new tmi.Client({
@@ -90,7 +85,11 @@ const initBots = async () => {
 
   console.log('* Database connection successful *');
 
-  Bots.db = dbClient.db(process.env.MONGODB_DB);
+  const database = process.env.STAGING
+    ? process.env.MONGODB_DB_TEST
+    : process.env.MONGODB_DB;
+
+  Bots.db = dbClient.db(database);
 
   Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
   Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));

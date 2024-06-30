@@ -1,30 +1,35 @@
 import {
+  ColorResolvable,
   CommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
+  User,
 } from 'discord.js';
 
 import { BotsProps } from 'src/interfaces';
-import { UserObject } from 'src/schemas';
+import { StarObject } from 'src/schemas';
+
 import { STAR } from '../../configs';
+import { COLORS } from '../../constants';
 import { DiscordCommandName, LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 
 export const Star = {
   data: new SlashCommandBuilder()
     .setName(DiscordCommandName.Star)
-    .setDescription('Give a star to a user as a form of endorsement')
+    .setDescription('Give a star as a form of endorsement')
     .addUserOption(option =>
       option
         .setName('user')
-        .setDescription('Tag the friend you want to give the star to')
+        .setDescription('Enter recipient name')
         .setRequired(true)
     ),
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserObject,
-    recipient: UserObject
+    user: StarObject,
+    userName: string,
+    recipient: User
   ) => {
     if (!STAR.ENABLED) {
       try {
@@ -49,9 +54,9 @@ export const Star = {
     };
 
     const now = new Date();
-    // const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    const today = now.toDateString();
 
-    if (user.discord_id === recipient.discord_id) {
+    if (user.discord_id === recipient.id) {
       await interaction.reply({
         content: replies.invalidSelf,
         ephemeral: true,
@@ -59,39 +64,34 @@ export const Star = {
       return;
     }
 
-    // @todo: Use activity collection to determine and set last_star value
-
-    // if (user.last_star === today) {
-    //   try {
-    //     await interaction.reply({
-    //       content: replies.invalidMax,
-    //       ephemeral: true,
-    //     });
-    //   } catch (err) {
-    //     logEvent({
-    //       Bots,
-    //       type: LogEventType.Error,
-    //       description: `Discord Command Error (Star): ` + JSON.stringify(err),
-    //     });
-    //     console.error(err);
-    //   }
-    //   return;
-    // }
+    if (user.last_given === today) {
+      try {
+        await interaction.reply({
+          content: replies.invalidMax,
+          ephemeral: true,
+        });
+      } catch (err) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description: `Discord Command Error (Star): ` + JSON.stringify(err),
+        });
+        console.error(err);
+      }
+      return;
+    }
 
     try {
-      // await Bots.db
-      //   ?.collection(Bots.env.MONGODB_ACTIVITIES_USER)
-      //   .updateOne(
-      //     { discord_id: user.discord_id },
-      //     { $set: { last_star: today } }
-      //   );
+      await Bots.db
+        ?.collection(Bots.env.MONGODB_STARS)
+        .updateOne(
+          { discord_id: user.discord_id },
+          { $inc: { total_given: 1 }, $set: { last_given: today } }
+        );
 
       await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: recipient.discord_id },
-          { $inc: { stars: 1 } }
-        );
+        ?.collection(Bots.env.MONGODB_STARS)
+        .updateOne({ discord_id: recipient.id }, { $inc: { stars: 1 } });
     } catch (err) {
       logEvent({
         Bots,
@@ -101,14 +101,14 @@ export const Star = {
       console.error(err);
     }
 
+    const recipientName = recipient.globalName || recipient.username;
+
     const botEmbed = new EmbedBuilder()
-      .setTitle(
-        `${recipient.discord_username} got a star from ${user.discord_username}!`
-      )
+      .setColor(COLORS.YELLOW as ColorResolvable)
+      .setTitle(`${recipientName} got a star from ${userName}!`)
       .setDescription(
-        'Give stars to someone as a form of endorsement! :sparkles:'
-      )
-      .setFooter({ text: `Star given on ${now}` });
+        'Endorse a community member by giving them a star! :sparkles:'
+      );
 
     try {
       await interaction.reply({ embeds: [botEmbed] });

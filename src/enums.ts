@@ -1,8 +1,3 @@
-export enum ActivityCode {
-  Bank = 'bnk',
-  Star = 'str',
-}
-
 export enum AdminChannelId {
   Message = '1012125638683009144',
   Stage = '1012125600242208819',

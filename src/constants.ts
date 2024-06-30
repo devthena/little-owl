@@ -1,4 +1,5 @@
 import { StringObjectProps } from 'src/interfaces';
+import { StarObject } from './schemas';
 
 export const BOT_ACTIVITIES = [
   { name: 'with Chat', type: 0 },
@@ -54,6 +55,13 @@ export const TWITCH_GAMBLE_EMOTES = {
   WIN: 'PopNemo',
   LOST: 'TearGlove',
   MAX: 'GivePLZ',
+};
+
+export const NEW_STAR: StarObject = {
+  discord_id: '',
+  stars: 0,
+  last_given: null,
+  total_given: 0,
 };
 
 export const NEW_USER = {
