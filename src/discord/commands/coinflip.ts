@@ -4,7 +4,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { weightedRandom } from '../../utils';
+import { weightedRandom } from '../../lib';
 
 export const CoinFlip = {
   data: new SlashCommandBuilder()

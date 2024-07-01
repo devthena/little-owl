@@ -42,7 +42,7 @@ import {
   onTimeout,
 } from './twitch/events';
 
-import { logEvent } from './utils';
+import { logEvent } from './lib';
 
 const Bots: BotsProps = {
   cooldowns: {

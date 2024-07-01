@@ -5,7 +5,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, weightedRandom } from '../../utils';
+import { getCurrency, weightedRandom } from '../../lib';
 
 export const Gamble = {
   data: new SlashCommandBuilder()

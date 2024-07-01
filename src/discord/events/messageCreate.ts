@@ -6,7 +6,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, INITIAL } from '../../constants';
 import { LogEventType } from '../../enums';
-import { addUser, getUserById } from '../../utils/db';
+import { addUser, getUserById } from '../../lib/db';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;

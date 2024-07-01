@@ -11,7 +11,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, INITIAL } from '../../constants';
 import { LogEventType } from '../../enums';
-import { addUser } from '../../utils/db';
+import { addUser } from '../../lib/db';
 
 export const AccountUnlink = {
   data: new SlashCommandBuilder()

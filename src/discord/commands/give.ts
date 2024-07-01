@@ -5,7 +5,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency } from '../../utils';
+import { getCurrency } from '../../lib';
 
 export const Give = {
   data: new SlashCommandBuilder()
