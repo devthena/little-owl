@@ -1,10 +1,11 @@
 import { CommandInteraction } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BotsProps } from 'src/interfaces';
 import { StarObject, UserObject } from 'src/schemas';
-import { NEW_STAR, NEW_USER } from '../../constants';
-import { DiscordChannelId, LogEventType } from '../../enums';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, INITIAL } from '../../constants';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 import { addStar, addUser, getStarById, getUserById } from '../../utils/db';
 
@@ -34,7 +35,7 @@ export const onInteractionCreate = async (
       const document = await getStarById(Bots, recipient.id);
 
       const data: StarObject = document ?? {
-        ...NEW_STAR,
+        ...INITIAL.STAR,
         discord_id: recipient.id,
       };
 
@@ -48,7 +49,7 @@ export const onInteractionCreate = async (
       const document = await getStarById(Bots, interaction.member.user.id);
 
       const data: StarObject = document ?? {
-        ...NEW_STAR,
+        ...INITIAL.STAR,
         discord_id: interaction.member?.user.id,
       };
 
@@ -64,7 +65,7 @@ export const onInteractionCreate = async (
       const document = await getUserById(Bots, recipient.id);
 
       const data: UserObject = document ?? {
-        ...NEW_USER,
+        ...INITIAL.USER,
         user_id: uuidv4(),
         discord_id: recipient.id,
         discord_username: recipient.username,
@@ -81,7 +82,7 @@ export const onInteractionCreate = async (
       const document = await getUserById(Bots, interaction.member.user.id);
 
       const data: UserObject = document ?? {
-        ...NEW_USER,
+        ...INITIAL.USER,
         user_id: uuidv4(),
         discord_id: interaction.member.user.id,
         discord_username: interaction.member.user.username,
@@ -130,20 +131,21 @@ export const onInteractionCreate = async (
 
     if (interaction.commandName === Gamble.getName()) {
       if (
-        interaction.channelId !== DiscordChannelId.Casino &&
-        interaction.channelId !== DiscordChannelId.Test
+        interaction.channelId !== CONFIG.CHANNELS.MAIN.CASINO &&
+        interaction.channelId !== CONFIG.CHANNELS.MAIN.STAGE
       ) {
         try {
           await interaction.reply({
             content: 'Please use the #casino channel to gamble your points.',
             ephemeral: true,
           });
-        } catch (err) {
+        } catch (error) {
           logEvent({
             Bots,
             type: LogEventType.Error,
             description:
-              `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
+              `Discord Event Error (interactionCreate): ` +
+              JSON.stringify(error),
           });
         }
       } else {
@@ -156,9 +158,9 @@ export const onInteractionCreate = async (
 
     if (interaction.commandName === Points.getName()) {
       if (
-        interaction.channelId !== DiscordChannelId.Casino &&
-        interaction.channelId !== DiscordChannelId.LittleOwl &&
-        interaction.channelId !== DiscordChannelId.Test
+        interaction.channelId !== CONFIG.CHANNELS.MAIN.CASINO &&
+        interaction.channelId !== CONFIG.CHANNELS.MAIN.OWL &&
+        interaction.channelId !== CONFIG.CHANNELS.MAIN.STAGE
       ) {
         try {
           await interaction.reply({
@@ -166,14 +168,14 @@ export const onInteractionCreate = async (
               'Please use one of the bot channels to check your balance.',
             ephemeral: true,
           });
-        } catch (err) {
+        } catch (error) {
           logEvent({
             Bots,
             type: LogEventType.Error,
             description:
-              `Discord Event Error (interactionCreate): ` + JSON.stringify(err),
+              `Discord Event Error (interactionCreate): ` +
+              JSON.stringify(error),
           });
-          console.error(err);
         }
       } else {
         const userData = await getUserData();

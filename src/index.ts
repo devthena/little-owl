@@ -14,7 +14,7 @@ import * as tmi from 'tmi.js';
 import { MongoClient } from 'mongodb';
 const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
-import { BotsProps } from './interfaces';
+import { BotsProps } from './types';
 
 import {
   onGuildBanAdd,
@@ -114,7 +114,7 @@ const initBots = async () => {
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
   Bots.discord.login(process.env.DISCORD_TOKEN);
-  Bots.twitch.connect().catch(console.error);
+  Bots.twitch.connect();
 };
 
 initBots();

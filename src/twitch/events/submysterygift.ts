@@ -1,4 +1,5 @@
-import { BotsProps, ObjectProps } from 'src/interfaces';
+import { BotsProps, ObjectProps } from 'src/types';
+
 import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 

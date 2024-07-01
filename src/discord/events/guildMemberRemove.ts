@@ -1,5 +1,7 @@
 import { GuildMember } from 'discord.js';
-import { BotsProps } from 'src/interfaces';
+
+import { BotsProps } from 'src/types';
+
 import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 

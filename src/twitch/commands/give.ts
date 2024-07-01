@@ -1,7 +1,7 @@
-import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { GIVE } from '../../configs';
-import { CURRENCY } from '../../constants';
+import { BotsProps } from 'src/types';
+
+import { CONFIG } from '../../constants';
 import { LogEventType } from '../../enums';
 import { getCurrency, logEvent } from '../../utils';
 
@@ -12,11 +12,11 @@ export const onGive = async (
   recipient: UserObject,
   value: number
 ) => {
-  if (!GIVE.ENABLED) return;
+  if (!CONFIG.FEATURES.GIVE.ENABLED) return;
 
   const replies = {
-    noPoints: `${user.twitch_username} you have no ${CURRENCY.SINGLE} to give.`,
-    notEnough: `${user.twitch_username} you don't have that much ${CURRENCY.PLURAL} to give.`,
+    noPoints: `${user.twitch_username} you have no ${CONFIG.CURRENCY.SINGLE} to give.`,
+    notEnough: `${user.twitch_username} you don't have that much ${CONFIG.CURRENCY.PLURAL} to give.`,
     success: `${user.twitch_username} gave ${value} ${getCurrency(value)} to ${
       recipient.twitch_username
     }`,
@@ -38,13 +38,12 @@ export const onGive = async (
       .updateOne({ twitch_id: recipient.twitch_id }, { $inc: { cash: value } });
 
     Bots.twitch.say(channel, replies.success);
-  } catch (err) {
+  } catch (error) {
     logEvent({
       Bots,
       type: LogEventType.Error,
-      description: `Twitch Database Error (Give): ` + JSON.stringify(err),
+      description: `Twitch Database Error (Give): ` + JSON.stringify(error),
     });
-    console.error(err);
   }
 
   return;

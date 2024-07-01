@@ -1,25 +1,26 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { BotsProps } from 'src/interfaces';
+
 import { UserObject } from 'src/schemas';
-import { GIVE } from '../../configs';
-import { CURRENCY } from '../../constants';
-import { DiscordCommandName, LogEventType } from '../../enums';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, COPY, EMOJIS } from '../../constants';
+import { LogEventType } from '../../enums';
 import { getCurrency, logEvent } from '../../utils';
 
 export const Give = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.Give)
-    .setDescription('Give points to another user')
+    .setName(COPY.GIVE.NAME)
+    .setDescription(COPY.GIVE.DESCRIPTION)
     .addUserOption(option =>
       option
-        .setName('user')
-        .setDescription('Enter recipient username')
+        .setName(COPY.GIVE.OPTION1_NAME)
+        .setDescription(COPY.GIVE.OPTION1_DESCRIPTION)
         .setRequired(true)
     )
     .addNumberOption(option =>
       option
-        .setName('amount')
-        .setDescription('Enter a specific amount to give')
+        .setName(COPY.GIVE.OPTION2_NAME)
+        .setDescription(COPY.GIVE.OPTION2_DESCRIPTION)
         .setRequired(true)
     ),
   execute: async (
@@ -28,29 +29,25 @@ export const Give = {
     user: UserObject,
     recipient: UserObject
   ) => {
-    if (!GIVE.ENABLED) {
+    if (!CONFIG.FEATURES.GIVE.ENABLED) {
       try {
-        await interaction.reply({
-          content: 'Giving points is not enabled in this server.',
-          ephemeral: true,
-        });
-      } catch (err) {
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
         logEvent({
           Bots,
           type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+          description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
 
     const amount = Number(interaction.options.get('amount')?.value) || 0;
     const replies = {
-      invalidNegative: `You should give at least 1 ${CURRENCY.SINGLE}.`,
-      invalidRecipient: `You can't give yourself ${CURRENCY.PLURAL}. :neutral_face:`,
-      noPoints: `Sorry, you have no ${CURRENCY.SINGLE} to give. :neutral_face:`,
-      notEnough: `Sorry, you don't have enough ${CURRENCY.PLURAL} to give. :neutral_face:`,
+      invalidNegative: `You should give at least 1 ${CONFIG.CURRENCY.SINGLE}.`,
+      invalidRecipient: `You can't give yourself ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.GIVE.INVALID}`,
+      noPoints: `Sorry, you have no ${CONFIG.CURRENCY.SINGLE} to give. ${EMOJIS.GIVE.INVALID}`,
+      notEnough: `Sorry, you don't have enough ${CONFIG.CURRENCY.PLURAL} to give. ${EMOJIS.GIVE.INVALID}`,
       success: `You gave ${
         recipient.discord_name || recipient.discord_username
       } ${amount} ${getCurrency(amount)}.`,
@@ -59,13 +56,12 @@ export const Give = {
     if (user.cash < 1) {
       try {
         await interaction.reply({ content: replies.noPoints, ephemeral: true });
-      } catch (err) {
+      } catch (error) {
         logEvent({
           Bots,
           type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+          description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
@@ -76,13 +72,12 @@ export const Give = {
           content: replies.invalidNegative,
           ephemeral: true,
         });
-      } catch (err) {
+      } catch (error) {
         logEvent({
           Bots,
           type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+          description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
@@ -93,13 +88,12 @@ export const Give = {
           content: replies.notEnough,
           ephemeral: true,
         });
-      } catch (err) {
+      } catch (error) {
         logEvent({
           Bots,
           type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+          description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
@@ -110,13 +104,12 @@ export const Give = {
           content: replies.invalidRecipient,
           ephemeral: true,
         });
-      } catch (err) {
+      } catch (error) {
         logEvent({
           Bots,
           type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(err),
+          description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
@@ -135,29 +128,27 @@ export const Give = {
           { discord_id: user.discord_id },
           { $set: { cash: (user.cash -= amount) } }
         );
-    } catch (err) {
+    } catch (error) {
       logEvent({
         Bots,
         type: LogEventType.Error,
-        description: `Discord Database Error (Give): ` + JSON.stringify(err),
+        description: `Discord Database Error (Give): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
 
     try {
       await interaction.reply({
-        content: `${replies.success} Current balance: ${user.cash} :coin:`,
+        content: `${replies.success} Current balance: ${user.cash} ${EMOJIS.CURRENCY}`,
       });
-    } catch (err) {
+    } catch (error) {
       logEvent({
         Bots,
         type: LogEventType.Error,
-        description: `Discord Command Error (Give): ` + JSON.stringify(err),
+        description: `Discord Command Error (Give): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
   },
   getName: (): string => {
-    return DiscordCommandName.Give;
+    return COPY.GIVE.NAME;
   },
 };

@@ -1,10 +1,11 @@
 import { Message } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { NEW_USER } from '../../constants';
-import { AdminChannelId, DiscordChannelId, LogEventType } from '../../enums';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, INITIAL } from '../../constants';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 import { addUser, getUserById } from '../../utils/db';
 
@@ -21,10 +22,10 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
     let channel = null;
 
-    if (message.channel.id === AdminChannelId.Message) {
-      channel = server.channels.cache.get(DiscordChannelId.Announcements);
-    } else if (message.channel.id === AdminChannelId.Stage) {
-      channel = server.channels.cache.get(DiscordChannelId.Stage);
+    if (message.channel.id === CONFIG.CHANNELS.ADMIN.ANNOUNCE) {
+      channel = server.channels.cache.get(CONFIG.CHANNELS.MAIN.ANNOUNCE);
+    } else if (message.channel.id === CONFIG.CHANNELS.ADMIN.STAGE) {
+      channel = server.channels.cache.get(CONFIG.CHANNELS.MAIN.STAGE);
     }
 
     if (channel?.isTextBased()) {
@@ -53,12 +54,12 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
   if (!document) {
     const userData: UserObject = {
-      ...NEW_USER,
+      ...INITIAL.USER,
       user_id: uuidv4(),
       discord_id: message.member.id,
       discord_username: message.member.user.username,
       discord_name: message.member.user.globalName,
-      cash: NEW_USER.cash + incAmount,
+      cash: INITIAL.USER.cash + incAmount,
     };
 
     return await addUser(Bots, userData);
@@ -71,13 +72,12 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
         { discord_id: message.member.id },
         { $inc: { cash: incAmount } }
       );
-  } catch (err) {
+  } catch (error) {
     logEvent({
       Bots,
       type: LogEventType.Error,
       description:
-        `Discord Database Error (messageCreate): ` + JSON.stringify(err),
+        `Discord Database Error (messageCreate): ` + JSON.stringify(error),
     });
-    console.error(err);
   }
 };

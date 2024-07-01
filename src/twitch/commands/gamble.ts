@@ -1,9 +1,9 @@
-import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { GAMBLE } from '../../configs';
-import { CURRENCY, GAMBLE_LIMIT, TWITCH_GAMBLE_EMOTES } from '../../constants';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, EMOTES } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, logEvent, weightedRandom } from '../../utils';
+import { getCurrency, isNumber, logEvent, weightedRandom } from '../../utils';
 
 export const onGamble = async (
   Bots: BotsProps,
@@ -11,13 +11,13 @@ export const onGamble = async (
   user: UserObject,
   args: string[]
 ) => {
-  if (!GAMBLE.ENABLED) return;
+  if (!CONFIG.FEATURES.GAMBLE.ENABLED) return;
 
   const replies = {
-    lostAll: `${user.twitch_username} lost all of their ${CURRENCY.PLURAL}. ${TWITCH_GAMBLE_EMOTES.LOST}`,
-    maxReached: `You can only gamble up to ${GAMBLE_LIMIT} ${CURRENCY.PLURAL}. ${TWITCH_GAMBLE_EMOTES.MAX}`,
-    noPoints: `${user.twitch_username} you have no ${CURRENCY.SINGLE} to gamble. ${TWITCH_GAMBLE_EMOTES.LOST}`,
-    notEnough: `${user.twitch_username} you don't have enough ${CURRENCY.PLURAL} to gamble that amount. ${TWITCH_GAMBLE_EMOTES.MAX}`,
+    lostAll: `${user.twitch_username} lost all of their ${CONFIG.CURRENCY.PLURAL}. ${EMOTES.GAMBLE.LOST}`,
+    maxReached: `You can only gamble up to ${CONFIG.FEATURES.GAMBLE.LIMIT} ${CONFIG.CURRENCY.PLURAL}. ${EMOTES.GAMBLE.INVALID}`,
+    noPoints: `${user.twitch_username} you have no ${CONFIG.CURRENCY.SINGLE} to gamble. ${EMOTES.GAMBLE.LOST}`,
+    notEnough: `${user.twitch_username} you don't have enough ${CONFIG.CURRENCY.PLURAL} to gamble that amount. ${EMOTES.GAMBLE.INVALID}`,
   };
 
   if (user.cash < 1) {
@@ -26,21 +26,23 @@ export const onGamble = async (
   }
 
   const value = args[0];
+
+  if (!isNumber(value) && value !== 'all' && value !== 'half') return;
+
   const amount = parseInt(value, 10);
 
-  if (isNaN(amount) && value !== 'all' && value !== 'half') return;
   if (amount < 1) return;
 
   const probability = {
-    win: GAMBLE.WIN_PERCENT / 100,
-    loss: 1 - GAMBLE.WIN_PERCENT / 100,
+    win: CONFIG.FEATURES.GAMBLE.WIN_PERCENT / 100,
+    loss: 1 - CONFIG.FEATURES.GAMBLE.WIN_PERCENT / 100,
   };
 
   let points = user.cash;
   const result = weightedRandom(probability);
 
   const isOverLimit = (amount: number) => {
-    if (amount > GAMBLE_LIMIT) {
+    if (amount > CONFIG.FEATURES.GAMBLE.LIMIT) {
       Bots.twitch.say(channel, replies.maxReached);
       return true;
     }
@@ -55,7 +57,7 @@ export const onGamble = async (
       Bots.twitch.say(
         channel,
         `${user.twitch_username} won ${user.cash} ${getCurrency(user.cash)}! ${
-          TWITCH_GAMBLE_EMOTES.WIN
+          EMOTES.GAMBLE.WIN
         } Current balance: ${points} ${getCurrency(points)}`
       );
     } else {
@@ -72,9 +74,9 @@ export const onGamble = async (
         channel,
         `${user.twitch_username} won ${halfPoints} ${getCurrency(
           halfPoints
-        )}! ${
-          TWITCH_GAMBLE_EMOTES.WIN
-        } Current balance: ${points} ${getCurrency(points)}`
+        )}! ${EMOTES.GAMBLE.WIN} Current balance: ${points} ${getCurrency(
+          points
+        )}`
       );
     } else {
       points -= halfPoints;
@@ -82,9 +84,9 @@ export const onGamble = async (
         channel,
         `${user.twitch_username} lost ${halfPoints} ${getCurrency(
           halfPoints
-        )}. ${
-          TWITCH_GAMBLE_EMOTES.LOST
-        } Current balance: ${points} ${getCurrency(points)}`
+        )}. ${EMOTES.GAMBLE.LOST} Current balance: ${points} ${getCurrency(
+          points
+        )}`
       );
     }
   } else if (amount <= user.cash) {
@@ -95,7 +97,7 @@ export const onGamble = async (
       Bots.twitch.say(
         channel,
         `${user.twitch_username} won ${amount} ${getCurrency(amount)}! ${
-          TWITCH_GAMBLE_EMOTES.WIN
+          EMOTES.GAMBLE.WIN
         } Current balance: ${points} ${getCurrency(points)}`
       );
     } else {
@@ -103,7 +105,7 @@ export const onGamble = async (
       Bots.twitch.say(
         channel,
         `${user.twitch_username} lost ${amount} ${getCurrency(amount)}. ${
-          TWITCH_GAMBLE_EMOTES.LOST
+          EMOTES.GAMBLE.LOST
         } Current balance: ${points} ${getCurrency(points)}`
       );
     }
@@ -116,12 +118,11 @@ export const onGamble = async (
     await Bots.db
       ?.collection(Bots.env.MONGODB_USERS)
       .updateOne({ twitch_id: user.twitch_id }, { $set: { cash: points } });
-  } catch (err) {
+  } catch (error) {
     logEvent({
       Bots,
       type: LogEventType.Error,
-      description: `Twitch Database Error (Gamble): ` + JSON.stringify(err),
+      description: `Twitch Database Error (Gamble): ` + JSON.stringify(error),
     });
-    console.error(err);
   }
 };

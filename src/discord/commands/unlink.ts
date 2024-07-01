@@ -6,27 +6,22 @@ import {
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { NEW_USER } from '../../constants';
-import { DiscordCommandName, LogEventType } from '../../enums';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, COPY, INITIAL } from '../../constants';
+import { LogEventType } from '../../enums';
 import { logEvent } from '../../utils';
 import { addUser } from '../../utils/db';
 
-const COMMAND_DESCRIPTION =
-  'Unlink your accounts (All coins stay in your Discord account)';
-const COMMAND_OPTION = 'username';
-const COMMAND_OPTION_DESCRIPTION =
-  'Enter the Twitch username you want to unlink';
-
 export const AccountUnlink = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.AccountUnlink)
-    .setDescription(COMMAND_DESCRIPTION)
+    .setName(COPY.UNLINK.NAME)
+    .setDescription(COPY.UNLINK.DESCRIPTION)
     .addStringOption((option: SlashCommandStringOption) =>
       option
-        .setName(COMMAND_OPTION)
-        .setDescription(COMMAND_OPTION_DESCRIPTION)
+        .setName(COPY.UNLINK.OPTION_NAME)
+        .setDescription(COPY.UNLINK.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
   execute: async (
@@ -34,19 +29,26 @@ export const AccountUnlink = {
     interaction: CommandInteraction,
     user: UserObject
   ) => {
-    const replies = {
-      mismatched:
-        'The Twitch username you entered is not linked with your account.',
-      noLinked: 'Your account is not linked to a Twitch account.',
-      success: 'Success! Your accounts are not linked anymore.',
-    };
+    if (!CONFIG.FEATURES.UNLINK.ENABLED) {
+      try {
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
+        logEvent({
+          Bots,
+          type: LogEventType.Error,
+          description:
+            `Discord Command Error (Unlink): ` + JSON.stringify(error),
+        });
+      }
+      return;
+    }
 
     const twitchName = interaction.options.get('username')?.value;
 
     try {
       if (!user.twitch_id) {
         await interaction.reply({
-          content: replies.noLinked,
+          content: COPY.UNLINK.RESPONSES.NOLINK,
           ephemeral: true,
         });
         return;
@@ -54,14 +56,14 @@ export const AccountUnlink = {
 
       if (user.twitch_username !== twitchName) {
         await interaction.reply({
-          content: replies.mismatched,
+          content: COPY.UNLINK.RESPONSES.INVALID,
           ephemeral: true,
         });
         return;
       }
 
       const twitchData: UserObject = {
-        ...NEW_USER,
+        ...INITIAL.USER,
         user_id: uuidv4(),
         twitch_id: user.twitch_id,
         twitch_username: user.twitch_username,
@@ -77,24 +79,26 @@ export const AccountUnlink = {
           { $set: { twitch_id: null, twitch_username: null } }
         );
 
-      await interaction.reply({ content: replies.success, ephemeral: true });
+      await interaction.reply({
+        content: COPY.UNLINK.RESPONSES.SUCCESS,
+        ephemeral: true,
+      });
 
       logEvent({
         Bots,
         type: LogEventType.Activity,
         description: `${user.discord_username} aka ${user.discord_name} has unlinked their account: ${user.twitch_username}`,
       });
-    } catch (err) {
+    } catch (error) {
       logEvent({
         Bots,
         type: LogEventType.Error,
         description:
-          `Discord Command Error (AccountUnlink): ` + JSON.stringify(err),
+          `Discord Command Error (AccountUnlink): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
   },
   getName: (): string => {
-    return DiscordCommandName.AccountUnlink;
+    return COPY.UNLINK.NAME;
   },
 };
