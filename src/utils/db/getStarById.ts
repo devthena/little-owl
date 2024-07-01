@@ -2,7 +2,6 @@ import { StarObject } from 'src/schemas';
 import { BotsProps } from 'src/types';
 
 import { LogEventType } from '../../enums';
-import { logEvent } from '../logEvent';
 
 export const getStarById = async (
   Bots: BotsProps,
@@ -15,8 +14,7 @@ export const getStarById = async (
 
     return document ?? undefined;
   } catch (error) {
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Error,
       description: `Database Error (getStarById): ` + JSON.stringify(error),
     });

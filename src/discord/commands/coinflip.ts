@@ -4,7 +4,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent, weightedRandom } from '../../utils';
+import { weightedRandom } from '../../utils';
 
 export const CoinFlip = {
   data: new SlashCommandBuilder()
@@ -15,8 +15,7 @@ export const CoinFlip = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (CoinFlip): ` + JSON.stringify(error),
@@ -31,8 +30,7 @@ export const CoinFlip = {
     try {
       await interaction.reply(`You got... ${result}! ${EMOJIS.CURRENCY}`);
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description:
           `Discord Command Error (CoinFlip): ` + JSON.stringify(error),

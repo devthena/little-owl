@@ -2,7 +2,6 @@ import { BotsProps } from 'src/types';
 
 import { IGNORE_LIST } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const onPart = (
   Bots: BotsProps,
@@ -12,8 +11,7 @@ export const onPart = (
 ) => {
   if (IGNORE_LIST.includes(username)) return;
 
-  logEvent({
-    Bots,
+  Bots.log({
     type: LogEventType.User,
     description: `${username} has left the chat.`,
   });

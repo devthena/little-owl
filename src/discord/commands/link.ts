@@ -9,7 +9,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const AccountLink = {
   data: new SlashCommandBuilder()
@@ -30,8 +29,7 @@ export const AccountLink = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Link): ` + JSON.stringify(error),
         });
@@ -92,14 +90,12 @@ export const AccountLink = {
         ephemeral: true,
       });
 
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Activity,
         description: `${user.discord_username} aka ${user.discord_name} has linked their account: ${twitchUser.twitch_username}`,
       });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description:
           `Discord Command Error (AccountLink): ` + JSON.stringify(error),

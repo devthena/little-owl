@@ -10,7 +10,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const Leaderboard = {
   data: new SlashCommandBuilder()
@@ -21,8 +20,7 @@ export const Leaderboard = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Leaderboard): ` + JSON.stringify(error),
@@ -83,14 +81,12 @@ export const Leaderboard = {
     try {
       await interaction.reply({ embeds: [botEmbed] });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description:
           `Discord Command Error (Leaderboard): ` + JSON.stringify(error),
       });
     }
-
     return;
   },
   getName: (): string => {

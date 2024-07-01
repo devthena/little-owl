@@ -11,7 +11,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const Star = {
   data: new SlashCommandBuilder()
@@ -34,8 +33,7 @@ export const Star = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Star): ` + JSON.stringify(error),
         });
@@ -66,8 +64,7 @@ export const Star = {
           ephemeral: true,
         });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Star): ` + JSON.stringify(error),
         });
@@ -87,8 +84,7 @@ export const Star = {
         ?.collection(Bots.env.MONGODB_STARS)
         .updateOne({ discord_id: recipient.id }, { $inc: { stars: 1 } });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Discord Database Error (Star): ` + JSON.stringify(error),
       });
@@ -106,8 +102,7 @@ export const Star = {
     try {
       await interaction.reply({ embeds: [botEmbed] });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Discord Command Error (Star): ` + JSON.stringify(error),
       });

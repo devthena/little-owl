@@ -6,9 +6,8 @@ import {
 
 import { BotsProps } from 'src/types';
 
-import { CONFIG, COPY } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
+import { CONFIG, COPY } from '../../constants';
 
 export const EightBall = {
   data: new SlashCommandBuilder()
@@ -25,8 +24,7 @@ export const EightBall = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (8-Ball): ` + JSON.stringify(error),
@@ -43,8 +41,7 @@ export const EightBall = {
     try {
       await interaction.reply(`:8ball: says.. ${answer}`);
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Discord Command Error (8Ball): ` + JSON.stringify(error),
       });

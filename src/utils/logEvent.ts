@@ -1,6 +1,6 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
-import { LogProps } from 'src/types';
+import { BotsProps, LogProps } from 'src/types';
 import { CONFIG } from '../constants';
 
 const typeMap = {
@@ -30,14 +30,10 @@ const typeMap = {
   },
 };
 
-export const logEvent = ({
-  Bots,
-  type,
-  description,
-  authorIcon,
-  thumbnail,
-  footer,
-}: LogProps) => {
+export const logEvent = (
+  Bots: BotsProps,
+  { type, description, authorIcon, thumbnail, footer }: LogProps
+) => {
   const server = Bots.discord.guilds.cache.get(Bots.env.ADMIN_SERVER_ID);
 
   if (server && server.available) {

@@ -14,7 +14,7 @@ import * as tmi from 'tmi.js';
 import { MongoClient } from 'mongodb';
 const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
-import { BotsProps } from './types';
+import { BotsProps, LogProps } from './types';
 
 import {
   onGuildBanAdd,
@@ -42,6 +42,8 @@ import {
   onTimeout,
 } from './twitch/events';
 
+import { logEvent } from './utils';
+
 const Bots: BotsProps = {
   cooldowns: {
     streamAlerts: false,
@@ -65,6 +67,9 @@ const Bots: BotsProps = {
     MONGODB_STATS: process.env.MONGODB_STATS || '',
     MONGODB_USERS: process.env.MONGODB_USERS || '',
     SERVER_ID: process.env.SERVER_ID || '',
+  },
+  log: (props: LogProps) => {
+    logEvent(Bots, props);
   },
   twitch: new tmi.Client({
     options: { debug: true },

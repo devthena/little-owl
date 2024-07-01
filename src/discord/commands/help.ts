@@ -10,7 +10,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, URLS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const Help = {
   data: new SlashCommandBuilder()
@@ -21,8 +20,7 @@ export const Help = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Help): ` + JSON.stringify(error),
         });
@@ -50,8 +48,7 @@ export const Help = {
         components: [row],
       });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Discord Command Error (Help): ` + JSON.stringify(error),
       });

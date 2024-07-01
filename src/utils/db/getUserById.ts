@@ -2,7 +2,6 @@ import { UserObject } from 'src/schemas';
 import { BotsProps } from 'src/types';
 
 import { LogEventType } from '../../enums';
-import { logEvent } from '../logEvent';
 
 export const getUserById = async (
   Bots: BotsProps,
@@ -18,8 +17,7 @@ export const getUserById = async (
 
     return document ?? undefined;
   } catch (error) {
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Error,
       description: `Database Error (getUserById): ` + JSON.stringify(error),
     });

@@ -3,7 +3,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, EMOTES } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, isNumber, logEvent, weightedRandom } from '../../utils';
+import { getCurrency, isNumber, weightedRandom } from '../../utils';
 
 export const onGamble = async (
   Bots: BotsProps,
@@ -119,8 +119,7 @@ export const onGamble = async (
       ?.collection(Bots.env.MONGODB_USERS)
       .updateOne({ twitch_id: user.twitch_id }, { $set: { cash: points } });
   } catch (error) {
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Error,
       description: `Twitch Database Error (Gamble): ` + JSON.stringify(error),
     });

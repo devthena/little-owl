@@ -6,7 +6,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, INITIAL } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 import { addStar, addUser, getStarById, getUserById } from '../../utils/db';
 
 import {
@@ -140,8 +139,7 @@ export const onInteractionCreate = async (
             ephemeral: true,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Event Error (interactionCreate): ` +
@@ -169,8 +167,7 @@ export const onInteractionCreate = async (
             ephemeral: true,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Event Error (interactionCreate): ` +

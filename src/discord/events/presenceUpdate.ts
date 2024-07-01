@@ -9,7 +9,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const onPresenceUpdate = async (
   Bots: BotsProps,
@@ -55,8 +54,7 @@ export const onPresenceUpdate = async (
         newPresence.member?.roles
           .add(liveRole)
           .then(_data => {
-            logEvent({
-              Bots,
+            Bots.log({
               type: LogEventType.Activity,
               description: `${newPresence.member?.user.username} aka ${newPresence.member?.displayName} has started streaming.`,
               footer: `Discord User ID: ${newPresence.member?.id}`,

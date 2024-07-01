@@ -5,7 +5,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, logEvent, weightedRandom } from '../../utils';
+import { getCurrency, weightedRandom } from '../../utils';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
@@ -26,8 +26,7 @@ export const Gamble = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -49,8 +48,7 @@ export const Gamble = {
       try {
         await interaction.reply({ content: replies.noPoints, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -69,8 +67,7 @@ export const Gamble = {
           ephemeral: true,
         });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -87,8 +84,7 @@ export const Gamble = {
             ephemeral: true,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -120,8 +116,7 @@ export const Gamble = {
             } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -133,8 +128,7 @@ export const Gamble = {
         try {
           await interaction.reply({ content: replies.lostAll });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -155,8 +149,7 @@ export const Gamble = {
             } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -172,8 +165,7 @@ export const Gamble = {
             } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -187,8 +179,7 @@ export const Gamble = {
           ephemeral: true,
         });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -207,8 +198,7 @@ export const Gamble = {
             } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -224,8 +214,7 @@ export const Gamble = {
             } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
         } catch (error) {
-          logEvent({
-            Bots,
+          Bots.log({
             type: LogEventType.Error,
             description:
               `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -239,8 +228,7 @@ export const Gamble = {
           ephemeral: true,
         });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Gamble): ` + JSON.stringify(error),
@@ -254,8 +242,7 @@ export const Gamble = {
         ?.collection(Bots.env.MONGODB_USERS)
         .updateOne({ discord_id: user.discord_id }, { $set: { cash: points } });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description:
           `Discord Database Error (Gamble): ` + JSON.stringify(error),

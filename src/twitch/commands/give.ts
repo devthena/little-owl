@@ -3,7 +3,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, logEvent } from '../../utils';
+import { getCurrency } from '../../utils';
 
 export const onGive = async (
   Bots: BotsProps,
@@ -39,8 +39,7 @@ export const onGive = async (
 
     Bots.twitch.say(channel, replies.success);
   } catch (error) {
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Error,
       description: `Twitch Database Error (Give): ` + JSON.stringify(error),
     });

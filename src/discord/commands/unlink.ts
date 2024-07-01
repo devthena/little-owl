@@ -11,7 +11,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, INITIAL } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 import { addUser } from '../../utils/db';
 
 export const AccountUnlink = {
@@ -33,8 +32,7 @@ export const AccountUnlink = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Unlink): ` + JSON.stringify(error),
@@ -84,14 +82,12 @@ export const AccountUnlink = {
         ephemeral: true,
       });
 
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Activity,
         description: `${user.discord_username} aka ${user.discord_name} has unlinked their account: ${user.twitch_username}`,
       });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description:
           `Discord Command Error (AccountUnlink): ` + JSON.stringify(error),

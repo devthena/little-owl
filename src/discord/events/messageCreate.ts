@@ -6,7 +6,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, INITIAL } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 import { addUser, getUserById } from '../../utils/db';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
@@ -73,8 +72,7 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
         { $inc: { cash: incAmount } }
       );
   } catch (error) {
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Error,
       description:
         `Discord Database Error (messageCreate): ` + JSON.stringify(error),

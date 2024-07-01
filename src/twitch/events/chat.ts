@@ -6,7 +6,7 @@ import { BotsProps, ObjectProps } from 'src/types';
 import { onGamble, onGive } from '../commands';
 import { CONFIG, COPY, IGNORE_LIST, INITIAL, URLS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, isNumber, logEvent } from '../../utils';
+import { getCurrency, isNumber } from '../../utils';
 import { addUser, getUserById, getUserByName } from '../../utils/db';
 
 export const onChat = async (
@@ -54,8 +54,7 @@ export const onChat = async (
       `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
     );
 
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Activity,
       description: `${userstate.username} has redeemed conversion of ${
         points * 10
@@ -70,8 +69,7 @@ export const onChat = async (
           { $inc: { cash: points } }
         );
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Twitch Database Error (Chat): ` + JSON.stringify(error),
       });
@@ -142,8 +140,7 @@ export const onChat = async (
       ?.collection(Bots.env.MONGODB_USERS)
       .updateOne({ twitch_id: userstate['user-id'] }, { $inc: { cash: 1 } });
   } catch (error) {
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Error,
       description: `Twitch Database Error (Chat): ` + JSON.stringify(error),
     });

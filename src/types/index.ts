@@ -9,11 +9,11 @@ export interface BotsProps {
   db: Db | null;
   discord: djs.Client<boolean>;
   env: { [key: string]: string };
+  log: Function;
   twitch: tmi.Client;
 }
 
 export interface LogProps {
-  Bots: BotsProps;
   type: LogEventType;
   description: string;
   authorIcon?: string;

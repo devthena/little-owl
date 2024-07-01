@@ -5,7 +5,6 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const Points = {
   data: new SlashCommandBuilder()
@@ -20,8 +19,7 @@ export const Points = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description:
             `Discord Command Error (Points): ` + JSON.stringify(error),
@@ -35,8 +33,7 @@ export const Points = {
         `Your current balance is: ${user.cash} ${EMOJIS.CURRENCY}`
       );
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Discord Command Error (Points): ` + JSON.stringify(error),
       });

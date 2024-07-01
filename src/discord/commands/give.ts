@@ -5,7 +5,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, logEvent } from '../../utils';
+import { getCurrency } from '../../utils';
 
 export const Give = {
   data: new SlashCommandBuilder()
@@ -33,8 +33,7 @@ export const Give = {
       try {
         await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
@@ -57,8 +56,7 @@ export const Give = {
       try {
         await interaction.reply({ content: replies.noPoints, ephemeral: true });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
@@ -73,8 +71,7 @@ export const Give = {
           ephemeral: true,
         });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
@@ -89,8 +86,7 @@ export const Give = {
           ephemeral: true,
         });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
@@ -105,8 +101,7 @@ export const Give = {
           ephemeral: true,
         });
       } catch (error) {
-        logEvent({
-          Bots,
+        Bots.log({
           type: LogEventType.Error,
           description: `Discord Command Error (Give): ` + JSON.stringify(error),
         });
@@ -129,8 +124,7 @@ export const Give = {
           { $set: { cash: (user.cash -= amount) } }
         );
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Discord Database Error (Give): ` + JSON.stringify(error),
       });
@@ -141,8 +135,7 @@ export const Give = {
         content: `${replies.success} Current balance: ${user.cash} ${EMOJIS.CURRENCY}`,
       });
     } catch (error) {
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Error,
         description: `Discord Command Error (Give): ` + JSON.stringify(error),
       });
