@@ -1,22 +1,40 @@
-# Little Owl Bot
+# Little Owl
 
-AthenaUS Twitch and Discord Bot
+A private Twitch and Discord bot for the AthenaUS community.
 
-## Prep
-- install `nvm`, `yarn`
-- create a discord developer account
-- get added to the discord teaam (see "Contributing to codebase" section)
+This is a Node.js application using TMI.js and Discord.js with MongoDB.
 
-## Developement
-- create a `.env`file based on the `.env.sample` (ask codeowners for the secrets)
-- run `nvm use` to install/use the proper node version
-- run `yarn install` to install dependencies
-- run `yarn start` to run local instance of the bot
+For the official command list, you can check the [Parthenon website](https://parthenon.app/commands).
 
+The following are for the Team Developers:
 
-## Contributing to codebase
+## Preparation
 
-If you want to contribute to this bot, reach out to the admins and ask to be added to their developer team. Once added you should get an email invite thats tied to your account. Once you accept the invite, you should now see the application the [discord developer portal](https://discord.com/developers/applications)
+- Install `nvm` and `yarn`
+- Pull the latest `stage` branch after cloning the repository
+- Create a `.env` file based on the `.env.sample` (Ask the code owners for the secrets)
 
-#### Notes
-- to help with developer experience, enable developer mode in your discord app by going to `settings -> advance -> developer mode`
+## Development
+
+Enable developer mode in your Discord app by going to `Settings -> Advanced -> Developer Mode`
+
+### Command Registration
+
+- New commands for Discord would need to be registered
+- Run `yarn bot:register` to manually register all prod and stage commands
+
+### Local Environment
+
+- Run `nvm use` to use the proper Node version
+- Run `yarn install` to install dependencies
+- Run `yarn dev` to run a local instance of the bot using stage environment variables
+
+## Contribution
+
+If you want to contribute to this bot, reach out to the admins and ask to be added to their developer team. Once added, you should get an email invite that is tied to your account. You should then be able to see the application from the [Discord developer portal](https://discord.com/developers/applications).
+
+## Support or Feedback
+
+Join the AthenaUS community!
+
+You can contact Athena if you have any questions or feedback by [sending an email](mailto:athena@parthenon.app) or joining her [Discord server](https://discord.com/invite/5dzECDz).
