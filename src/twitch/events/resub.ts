@@ -1,6 +1,5 @@
-import { BotsProps, ObjectProps } from 'src/interfaces';
+import { BotsProps, ObjectProps } from 'src/types';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const onResub = (
   Bots: BotsProps,
@@ -12,8 +11,7 @@ export const onResub = (
   _methods: ObjectProps
 ) => {
   // @todo: Add logic for variations of resub event
-  logEvent({
-    Bots,
+  Bots.log({
     type: LogEventType.Alert,
     description: `${username} has resubbed to the channel!\n\nMessage: ${message}`,
   });

@@ -1,28 +1,43 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { BotsProps } from 'src/interfaces';
-import { DiscordCommandName, LogEventType } from '../../enums';
-import { logEvent, weightedRandom } from '../../utils';
+
+import { BotsProps } from 'src/types';
+
+import { CONFIG, COPY, EMOJIS } from '../../constants';
+import { LogEventType } from '../../enums';
+import { weightedRandom } from '../../utils';
 
 export const CoinFlip = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.CoinFlip)
-    .setDescription('Flip a coin!'),
+    .setName(COPY.COINFLIP.NAME)
+    .setDescription(COPY.COINFLIP.DESCRIPTION),
   execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
+    if (!CONFIG.FEATURES.COINFLIP.ENABLED) {
+      try {
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
+        Bots.log({
+          type: LogEventType.Error,
+          description:
+            `Discord Command Error (CoinFlip): ` + JSON.stringify(error),
+        });
+      }
+      return;
+    }
+
     const probability = { Heads: 0.5, Tails: 0.5 };
     const result = weightedRandom(probability);
 
     try {
-      await interaction.reply(`You got... ${result}! :coin:`);
-    } catch (err) {
-      logEvent({
-        Bots,
+      await interaction.reply(`You got... ${result}! ${EMOJIS.CURRENCY}`);
+    } catch (error) {
+      Bots.log({
         type: LogEventType.Error,
-        description: `Discord Command Error (CoinFlip): ` + JSON.stringify(err),
+        description:
+          `Discord Command Error (CoinFlip): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
   },
   getName: (): string => {
-    return DiscordCommandName.CoinFlip;
+    return COPY.COINFLIP.NAME;
   },
 };

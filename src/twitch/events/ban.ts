@@ -1,6 +1,5 @@
-import { BotsProps } from 'src/interfaces';
+import { BotsProps } from 'src/types';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const onBan = async (
   Bots: BotsProps,
@@ -8,8 +7,7 @@ export const onBan = async (
   username: string,
   _reason: string
 ) => {
-  logEvent({
-    Bots,
+  Bots.log({
     type: LogEventType.Leave,
     description: `${username} has been banned from ${channel}!`,
   });
@@ -19,20 +17,17 @@ export const onBan = async (
       ?.collection(Bots.env.MONGODB_USERS)
       .findOneAndDelete({ twitch_username: username });
 
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Deleted,
       description: `Record with username=${username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
       footer: `Twitch Username: ${username}`,
     });
-  } catch (err) {
+  } catch (error) {
     const description = `Twitch Database Error (Ban):\nError deleting record with twitch_username=${username} from collection ${Bots.env.MONGODB_USERS}.`;
 
-    logEvent({
-      Bots,
+    Bots.log({
       type: LogEventType.Error,
-      description: description + `\n\nDetails:\n${JSON.stringify(err)}`,
+      description: description + `\n\nDetails:\n${JSON.stringify(error)}`,
     });
-    console.error(err);
   }
 };

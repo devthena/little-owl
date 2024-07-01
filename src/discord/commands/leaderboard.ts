@@ -4,18 +4,32 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import { BotsProps } from 'src/interfaces';
-import { DiscordCommandName, LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
-import { COLORS, CURRENCY } from '../../constants';
+
 import { UserObject } from 'src/schemas';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, COPY, EMOJIS } from '../../constants';
+import { LogEventType } from '../../enums';
 
 export const Leaderboard = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.Leaderboard)
-    .setDescription('Display a leaderboard based on amount of coins'),
+    .setName(COPY.LEADERBOARD.NAME)
+    .setDescription(COPY.LEADERBOARD.DESCRIPTION),
   execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
-    const description = `Here are the users with the highest ${CURRENCY.PLURAL}!`;
+    if (!CONFIG.FEATURES.LEADERBOARD.ENABLED) {
+      try {
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
+        Bots.log({
+          type: LogEventType.Error,
+          description:
+            `Discord Command Error (Leaderboard): ` + JSON.stringify(error),
+        });
+      }
+      return;
+    }
+
+    const description = `Here are the users with the highest ${CONFIG.CURRENCY.PLURAL}!`;
 
     const topUsers = await Bots.db
       ?.collection<UserObject>(Bots.env.MONGODB_USERS)
@@ -26,14 +40,14 @@ export const Leaderboard = {
 
     if (!topUsers) {
       return await interaction.reply({
-        content: `Awkward.. it looks like nobody has any ${CURRENCY.SINGLE} right now.`,
+        content: `Awkward.. it looks like nobody has any ${CONFIG.CURRENCY.SINGLE} right now.`,
         ephemeral: true,
       });
     }
 
     const botEmbed = new EmbedBuilder()
       .setTitle('Leaderboard')
-      .setColor(COLORS.YELLOW as ColorResolvable);
+      .setColor(CONFIG.COLORS.YELLOW as ColorResolvable);
 
     let content = '';
     topUsers.forEach((top, i) => {
@@ -43,45 +57,39 @@ export const Leaderboard = {
 
       switch (i) {
         case 0:
-          content += `${i + 1}. ${name} :first_place:  |  ${
+          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.FIRST}  |  ${
             top.cash
-          } :coin:\n\n`;
+          } ${EMOJIS.CURRENCY}\n`;
           break;
         case 1:
-          content += `${i + 1}. ${name} :second_place:  |  ${
+          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.SECOND}  |  ${
             top.cash
-          } :coin:\n\n`;
+          } ${EMOJIS.CURRENCY}\n`;
           break;
         case 2:
-          content += `${i + 1}. ${name} :third_place:  |  ${
+          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.THIRD}  |  ${
             top.cash
-          } :coin:\n\n`;
+          } ${EMOJIS.CURRENCY}\n`;
           break;
         default:
-          content += `${i + 1}. ${name}  |  ${top.cash} :coin:\n\n`;
+          content += `${i + 1}. ${name}  |  ${top.cash} ${EMOJIS.CURRENCY}\n`;
       }
     });
 
-    botEmbed.addFields({
-      name: description,
-      value: content,
-    });
+    botEmbed.addFields({ name: description, value: content });
 
     try {
       await interaction.reply({ embeds: [botEmbed] });
-    } catch (err) {
-      logEvent({
-        Bots,
+    } catch (error) {
+      Bots.log({
         type: LogEventType.Error,
         description:
-          `Discord Command Error (Leaderboard): ` + JSON.stringify(err),
+          `Discord Command Error (Leaderboard): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
-
     return;
   },
   getName: (): string => {
-    return DiscordCommandName.Leaderboard;
+    return COPY.LEADERBOARD.NAME;
   },
 };

@@ -1,7 +1,7 @@
-import { BotsProps } from 'src/interfaces';
+import { BotsProps } from 'src/types';
+
 import { IGNORE_LIST } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const onJoin = async (
   Bots: BotsProps,
@@ -12,8 +12,7 @@ export const onJoin = async (
   if (self) return console.log('* Twitch LittleOwl is online *');
   if (IGNORE_LIST.includes(username)) return;
 
-  logEvent({
-    Bots,
+  Bots.log({
     type: LogEventType.User,
     description: `${username} has joined the chat.`,
   });

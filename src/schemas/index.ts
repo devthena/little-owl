@@ -1,3 +1,3 @@
-export * from './activities';
-export * from './stats';
+export * from './bank';
+export * from './stars';
 export * from './user';

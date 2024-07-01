@@ -4,23 +4,20 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { BotsProps } from 'src/interfaces';
 import { UserObject } from 'src/schemas';
-import { DiscordCommandName, LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
+import { BotsProps } from 'src/types';
 
-const COMMAND_DESCRIPTION = 'Link your Twitch account to merge your coins!';
-const COMMAND_OPTION = 'code';
-const COMMAND_OPTION_DESCRIPTION = 'Enter the account link code';
+import { CONFIG, COPY } from '../../constants';
+import { LogEventType } from '../../enums';
 
 export const AccountLink = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.AccountLink)
-    .setDescription(COMMAND_DESCRIPTION)
+    .setName(COPY.LINK.NAME)
+    .setDescription(COPY.LINK.DESCRIPTION)
     .addStringOption((option: SlashCommandStringOption) =>
       option
-        .setName(COMMAND_OPTION)
-        .setDescription(COMMAND_OPTION_DESCRIPTION)
+        .setName(COPY.LINK.OPTION_NAME)
+        .setDescription(COPY.LINK.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
   execute: async (
@@ -28,22 +25,24 @@ export const AccountLink = {
     interaction: CommandInteraction,
     user: UserObject
   ) => {
-    const replies = {
-      invalidCode:
-        'Invalid code. Login at https://parthenon.app via Twitch to get the right code.',
-      isLinkedTwitch:
-        'This Twitch account is already linked with another Discord account.',
-      isLinkedDiscord:
-        'Your account is already linked with another Twitch account.',
-      success: 'Success! Your accounts are now linked.',
-    };
+    if (!CONFIG.FEATURES.LINK.ENABLED) {
+      try {
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
+        Bots.log({
+          type: LogEventType.Error,
+          description: `Discord Command Error (Link): ` + JSON.stringify(error),
+        });
+      }
+      return;
+    }
 
     const code = interaction.options.get('code')?.value;
 
     try {
       if (user.twitch_id) {
         await interaction.reply({
-          content: replies.isLinkedDiscord,
+          content: COPY.LINK.RESPONSES.LINKED_DISCORD,
           ephemeral: true,
         });
         return;
@@ -55,7 +54,7 @@ export const AccountLink = {
 
       if (!twitchUser) {
         await interaction.reply({
-          content: replies.invalidCode,
+          content: COPY.LINK.RESPONSES.INVALID,
           ephemeral: true,
         });
         return;
@@ -63,7 +62,7 @@ export const AccountLink = {
 
       if (twitchUser && twitchUser.discord_id) {
         await interaction.reply({
-          content: replies.isLinkedTwitch,
+          content: COPY.LINK.RESPONSES.LINKED_TWITCH,
           ephemeral: true,
         });
         return;
@@ -86,24 +85,24 @@ export const AccountLink = {
         ?.collection(Bots.env.MONGODB_USERS)
         .deleteOne({ user_id: code });
 
-      await interaction.reply({ content: replies.success, ephemeral: true });
+      await interaction.reply({
+        content: COPY.LINK.RESPONSES.SUCCESS,
+        ephemeral: true,
+      });
 
-      logEvent({
-        Bots,
+      Bots.log({
         type: LogEventType.Activity,
         description: `${user.discord_username} aka ${user.discord_name} has linked their account: ${twitchUser.twitch_username}`,
       });
-    } catch (err) {
-      logEvent({
-        Bots,
+    } catch (error) {
+      Bots.log({
         type: LogEventType.Error,
         description:
-          `Discord Command Error (AccountLink): ` + JSON.stringify(err),
+          `Discord Command Error (AccountLink): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
   },
   getName: (): string => {
-    return DiscordCommandName.AccountLink;
+    return COPY.LINK.NAME;
   },
 };

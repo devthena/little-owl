@@ -1,57 +1,55 @@
 import {
+  ColorResolvable,
   CommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
+  User,
 } from 'discord.js';
 
-import { BotsProps } from 'src/interfaces';
-import { UserObject } from 'src/schemas';
-import { STAR } from '../../configs';
-import { DiscordCommandName, LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
+import { StarObject } from 'src/schemas';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, COPY, EMOJIS } from '../../constants';
+import { LogEventType } from '../../enums';
 
 export const Star = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.Star)
-    .setDescription('Give a star to a user as a form of endorsement')
+    .setName(COPY.STAR.NAME)
+    .setDescription(COPY.STAR.DESCRIPTION)
     .addUserOption(option =>
       option
-        .setName('user')
-        .setDescription('Tag the friend you want to give the star to')
+        .setName(COPY.STAR.OPTION_NAME)
+        .setDescription(COPY.STAR.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserObject,
-    recipient: UserObject
+    user: StarObject,
+    userName: string,
+    recipient: User
   ) => {
-    if (!STAR.ENABLED) {
+    if (!CONFIG.FEATURES.STAR.ENABLED) {
       try {
-        await interaction.reply({
-          content: 'Giving stars is not enabled in this server.',
-          ephemeral: true,
-        });
-      } catch (err) {
-        logEvent({
-          Bots,
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
+        Bots.log({
           type: LogEventType.Error,
-          description: `Discord Command Error (Star): ` + JSON.stringify(err),
+          description: `Discord Command Error (Star): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
 
     const replies = {
-      invalidMax: 'You can only give one star per day.',
-      invalidSelf: `You can't give yourself a star. :neutral_face:`,
+      invalidMax: `You can only give one star per day. ${EMOJIS.STAR.INVALID}`,
+      invalidSelf: `You can't give yourself a star. ${EMOJIS.STAR.INVALID}`,
     };
 
     const now = new Date();
-    // const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    const today = now.toDateString();
 
-    if (user.discord_id === recipient.discord_id) {
+    if (user.discord_id === recipient.id) {
       await interaction.reply({
         content: replies.invalidSelf,
         ephemeral: true,
@@ -59,69 +57,58 @@ export const Star = {
       return;
     }
 
-    // @todo: Use activity collection to determine and set last_star value
-
-    // if (user.last_star === today) {
-    //   try {
-    //     await interaction.reply({
-    //       content: replies.invalidMax,
-    //       ephemeral: true,
-    //     });
-    //   } catch (err) {
-    //     logEvent({
-    //       Bots,
-    //       type: LogEventType.Error,
-    //       description: `Discord Command Error (Star): ` + JSON.stringify(err),
-    //     });
-    //     console.error(err);
-    //   }
-    //   return;
-    // }
-
-    try {
-      // await Bots.db
-      //   ?.collection(Bots.env.MONGODB_ACTIVITIES_USER)
-      //   .updateOne(
-      //     { discord_id: user.discord_id },
-      //     { $set: { last_star: today } }
-      //   );
-
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: recipient.discord_id },
-          { $inc: { stars: 1 } }
-        );
-    } catch (err) {
-      logEvent({
-        Bots,
-        type: LogEventType.Error,
-        description: `Discord Database Error (Star): ` + JSON.stringify(err),
-      });
-      console.error(err);
+    if (user.last_given === today) {
+      try {
+        await interaction.reply({
+          content: replies.invalidMax,
+          ephemeral: true,
+        });
+      } catch (error) {
+        Bots.log({
+          type: LogEventType.Error,
+          description: `Discord Command Error (Star): ` + JSON.stringify(error),
+        });
+      }
+      return;
     }
 
+    try {
+      await Bots.db
+        ?.collection(Bots.env.MONGODB_STARS)
+        .updateOne(
+          { discord_id: user.discord_id },
+          { $inc: { total_given: 1 }, $set: { last_given: today } }
+        );
+
+      await Bots.db
+        ?.collection(Bots.env.MONGODB_STARS)
+        .updateOne({ discord_id: recipient.id }, { $inc: { stars: 1 } });
+    } catch (error) {
+      Bots.log({
+        type: LogEventType.Error,
+        description: `Discord Database Error (Star): ` + JSON.stringify(error),
+      });
+    }
+
+    const recipientName = recipient.globalName || recipient.username;
+
     const botEmbed = new EmbedBuilder()
-      .setTitle(
-        `${recipient.discord_username} got a star from ${user.discord_username}!`
-      )
+      .setColor(CONFIG.COLORS.YELLOW as ColorResolvable)
+      .setTitle(`${recipientName} got a star from ${userName}!`)
       .setDescription(
-        'Give stars to someone as a form of endorsement! :sparkles:'
-      )
-      .setFooter({ text: `Star given on ${now}` });
+        `Endorse a community member by giving them a star! ${EMOJIS.STAR.EMBED}`
+      );
 
     try {
       await interaction.reply({ embeds: [botEmbed] });
-    } catch (err) {
-      logEvent({
-        Bots,
+    } catch (error) {
+      Bots.log({
         type: LogEventType.Error,
-        description: `Discord Command Error (Star): ` + JSON.stringify(err),
+        description: `Discord Command Error (Star): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
   },
   getName: (): string => {
-    return DiscordCommandName.Star;
+    return COPY.STAR.NAME;
   },
 };

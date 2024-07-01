@@ -1,19 +1,20 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { BotsProps } from 'src/interfaces';
+
 import { UserObject } from 'src/schemas';
-import { GAMBLE } from '../../configs';
-import { CURRENCY, GAMBLE_LIMIT } from '../../constants';
-import { DiscordCommandName, LogEventType } from '../../enums';
-import { getCurrency, logEvent, weightedRandom } from '../../utils';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, COPY, EMOJIS } from '../../constants';
+import { LogEventType } from '../../enums';
+import { getCurrency, weightedRandom } from '../../utils';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.Gamble)
-    .setDescription('Play your points for a chance to double it')
+    .setName(COPY.GAMBLE.NAME)
+    .setDescription(COPY.GAMBLE.DESCRIPTION)
     .addStringOption(option =>
       option
-        .setName('amount')
-        .setDescription('Enter a specific amount, "all" or "half"')
+        .setName(COPY.GAMBLE.OPTION_NAME)
+        .setDescription(COPY.GAMBLE.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
   execute: async (
@@ -21,42 +22,37 @@ export const Gamble = {
     interaction: CommandInteraction,
     user: UserObject
   ) => {
-    if (!GAMBLE.ENABLED) {
+    if (!CONFIG.FEATURES.GAMBLE.ENABLED) {
       try {
-        await interaction.reply({
-          content: 'Gambling is not enabled in this server.',
-          ephemeral: true,
-        });
-      } catch (err) {
-        logEvent({
-          Bots,
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
+        Bots.log({
           type: LogEventType.Error,
-          description: `Discord Command Error (Gamble): ` + JSON.stringify(err),
+          description:
+            `Discord Command Error (Gamble): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
 
     const replies = {
       invalidInput: 'Enter a specific amount, "all", or "half".',
-      invalidNegative: `You should gamble at least 1 ${CURRENCY.SINGLE}.`,
-      lostAll: `You lost all of your ${CURRENCY.PLURAL}. :money_with_wings:`,
-      maxReached: `You can only gamble up to ${GAMBLE_LIMIT} ${CURRENCY.PLURAL}. :neutral_face:`,
-      noPoints: `You have no ${CURRENCY.SINGLE} to gamble. :neutral_face:`,
-      notEnough: `You don't have enough ${CURRENCY.PLURAL} to gamble that amount. :neutral_face:`,
+      invalidNegative: `You should gamble at least 1 ${CONFIG.CURRENCY.SINGLE}.`,
+      lostAll: `You lost all of your ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.GAMBLE.LOST}`,
+      maxReached: `You can only gamble up to ${CONFIG.FEATURES.GAMBLE.LIMIT} ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.GAMBLE.INVALID}`,
+      noPoints: `You have no ${CONFIG.CURRENCY.SINGLE} to gamble. ${EMOJIS.GAMBLE.INVALID}`,
+      notEnough: `You don't have enough ${CONFIG.CURRENCY.PLURAL} to gamble that amount. ${EMOJIS.GAMBLE.INVALID}`,
     };
 
     if (user.cash < 1) {
       try {
         await interaction.reply({ content: replies.noPoints, ephemeral: true });
-      } catch (err) {
-        logEvent({
-          Bots,
+      } catch (error) {
+        Bots.log({
           type: LogEventType.Error,
-          description: `Discord Command Error (Gamble): ` + JSON.stringify(err),
+          description:
+            `Discord Command Error (Gamble): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
@@ -70,32 +66,29 @@ export const Gamble = {
           content: replies.invalidInput,
           ephemeral: true,
         });
-      } catch (err) {
-        logEvent({
-          Bots,
+      } catch (error) {
+        Bots.log({
           type: LogEventType.Error,
-          description: `Discord Command Error (Gamble): ` + JSON.stringify(err),
+          description:
+            `Discord Command Error (Gamble): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
 
     const isOverLimit = async (amount: number) => {
-      if (amount > GAMBLE_LIMIT) {
+      if (amount > CONFIG.FEATURES.GAMBLE.LIMIT) {
         try {
           await interaction.reply({
             content: replies.maxReached,
             ephemeral: true,
           });
-        } catch (err) {
-          logEvent({
-            Bots,
+        } catch (error) {
+          Bots.log({
             type: LogEventType.Error,
             description:
-              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+              `Discord Command Error (Gamble): ` + JSON.stringify(error),
           });
-          console.error(err);
         }
         return true;
       }
@@ -103,8 +96,8 @@ export const Gamble = {
     };
 
     const probability = {
-      win: GAMBLE.WIN_PERCENT / 100,
-      loss: 1 - GAMBLE.WIN_PERCENT / 100,
+      win: CONFIG.FEATURES.GAMBLE.WIN_PERCENT / 100,
+      loss: 1 - CONFIG.FEATURES.GAMBLE.WIN_PERCENT / 100,
     };
 
     let points = user.cash;
@@ -118,32 +111,28 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You won ${user.cash} ${getCurrency(
-              user.cash
-            )}! :moneybag: Current balance: ${points} :coin:`,
+            content: `You won ${user.cash} ${getCurrency(user.cash)}! ${
+              EMOJIS.GAMBLE.WIN
+            } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
-        } catch (err) {
-          logEvent({
-            Bots,
+        } catch (error) {
+          Bots.log({
             type: LogEventType.Error,
             description:
-              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+              `Discord Command Error (Gamble): ` + JSON.stringify(error),
           });
-          console.error(err);
         }
       } else {
         points = 0;
 
         try {
           await interaction.reply({ content: replies.lostAll });
-        } catch (err) {
-          logEvent({
-            Bots,
+        } catch (error) {
+          Bots.log({
             type: LogEventType.Error,
             description:
-              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+              `Discord Command Error (Gamble): ` + JSON.stringify(error),
           });
-          console.error(err);
         }
       }
     } else if (arg === 'half') {
@@ -155,36 +144,32 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You won ${halfPoints} ${getCurrency(
-              halfPoints
-            )}! :moneybag: Current balance: ${points} :coin:`,
+            content: `You won ${halfPoints} ${getCurrency(halfPoints)}! ${
+              EMOJIS.GAMBLE.WIN
+            } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
-        } catch (err) {
-          logEvent({
-            Bots,
+        } catch (error) {
+          Bots.log({
             type: LogEventType.Error,
             description:
-              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+              `Discord Command Error (Gamble): ` + JSON.stringify(error),
           });
-          console.error(err);
         }
       } else {
         points -= halfPoints;
 
         try {
           await interaction.reply({
-            content: `You lost ${halfPoints} ${getCurrency(
-              halfPoints
-            )}. :money_with_wings: Current balance: ${points} :coin:`,
+            content: `You lost ${halfPoints} ${getCurrency(halfPoints)}. ${
+              EMOJIS.GAMBLE.LOST
+            } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
-        } catch (err) {
-          logEvent({
-            Bots,
+        } catch (error) {
+          Bots.log({
             type: LogEventType.Error,
             description:
-              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+              `Discord Command Error (Gamble): ` + JSON.stringify(error),
           });
-          console.error(err);
         }
       }
     } else if (amount < 1) {
@@ -193,13 +178,12 @@ export const Gamble = {
           content: replies.invalidNegative,
           ephemeral: true,
         });
-      } catch (err) {
-        logEvent({
-          Bots,
+      } catch (error) {
+        Bots.log({
           type: LogEventType.Error,
-          description: `Discord Command Error (Gamble): ` + JSON.stringify(err),
+          description:
+            `Discord Command Error (Gamble): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
     } else if (amount <= user.cash) {
       if (await isOverLimit(amount)) return;
@@ -209,36 +193,32 @@ export const Gamble = {
 
         try {
           await interaction.reply({
-            content: `You won ${amount} ${getCurrency(
-              amount
-            )}! :moneybag: Current balance: ${points} :coin:`,
+            content: `You won ${amount} ${getCurrency(amount)}! ${
+              EMOJIS.GAMBLE.WIN
+            } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
-        } catch (err) {
-          logEvent({
-            Bots,
+        } catch (error) {
+          Bots.log({
             type: LogEventType.Error,
             description:
-              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+              `Discord Command Error (Gamble): ` + JSON.stringify(error),
           });
-          console.error(err);
         }
       } else {
         points -= amount;
 
         try {
           await interaction.reply({
-            content: `You lost ${amount} ${getCurrency(
-              amount
-            )}. :money_with_wings: Current balance: ${points} :coin:`,
+            content: `You lost ${amount} ${getCurrency(amount)}. ${
+              EMOJIS.GAMBLE.LOST
+            } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           });
-        } catch (err) {
-          logEvent({
-            Bots,
+        } catch (error) {
+          Bots.log({
             type: LogEventType.Error,
             description:
-              `Discord Command Error (Gamble): ` + JSON.stringify(err),
+              `Discord Command Error (Gamble): ` + JSON.stringify(error),
           });
-          console.error(err);
         }
       }
     } else if (amount > user.cash) {
@@ -247,13 +227,12 @@ export const Gamble = {
           content: replies.notEnough,
           ephemeral: true,
         });
-      } catch (err) {
-        logEvent({
-          Bots,
+      } catch (error) {
+        Bots.log({
           type: LogEventType.Error,
-          description: `Discord Command Error (Gamble): ` + JSON.stringify(err),
+          description:
+            `Discord Command Error (Gamble): ` + JSON.stringify(error),
         });
-        console.error(err);
       }
       return;
     }
@@ -262,16 +241,15 @@ export const Gamble = {
       await Bots.db
         ?.collection(Bots.env.MONGODB_USERS)
         .updateOne({ discord_id: user.discord_id }, { $set: { cash: points } });
-    } catch (err) {
-      logEvent({
-        Bots,
+    } catch (error) {
+      Bots.log({
         type: LogEventType.Error,
-        description: `Discord Database Error (Gamble): ` + JSON.stringify(err),
+        description:
+          `Discord Database Error (Gamble): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
   },
   getName: (): string => {
-    return DiscordCommandName.Gamble;
+    return COPY.GAMBLE.NAME;
   },
 };

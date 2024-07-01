@@ -6,27 +6,40 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { BotsProps } from 'src/interfaces';
-import { DiscordCommandName, LogEventType, ParthenonURL } from '../../enums';
-import { logEvent } from '../../utils';
+import { BotsProps } from 'src/types';
+
+import { CONFIG, COPY, URLS } from '../../constants';
+import { LogEventType } from '../../enums';
 
 export const Help = {
   data: new SlashCommandBuilder()
-    .setName(DiscordCommandName.Help)
-    .setDescription('Display helpful links about commands and FAQ'),
+    .setName(COPY.HELP.NAME)
+    .setDescription(COPY.HELP.DESCRIPTION),
   execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
+    if (!CONFIG.FEATURES.HELP.ENABLED) {
+      try {
+        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
+      } catch (error) {
+        Bots.log({
+          type: LogEventType.Error,
+          description: `Discord Command Error (Help): ` + JSON.stringify(error),
+        });
+      }
+      return;
+    }
+
     const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
           .setLabel('Commands')
           .setStyle(ButtonStyle.Link)
-          .setURL(ParthenonURL.Commands)
+          .setURL(URLS.COMMANDS)
       )
       .addComponents(
         new ButtonBuilder()
           .setLabel('FAQ')
           .setStyle(ButtonStyle.Link)
-          .setURL(ParthenonURL.FAQ)
+          .setURL(URLS.FAQ)
       );
 
     try {
@@ -34,16 +47,14 @@ export const Help = {
         content: 'Here are some links you might be interested in:',
         components: [row],
       });
-    } catch (err) {
-      logEvent({
-        Bots,
+    } catch (error) {
+      Bots.log({
         type: LogEventType.Error,
-        description: `Discord Command Error (Help): ` + JSON.stringify(err),
+        description: `Discord Command Error (Help): ` + JSON.stringify(error),
       });
-      console.error(err);
     }
   },
   getName: (): string => {
-    return DiscordCommandName.Help;
+    return COPY.HELP.NAME;
   },
 };

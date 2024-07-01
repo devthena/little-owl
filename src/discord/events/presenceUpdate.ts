@@ -5,11 +5,10 @@ import {
   Presence,
 } from 'discord.js';
 
-import { BotsProps } from 'src/interfaces';
-import { LIVE_ROLE, STREAM_ALERTS } from '../../configs';
-import { COLORS } from '../../constants';
+import { BotsProps } from 'src/types';
+
+import { CONFIG } from '../../constants';
 import { LogEventType } from '../../enums';
-import { logEvent } from '../../utils';
 
 export const onPresenceUpdate = async (
   Bots: BotsProps,
@@ -19,7 +18,7 @@ export const onPresenceUpdate = async (
   if (!newPresence.guild?.available) return;
 
   const liveRole = newPresence.guild.roles.cache.find(
-    role => LIVE_ROLE.ENABLED && role.id === LIVE_ROLE.ID
+    role => CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
   );
 
   // member has gone offline
@@ -55,8 +54,7 @@ export const onPresenceUpdate = async (
         newPresence.member?.roles
           .add(liveRole)
           .then(_data => {
-            logEvent({
-              Bots,
+            Bots.log({
               type: LogEventType.Activity,
               description: `${newPresence.member?.user.username} aka ${newPresence.member?.displayName} has started streaming.`,
               footer: `Discord User ID: ${newPresence.member?.id}`,
@@ -68,7 +66,7 @@ export const onPresenceUpdate = async (
       // stream announcement for server owner
       if (
         !hasBeenStreaming &&
-        STREAM_ALERTS.ENABLED &&
+        CONFIG.ALERTS.LIVE.ENABLED &&
         newPresence.guild.ownerId === newPresence.member?.id
       ) {
         const streamActivity = newPresence.activities.find(
@@ -76,7 +74,7 @@ export const onPresenceUpdate = async (
         );
 
         const streamAlertChannelExists = newPresence.guild.channels.cache.find(
-          channel => channel.id === STREAM_ALERTS.CHANNEL_ID
+          channel => channel.id === CONFIG.ALERTS.LIVE.ID
         );
 
         if (
@@ -92,7 +90,7 @@ export const onPresenceUpdate = async (
           const liveImage = streamActivity.assets?.largeImageURL();
 
           const botEmbed = new EmbedBuilder()
-            .setColor(COLORS.BLUE as ColorResolvable)
+            .setColor(CONFIG.COLORS.BLUE as ColorResolvable)
             .setAuthor({
               name: newPresence.member.displayName,
               iconURL: newPresence.member.displayAvatarURL(),
@@ -107,7 +105,7 @@ export const onPresenceUpdate = async (
           if (liveImage) botEmbed.setImage(liveImage);
 
           const streamAlertChannel = newPresence.guild.channels.cache.get(
-            STREAM_ALERTS.CHANNEL_ID
+            CONFIG.ALERTS.LIVE.ID
           );
 
           if (!streamAlertChannel || !streamAlertChannel.isTextBased()) return;
@@ -123,7 +121,7 @@ export const onPresenceUpdate = async (
 
               setTimeout(() => {
                 Bots.cooldowns.streamAlerts = false;
-              }, STREAM_ALERTS.COOLDOWN_MS);
+              }, CONFIG.ALERTS.LIVE.COOLDOWN_MS);
             });
         }
       }

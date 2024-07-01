@@ -1,20 +1,20 @@
 import { Client } from 'discord.js';
-import { BOT_ACTIVITIES } from '../constants';
+import { CONFIG } from '../constants';
 
 let timer: NodeJS.Timeout | null = null;
 let pointer: number = 0;
 
 export const discordBotTimer = (Bot: Client) => {
-  if (pointer < BOT_ACTIVITIES.length) {
-    const activityName = BOT_ACTIVITIES[pointer].name;
-    const activityType = BOT_ACTIVITIES[pointer].type;
+  if (pointer < CONFIG.ACTIVITIES.length) {
+    const activityName = CONFIG.ACTIVITIES[pointer].name;
+    const activityType = CONFIG.ACTIVITIES[pointer].type;
 
     Bot.user?.setActivity(activityName, {
       type: activityType,
     });
 
     pointer++;
-    if (pointer >= BOT_ACTIVITIES.length) pointer = 0;
+    if (pointer >= CONFIG.ACTIVITIES.length) pointer = 0;
   }
 
   if (timer) clearTimeout(timer);

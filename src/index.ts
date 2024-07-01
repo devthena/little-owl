@@ -14,7 +14,7 @@ import * as tmi from 'tmi.js';
 import { MongoClient } from 'mongodb';
 const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
-import { BotsProps } from './interfaces';
+import { BotsProps, LogProps } from './types';
 
 import {
   onGuildBanAdd,
@@ -42,6 +42,8 @@ import {
   onTimeout,
 } from './twitch/events';
 
+import { logEvent } from './utils';
+
 const Bots: BotsProps = {
   cooldowns: {
     streamAlerts: false,
@@ -61,15 +63,13 @@ const Bots: BotsProps = {
   }),
   env: {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    MONGODB_STATS:
-      (process.env.STAGING
-        ? process.env.MONGODB_STATS_STAGE
-        : process.env.MONGODB_STATS_PROD) || '',
-    MONGODB_USERS:
-      (process.env.STAGING
-        ? process.env.MONGODB_USERS_STAGE
-        : process.env.MONGODB_USERS_PROD) || '',
+    MONGODB_STARS: process.env.MONGODB_STARS || '',
+    MONGODB_STATS: process.env.MONGODB_STATS || '',
+    MONGODB_USERS: process.env.MONGODB_USERS || '',
     SERVER_ID: process.env.SERVER_ID || '',
+  },
+  log: (props: LogProps) => {
+    logEvent(Bots, props);
   },
   twitch: new tmi.Client({
     options: { debug: true },
@@ -90,7 +90,11 @@ const initBots = async () => {
 
   console.log('* Database connection successful *');
 
-  Bots.db = dbClient.db(process.env.MONGODB_DB);
+  const database = process.env.STAGING
+    ? process.env.MONGODB_DB_TEST
+    : process.env.MONGODB_DB;
+
+  Bots.db = dbClient.db(database);
 
   Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
   Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
@@ -115,7 +119,7 @@ const initBots = async () => {
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
   Bots.discord.login(process.env.DISCORD_TOKEN);
-  Bots.twitch.connect().catch(console.error);
+  Bots.twitch.connect();
 };
 
 initBots();
