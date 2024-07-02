@@ -17,15 +17,12 @@ export const Leaderboard = {
     .setDescription(COPY.LEADERBOARD.DESCRIPTION),
   execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
     if (!CONFIG.FEATURES.LEADERBOARD.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description:
-            `Discord Command Error (Leaderboard): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.LEADERBOARD.NAME,
+      });
       return;
     }
 
@@ -84,7 +81,8 @@ export const Leaderboard = {
       Bots.log({
         type: LogEventType.Error,
         description:
-          `Discord Command Error (Leaderboard): ` + JSON.stringify(error),
+          `Discord Command Error (${COPY.LEADERBOARD.NAME}): ` +
+          JSON.stringify(error),
       });
     }
     return;

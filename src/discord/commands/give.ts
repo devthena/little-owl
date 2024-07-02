@@ -30,18 +30,17 @@ export const Give = {
     recipient: UserObject
   ) => {
     if (!CONFIG.FEATURES.GIVE.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.GIVE.NAME,
+      });
       return;
     }
 
     const amount = Number(interaction.options.get('amount')?.value) || 0;
+
     const replies = {
       invalidNegative: `You should give at least 1 ${CONFIG.CURRENCY.SINGLE}.`,
       invalidRecipient: `You can't give yourself ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.GIVE.INVALID}`,
@@ -53,59 +52,42 @@ export const Give = {
     };
 
     if (user.cash < 1) {
-      try {
-        await interaction.reply({ content: replies.noPoints, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: replies.noPoints,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.GIVE.NAME,
+      });
       return;
     }
 
     if (amount < 1) {
-      try {
-        await interaction.reply({
-          content: replies.invalidNegative,
-          ephemeral: true,
-        });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: replies.invalidNegative,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.GIVE.NAME,
+      });
       return;
     }
 
     if (user.cash < amount) {
-      try {
-        await interaction.reply({
-          content: replies.notEnough,
-          ephemeral: true,
-        });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: replies.notEnough,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.GIVE.NAME,
+      });
       return;
     }
 
     if (user.discord_id === recipient.discord_id) {
-      try {
-        await interaction.reply({
-          content: replies.invalidRecipient,
-          ephemeral: true,
-        });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Give): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: replies.invalidRecipient,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.GIVE.NAME,
+      });
       return;
     }
 
@@ -130,16 +112,12 @@ export const Give = {
       });
     }
 
-    try {
-      await interaction.reply({
-        content: `${replies.success} Current balance: ${user.cash} ${EMOJIS.CURRENCY}`,
-      });
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description: `Discord Command Error (Give): ` + JSON.stringify(error),
-      });
-    }
+    Bots.reply({
+      content: `${replies.success} Current balance: ${user.cash} ${EMOJIS.CURRENCY}`,
+      ephimeral: false,
+      interaction: interaction,
+      source: COPY.GIVE.NAME,
+    });
   },
   getName: (): string => {
     return COPY.GIVE.NAME;

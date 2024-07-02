@@ -26,28 +26,28 @@ export const AccountLink = {
     user: UserObject
   ) => {
     if (!CONFIG.FEATURES.LINK.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Link): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.LINK.NAME,
+      });
       return;
     }
 
     const code = interaction.options.get('code')?.value;
 
-    try {
-      if (user.twitch_id) {
-        await interaction.reply({
-          content: COPY.LINK.RESPONSES.LINKED_DISCORD,
-          ephemeral: true,
-        });
-        return;
-      }
+    if (user.twitch_id) {
+      Bots.reply({
+        content: COPY.LINK.RESPONSES.LINKED_DISCORD,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.LINK.NAME,
+      });
+      return;
+    }
 
+    try {
       const twitchUser = await Bots.db
         ?.collection<UserObject>(Bots.env.MONGODB_USERS)
         .findOne({ user_id: code?.toString() });
@@ -98,7 +98,7 @@ export const AccountLink = {
       Bots.log({
         type: LogEventType.Error,
         description:
-          `Discord Command Error (AccountLink): ` + JSON.stringify(error),
+          `Discord Command Error (${COPY.LINK.NAME}): ` + JSON.stringify(error),
       });
     }
   },

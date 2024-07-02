@@ -17,14 +17,12 @@ export const Help = {
     .setDescription(COPY.HELP.DESCRIPTION),
   execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
     if (!CONFIG.FEATURES.HELP.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Help): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.HELP.NAME,
+      });
       return;
     }
 
@@ -50,7 +48,8 @@ export const Help = {
     } catch (error) {
       Bots.log({
         type: LogEventType.Error,
-        description: `Discord Command Error (Help): ` + JSON.stringify(error),
+        description:
+          `Discord Command Error (${COPY.HELP.NAME}): ` + JSON.stringify(error),
       });
     }
   },

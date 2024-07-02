@@ -29,37 +29,38 @@ export const AccountUnlink = {
     user: UserObject
   ) => {
     if (!CONFIG.FEATURES.UNLINK.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description:
-            `Discord Command Error (Unlink): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.UNLINK.NAME,
+      });
+      return;
+    }
+
+    if (!user.twitch_id) {
+      Bots.reply({
+        content: COPY.UNLINK.RESPONSES.NOLINK,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.UNLINK.NAME,
+      });
       return;
     }
 
     const twitchName = interaction.options.get('username')?.value;
 
+    if (user.twitch_username !== twitchName) {
+      Bots.reply({
+        content: COPY.UNLINK.RESPONSES.INVALID,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.UNLINK.NAME,
+      });
+      return;
+    }
+
     try {
-      if (!user.twitch_id) {
-        await interaction.reply({
-          content: COPY.UNLINK.RESPONSES.NOLINK,
-          ephemeral: true,
-        });
-        return;
-      }
-
-      if (user.twitch_username !== twitchName) {
-        await interaction.reply({
-          content: COPY.UNLINK.RESPONSES.INVALID,
-          ephemeral: true,
-        });
-        return;
-      }
-
       const twitchData: UserObject = {
         ...INITIAL.USER,
         user_id: uuidv4(),
@@ -90,7 +91,8 @@ export const AccountUnlink = {
       Bots.log({
         type: LogEventType.Error,
         description:
-          `Discord Command Error (AccountUnlink): ` + JSON.stringify(error),
+          `Discord Command Error (${COPY.UNLINK.NAME}): ` +
+          JSON.stringify(error),
       });
     }
   },

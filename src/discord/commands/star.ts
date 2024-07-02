@@ -30,14 +30,12 @@ export const Star = {
     recipient: User
   ) => {
     if (!CONFIG.FEATURES.STAR.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Star): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.STAR.NAME,
+      });
       return;
     }
 
@@ -50,25 +48,22 @@ export const Star = {
     const today = now.toDateString();
 
     if (user.discord_id === recipient.id) {
-      await interaction.reply({
+      Bots.reply({
         content: replies.invalidSelf,
-        ephemeral: true,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.STAR.NAME,
       });
       return;
     }
 
     if (user.last_given === today) {
-      try {
-        await interaction.reply({
-          content: replies.invalidMax,
-          ephemeral: true,
-        });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description: `Discord Command Error (Star): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: replies.invalidMax,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.STAR.NAME,
+      });
       return;
     }
 
@@ -104,7 +99,8 @@ export const Star = {
     } catch (error) {
       Bots.log({
         type: LogEventType.Error,
-        description: `Discord Command Error (Star): ` + JSON.stringify(error),
+        description:
+          `Discord Command Error (${COPY.STAR.NAME}): ` + JSON.stringify(error),
       });
     }
   },

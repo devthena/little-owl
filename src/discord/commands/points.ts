@@ -4,7 +4,6 @@ import { UserObject } from 'src/schemas';
 import { BotsProps } from 'src/types';
 
 import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { LogEventType } from '../../enums';
 
 export const Points = {
   data: new SlashCommandBuilder()
@@ -16,28 +15,21 @@ export const Points = {
     user: UserObject
   ) => {
     if (!CONFIG.FEATURES.POINTS.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description:
-            `Discord Command Error (Points): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.POINTS.NAME,
+      });
       return;
     }
 
-    try {
-      await interaction.reply(
-        `Your current balance is: ${user.cash} ${EMOJIS.CURRENCY}`
-      );
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description: `Discord Command Error (Points): ` + JSON.stringify(error),
-      });
-    }
+    Bots.reply({
+      content: `Your current balance is: ${user.cash} ${EMOJIS.CURRENCY}`,
+      ephimeral: false,
+      interaction: interaction,
+      source: COPY.POINTS.NAME,
+    });
   },
   getName: (): string => {
     return COPY.POINTS.NAME;
