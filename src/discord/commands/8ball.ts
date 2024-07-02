@@ -5,8 +5,6 @@ import {
 } from 'discord.js';
 
 import { BotsProps } from 'src/types';
-
-import { LogEventType } from '../../enums';
 import { CONFIG, COPY } from '../../constants';
 
 export const EightBall = {
@@ -21,31 +19,27 @@ export const EightBall = {
     ),
   execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
     if (!CONFIG.FEATURES.EIGHTBALL.ENABLED) {
-      try {
-        await interaction.reply({ content: COPY.DISABLED, ephemeral: true });
-      } catch (error) {
-        Bots.log({
-          type: LogEventType.Error,
-          description:
-            `Discord Command Error (8-Ball): ` + JSON.stringify(error),
-        });
-      }
+      Bots.reply({
+        content: COPY.DISABLED,
+        ephimeral: true,
+        interaction: interaction,
+        source: COPY.EIGHTBALL.NAME,
+      });
       return;
     }
 
     const randomNum = Math.floor(
       Math.random() * COPY.EIGHTBALL.RESPONSES.length
     );
+
     const answer = COPY.EIGHTBALL.RESPONSES[randomNum];
 
-    try {
-      await interaction.reply(`:8ball: says.. ${answer}`);
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description: `Discord Command Error (8Ball): ` + JSON.stringify(error),
-      });
-    }
+    Bots.reply({
+      content: `:8ball: says.. ${answer}`,
+      ephimeral: false,
+      interaction: interaction,
+      source: COPY.EIGHTBALL.NAME,
+    });
   },
   getName: (): string => {
     return COPY.EIGHTBALL.NAME;

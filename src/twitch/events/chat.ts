@@ -6,8 +6,8 @@ import { BotsProps, ObjectProps } from 'src/types';
 import { onGamble, onGive } from '../commands';
 import { CONFIG, COPY, IGNORE_LIST, INITIAL, URLS } from '../../constants';
 import { LogEventType } from '../../enums';
-import { getCurrency, isNumber } from '../../utils';
-import { addUser, getUserById, getUserByName } from '../../utils/db';
+import { getCurrency, isNumber } from '../../lib';
+import { addUser, getUserById, getUserByName } from '../../lib/db';
 
 export const onChat = async (
   Bots: BotsProps,

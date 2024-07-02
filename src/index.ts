@@ -14,7 +14,7 @@ import * as tmi from 'tmi.js';
 import { MongoClient } from 'mongodb';
 const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
-import { BotsProps, LogProps } from './types';
+import { BotsProps, LogProps, ReplyProps } from './types';
 
 import {
   onGuildBanAdd,
@@ -42,7 +42,7 @@ import {
   onTimeout,
 } from './twitch/events';
 
-import { logEvent } from './utils';
+import { discordReply, logEvent } from './lib';
 
 const Bots: BotsProps = {
   cooldowns: {
@@ -70,6 +70,9 @@ const Bots: BotsProps = {
   },
   log: (props: LogProps) => {
     logEvent(Bots, props);
+  },
+  reply: (props: ReplyProps) => {
+    discordReply(Bots, props);
   },
   twitch: new tmi.Client({
     options: { debug: true },

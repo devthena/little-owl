@@ -6,7 +6,7 @@ import { BotsProps } from 'src/types';
 
 import { CONFIG, INITIAL } from '../../constants';
 import { LogEventType } from '../../enums';
-import { addStar, addUser, getStarById, getUserById } from '../../utils/db';
+import { addStar, addUser, getStarById, getUserById } from '../../lib/db';
 
 import {
   AccountLink,
