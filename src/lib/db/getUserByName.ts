@@ -13,7 +13,7 @@ export const getUserByName = async (
 
     const document = await Bots.db
       ?.collection<UserObject>(Bots.env.MONGODB_USERS)
-      .findOne({ [nameField]: username });
+      .findOne({ [nameField]: username.toLowerCase() });
 
     return document ?? undefined;
   } catch (error) {

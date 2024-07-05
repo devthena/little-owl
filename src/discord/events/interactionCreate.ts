@@ -5,7 +5,6 @@ import { StarObject, UserObject } from 'src/schemas';
 import { BotsProps } from 'src/types';
 
 import { CONFIG, INITIAL } from '../../constants';
-import { LogEventType } from '../../enums';
 import { addStar, addUser, getStarById, getUserById } from '../../lib/db';
 
 import {
@@ -133,19 +132,12 @@ export const onInteractionCreate = async (
         interaction.channelId !== CONFIG.CHANNELS.MAIN.CASINO &&
         interaction.channelId !== CONFIG.CHANNELS.MAIN.STAGE
       ) {
-        try {
-          await interaction.reply({
-            content: 'Please use the #casino channel to gamble your points.',
-            ephemeral: true,
-          });
-        } catch (error) {
-          Bots.log({
-            type: LogEventType.Error,
-            description:
-              `Discord Event Error (interactionCreate): ` +
-              JSON.stringify(error),
-          });
-        }
+        Bots.reply({
+          content: 'Please use the #casino channel to gamble your points.',
+          ephimeral: true,
+          interaction: interaction,
+          source: 'interactionCreate',
+        });
       } else {
         const userData = await getUserData();
         if (!userData) return;
@@ -160,20 +152,12 @@ export const onInteractionCreate = async (
         interaction.channelId !== CONFIG.CHANNELS.MAIN.OWL &&
         interaction.channelId !== CONFIG.CHANNELS.MAIN.STAGE
       ) {
-        try {
-          await interaction.reply({
-            content:
-              'Please use one of the bot channels to check your balance.',
-            ephemeral: true,
-          });
-        } catch (error) {
-          Bots.log({
-            type: LogEventType.Error,
-            description:
-              `Discord Event Error (interactionCreate): ` +
-              JSON.stringify(error),
-          });
-        }
+        Bots.reply({
+          content: 'Please use one of the bot channels to check your balance.',
+          ephimeral: true,
+          interaction: interaction,
+          source: 'interactionCreate',
+        });
       } else {
         const userData = await getUserData();
         if (!userData) return;
