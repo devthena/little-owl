@@ -56,6 +56,13 @@ export const COPY = {
     NAME: 'help',
     DESCRIPTION: 'Display official links for commands and FAQ',
   },
+  INFO: {
+    discord: 'https://discord.gg/EMsfWqk',
+    dstmods: 'https://steamcommunity.com/workshop/filedetails/?id=1783032105',
+    fc: 'SW-8136-7007-4521',
+    steam: 'https://steamcommunity.com/id/AthenaUS',
+    twitter: 'https://twitter.com/athenaus',
+  } as { [key: string]: string },
   LEADERBOARD: {
     NAME: 'leaderboard',
     DESCRIPTION: `Display a leaderboard based on amount of ${CONFIG.CURRENCY.PLURAL}`,

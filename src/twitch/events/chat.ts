@@ -9,6 +9,8 @@ import { LogEventType } from '../../enums';
 import { getCurrency, isNumber } from '../../lib';
 import { addUser, getUserById, getUserByName } from '../../lib/db';
 
+const infoCommands = ['discord', 'dstmods', 'fc', 'steam', 'twitter'];
+
 export const onChat = async (
   Bots: BotsProps,
   channel: string,
@@ -82,6 +84,8 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
+    if (!command) return;
+
     // commands that do not expect an argument
 
     if (command === COPY.COMMANDS.NAME) {
@@ -95,6 +99,10 @@ export const onChat = async (
           userData.cash
         )}`
       );
+    }
+
+    if (infoCommands.includes(command)) {
+      return Bots.twitch.say(channel, COPY.INFO[command]);
     }
 
     // commands that expect at least one (1) argument
