@@ -33,6 +33,7 @@ const register = (): void => {
   }
 
   const commands = [];
+  const commandsGlobal = [];
   const commandsStage = [];
 
   // commands ready for production should be added here
@@ -42,13 +43,15 @@ const register = (): void => {
   commands.push(EightBall.data.toJSON());
   commands.push(Gamble.data.toJSON());
   commands.push(Give.data.toJSON());
-  commands.push(Help.data.toJSON());
   commands.push(Leaderboard.data.toJSON());
   commands.push(Points.data.toJSON());
   commands.push(Star.data.toJSON());
 
   // commands in development for testing should be added here
-  commandsStage.push(Star.data.toJSON());
+  commandsStage.push(Points.data.toJSON());
+
+  // global commands should be added here
+  commandsGlobal.push(Help.data.toJSON());
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
@@ -63,6 +66,16 @@ const register = (): void => {
       )
       .then(_data =>
         console.log('Successfully registered PROD Discord commands.')
+      )
+      .catch(console.error);
+
+  if (commandsGlobal.length > 0)
+    rest
+      .put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
+        body: commandsGlobal,
+      })
+      .then(_data =>
+        console.log('Successfully registered GLOBAL Discord commands.')
       )
       .catch(console.error);
 
