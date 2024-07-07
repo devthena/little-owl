@@ -82,6 +82,9 @@ export const COPY = {
       SUCCESS: 'Success! Your accounts are now linked.',
     },
   },
+  LURK: {
+    NAME: 'lurk',
+  },
   POINTS: {
     NAME: 'points',
     DESCRIPTION: `Display the amount of ${CONFIG.CURRENCY.PLURAL} you have`,

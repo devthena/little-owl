@@ -25,4 +25,7 @@ export const EMOTES = {
     INVALID: 'GivePLZ',
     WIN: 'PopNemo',
   },
+  LURK: {
+    DEFAULT: 'ScaredyCat',
+  },
 };

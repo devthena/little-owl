@@ -4,7 +4,16 @@ import { UserObject } from 'src/schemas';
 import { BotsProps, ObjectProps } from 'src/types';
 
 import { onGamble, onGive } from '../commands';
-import { CONFIG, COPY, IGNORE_LIST, INITIAL, URLS } from '../../constants';
+
+import {
+  CONFIG,
+  COPY,
+  EMOTES,
+  IGNORE_LIST,
+  INITIAL,
+  URLS,
+} from '../../constants';
+
 import { LogEventType } from '../../enums';
 import { getCurrency, isNumber } from '../../lib';
 import { addUser, getUserById, getUserByName } from '../../lib/db';
@@ -58,11 +67,6 @@ export const onChat = async (
 
     if (!points) return;
 
-    Bots.twitch.say(
-      channel,
-      `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
-    );
-
     Bots.log({
       type: LogEventType.Activity,
       description: `${userstate.username} has redeemed conversion of ${
@@ -95,14 +99,10 @@ export const onChat = async (
 
     // commands that do not expect an argument
 
-    if (command === COPY.COMMANDS.NAME) {
-      return Bots.twitch.say(channel, URLS.COMMANDS);
-    }
-
     if (command === COPY.POINTS.NAME) {
       return Bots.twitch.say(
         channel,
-        `${userstate.username} you have ${userData.cash} ${getCurrency(
+        `${userstate['display-name']} you have ${userData.cash} ${getCurrency(
           userData.cash
         )}`
       );
@@ -110,6 +110,17 @@ export const onChat = async (
 
     if (infoCommands.includes(command)) {
       return Bots.twitch.say(channel, COPY.INFO[command]);
+    }
+
+    if (command === COPY.LURK.NAME) {
+      return Bots.twitch.say(
+        channel,
+        `/me ${userstate['display-name']} has disappeared into the shadows ${EMOTES.LURK.DEFAULT}`
+      );
+    }
+
+    if (command === COPY.COMMANDS.NAME) {
+      return Bots.twitch.say(channel, URLS.COMMANDS);
     }
 
     // commands that expect at least one (1) argument
