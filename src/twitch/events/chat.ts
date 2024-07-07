@@ -9,7 +9,14 @@ import { LogEventType } from '../../enums';
 import { getCurrency, isNumber } from '../../lib';
 import { addUser, getUserById, getUserByName } from '../../lib/db';
 
-const infoCommands = ['discord', 'dstmods', 'fc', 'steam', 'twitter'];
+const infoCommands = [
+  'discord',
+  'dstmods',
+  'steam',
+  'switch',
+  'twitter',
+  'web',
+];
 
 export const onChat = async (
   Bots: BotsProps,

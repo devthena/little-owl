@@ -59,9 +59,10 @@ export const COPY = {
   INFO: {
     discord: 'https://discord.gg/EMsfWqk',
     dstmods: 'https://steamcommunity.com/workshop/filedetails/?id=1783032105',
-    fc: 'SW-8136-7007-4521',
     steam: 'https://steamcommunity.com/id/AthenaUS',
+    switch: 'SW-8136-7007-4521',
     twitter: 'https://twitter.com/athenaus',
+    web: 'https://parthenon.app',
   } as { [key: string]: string },
   LEADERBOARD: {
     NAME: 'leaderboard',
