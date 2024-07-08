@@ -135,6 +135,15 @@ export const onChat = async (
 
     if (!recipient) return;
 
+    if (command === COPY.HUG.NAME) {
+      return Bots.twitch.say(
+        channel,
+        `${EMOTES.HUG.LEFT} ${userstate['display-name']} hugs ${recipient} ${EMOTES.HUG.RIGHT}`
+      );
+    }
+
+    // commands that expect a recipient and value in the arguments
+
     const amount = args[1];
 
     if (!isNumber(amount)) return;

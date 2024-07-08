@@ -56,6 +56,9 @@ export const COPY = {
     NAME: 'help',
     DESCRIPTION: 'Display official links for commands and FAQ',
   },
+  HUG: {
+    NAME: 'hug',
+  },
   INFO: {
     discord: 'https://discord.gg/EMsfWqk',
     dstmods: 'https://steamcommunity.com/workshop/filedetails/?id=1783032105',
