@@ -10,6 +10,7 @@ import {
   Help,
   Leaderboard,
   Points,
+  Profile,
   Star,
 } from './commands';
 
@@ -45,10 +46,11 @@ const register = (): void => {
   commands.push(Give.data.toJSON());
   commands.push(Leaderboard.data.toJSON());
   commands.push(Points.data.toJSON());
+  commands.push(Profile.data.toJSON());
   commands.push(Star.data.toJSON());
 
   // commands in development for testing should be added here
-  commandsStage.push(Points.data.toJSON());
+  commandsStage.push(Profile.data.toJSON());
 
   // global commands should be added here
   commandsGlobal.push(Help.data.toJSON());

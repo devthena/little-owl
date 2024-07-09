@@ -17,6 +17,7 @@ import {
   Help,
   Leaderboard,
   Points,
+  Profile,
   Star,
 } from '../commands';
 
@@ -166,19 +167,26 @@ export const onInteractionCreate = async (
       return;
     }
 
+    if (interaction.commandName === Profile.getName()) {
+      const userData = await getUserData();
+      const userStar = await getUserStar();
+
+      if (!userData || !userStar) return;
+
+      return Profile.execute(Bots, interaction, userData, userStar);
+    }
+
     if (interaction.commandName === Star.getName()) {
       const recipient = interaction.options.getUser('user');
 
       if (!recipient) return;
 
-      const userActivity = await getUserStar();
+      const userStar = await getUserStar();
       const recipientActivity = await getRecipientStar();
 
-      if (!userActivity || !recipientActivity) return;
+      if (!userStar || !recipientActivity) return;
 
-      const userName = interaction.user.globalName || interaction.user.username;
-
-      return Star.execute(Bots, interaction, userActivity, userName, recipient);
+      return Star.execute(Bots, interaction, userStar, recipient);
     }
   }
 };

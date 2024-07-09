@@ -92,6 +92,10 @@ export const COPY = {
     NAME: 'points',
     DESCRIPTION: `Display the amount of ${CONFIG.CURRENCY.PLURAL} you have`,
   },
+  PROFILE: {
+    NAME: 'profile',
+    DESCRIPTION: 'Display your profile',
+  },
   STAR: {
     NAME: 'star',
     DESCRIPTION: 'Give a star as a form of endorsement',
