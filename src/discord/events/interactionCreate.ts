@@ -92,22 +92,6 @@ export const onInteractionCreate = async (
       return data;
     };
 
-    if (interaction.commandName === CoinFlip.getName()) {
-      return CoinFlip.execute(Bots, interaction);
-    }
-
-    if (interaction.commandName === EightBall.getName()) {
-      return EightBall.execute(Bots, interaction);
-    }
-
-    if (interaction.commandName === Help.getName()) {
-      return Help.execute(Bots, interaction);
-    }
-
-    if (interaction.commandName === Leaderboard.getName()) {
-      return Leaderboard.execute(Bots, interaction);
-    }
-
     if (interaction.commandName === AccountLink.getName()) {
       const userData = await getUserData();
       if (!userData) return;
@@ -120,60 +104,8 @@ export const onInteractionCreate = async (
       return AccountUnlink.execute(Bots, interaction, userData);
     }
 
-    if (interaction.commandName === Give.getName()) {
-      const userData = await getUserData();
-      const recipientData = await getRecipientData();
-
-      if (!userData || !recipientData) return;
-      return Give.execute(Bots, interaction, userData, recipientData);
-    }
-
-    if (interaction.commandName === Gamble.getName()) {
-      if (
-        interaction.channelId !== CONFIG.CHANNELS.MAIN.CASINO &&
-        interaction.channelId !== CONFIG.CHANNELS.MAIN.STAGE
-      ) {
-        Bots.reply({
-          content: 'Please use the #casino channel to gamble your points.',
-          ephimeral: true,
-          interaction: interaction,
-          source: 'interactionCreate',
-        });
-      } else {
-        const userData = await getUserData();
-        if (!userData) return;
-        Gamble.execute(Bots, interaction, userData);
-      }
-      return;
-    }
-
-    if (interaction.commandName === Points.getName()) {
-      if (
-        interaction.channelId !== CONFIG.CHANNELS.MAIN.CASINO &&
-        interaction.channelId !== CONFIG.CHANNELS.MAIN.OWL &&
-        interaction.channelId !== CONFIG.CHANNELS.MAIN.STAGE
-      ) {
-        Bots.reply({
-          content: 'Please use one of the bot channels to check your balance.',
-          ephimeral: true,
-          interaction: interaction,
-          source: 'interactionCreate',
-        });
-      } else {
-        const userData = await getUserData();
-        if (!userData) return;
-        Points.execute(Bots, interaction, userData);
-      }
-      return;
-    }
-
-    if (interaction.commandName === Profile.getName()) {
-      const userData = await getUserData();
-      const userStar = await getUserStar();
-
-      if (!userData || !userStar) return;
-
-      return Profile.execute(Bots, interaction, userData, userStar);
+    if (interaction.commandName === Help.getName()) {
+      return Help.execute(Bots, interaction);
     }
 
     if (interaction.commandName === Star.getName()) {
@@ -187,6 +119,78 @@ export const onInteractionCreate = async (
       if (!userStar || !recipientActivity) return;
 
       return Star.execute(Bots, interaction, userStar, recipient);
+    }
+
+    const isInCasinoChannel =
+      interaction.channelId === CONFIG.CHANNELS.MAIN.CASINO ||
+      interaction.channelId === CONFIG.CHANNELS.MAIN.STAGE;
+
+    const isInBotChannel =
+      interaction.channelId === CONFIG.CHANNELS.MAIN.CASINO ||
+      interaction.channelId === CONFIG.CHANNELS.MAIN.OWL ||
+      interaction.channelId === CONFIG.CHANNELS.MAIN.STAGE;
+
+    if (!isInBotChannel) {
+      Bots.reply({
+        content: 'Please use this command in one of the bot channels.',
+        ephimeral: true,
+        interaction: interaction,
+        source: 'interactionCreate',
+      });
+      return;
+    }
+
+    if (interaction.commandName === Points.getName()) {
+      const userData = await getUserData();
+      if (!userData) return;
+
+      return Points.execute(Bots, interaction, userData);
+    }
+
+    if (interaction.commandName === Gamble.getName()) {
+      if (!isInCasinoChannel) {
+        Bots.reply({
+          content: 'Please use the #casino channel to gamble your points.',
+          ephimeral: true,
+          interaction: interaction,
+          source: 'interactionCreate',
+        });
+        return;
+      }
+
+      const userData = await getUserData();
+      if (!userData) return;
+
+      return Gamble.execute(Bots, interaction, userData);
+    }
+
+    if (interaction.commandName === Profile.getName()) {
+      const userData = await getUserData();
+      const userStar = await getUserStar();
+
+      if (!userData || !userStar) return;
+
+      return Profile.execute(Bots, interaction, userData, userStar);
+    }
+
+    if (interaction.commandName === Leaderboard.getName()) {
+      return Leaderboard.execute(Bots, interaction);
+    }
+
+    if (interaction.commandName === Give.getName()) {
+      const userData = await getUserData();
+      const recipientData = await getRecipientData();
+
+      if (!userData || !recipientData) return;
+      return Give.execute(Bots, interaction, userData, recipientData);
+    }
+
+    if (interaction.commandName === CoinFlip.getName()) {
+      return CoinFlip.execute(Bots, interaction);
+    }
+
+    if (interaction.commandName === EightBall.getName()) {
+      return EightBall.execute(Bots, interaction);
     }
   }
 };
