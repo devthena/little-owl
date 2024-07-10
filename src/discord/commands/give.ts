@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
 
 import { UserObject } from 'src/schemas';
 import { BotsProps } from 'src/types';
@@ -27,7 +27,7 @@ export const Give = {
     Bots: BotsProps,
     interaction: CommandInteraction,
     user: UserObject,
-    recipient: UserObject
+    recipient: User
   ) => {
     if (!CONFIG.FEATURES.GIVE.ENABLED) {
       Bots.reply({
@@ -46,9 +46,9 @@ export const Give = {
       invalidRecipient: `You can't give yourself ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.GIVE.INVALID}`,
       noPoints: `Sorry, you have no ${CONFIG.CURRENCY.SINGLE} to give. ${EMOJIS.GIVE.INVALID}`,
       notEnough: `Sorry, you don't have enough ${CONFIG.CURRENCY.PLURAL} to give. ${EMOJIS.GIVE.INVALID}`,
-      success: `You gave ${
-        recipient.discord_name || recipient.discord_username
-      } ${amount} ${getCurrency(amount)}.`,
+      success: `You gave ${recipient.displayName} ${amount} ${getCurrency(
+        amount
+      )}.`,
     };
 
     if (user.cash < 1) {
@@ -81,7 +81,7 @@ export const Give = {
       return;
     }
 
-    if (user.discord_id === recipient.discord_id) {
+    if (user.discord_id === recipient.id) {
       Bots.reply({
         content: replies.invalidRecipient,
         ephimeral: true,
@@ -94,10 +94,7 @@ export const Give = {
     try {
       await Bots.db
         ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: recipient.discord_id },
-          { $set: { cash: (recipient.cash += amount) } }
-        );
+        .updateOne({ discord_id: recipient.id }, { $inc: { cash: amount } });
 
       await Bots.db
         ?.collection(Bots.env.MONGODB_USERS)
@@ -113,7 +110,7 @@ export const Give = {
     }
 
     Bots.reply({
-      content: `${replies.success} Current balance: ${user.cash} ${EMOJIS.CURRENCY}`,
+      content: `${replies.success} Your new balance: ${user.cash} ${EMOJIS.CURRENCY}`,
       ephimeral: false,
       interaction: interaction,
       source: COPY.GIVE.NAME,

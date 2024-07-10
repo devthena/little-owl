@@ -29,22 +29,21 @@ export const Help = {
     const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
+          .setEmoji('📚')
           .setLabel('Commands')
           .setStyle(ButtonStyle.Link)
           .setURL(URLS.COMMANDS)
       )
       .addComponents(
         new ButtonBuilder()
+          .setEmoji('📜')
           .setLabel('FAQ')
           .setStyle(ButtonStyle.Link)
           .setURL(URLS.FAQ)
       );
 
     try {
-      await interaction.reply({
-        content: 'Here are some links you might be interested in:',
-        components: [row],
-      });
+      await interaction.reply({ components: [row] });
     } catch (error) {
       Bots.log({
         type: LogEventType.Error,

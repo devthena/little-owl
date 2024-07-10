@@ -80,6 +80,9 @@ export const CONFIG = {
     POINTS: {
       ENABLED: true,
     },
+    PROFILE: {
+      ENABLED: true,
+    },
     STAR: {
       ENABLED: true,
     },

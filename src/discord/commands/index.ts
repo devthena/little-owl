@@ -6,5 +6,6 @@ export * from './help';
 export * from './leaderboard';
 export * from './link';
 export * from './points';
+export * from './profile';
 export * from './star';
 export * from './unlink';

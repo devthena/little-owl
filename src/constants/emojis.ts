@@ -1,4 +1,5 @@
 export const EMOJIS = {
+  BOT: '<:athena1Bot:1092867248814821466>',
   CURRENCY: ':coin:',
   GAMBLE: {
     LOST: ':money_with_wings:',
@@ -24,5 +25,12 @@ export const EMOTES = {
     LOST: 'TearGlove',
     INVALID: 'GivePLZ',
     WIN: 'PopNemo',
+  },
+  HUG: {
+    LEFT: 'GivePLZ',
+    RIGHT: 'TakeNRG',
+  },
+  LURK: {
+    DEFAULT: 'ScaredyCat',
   },
 };

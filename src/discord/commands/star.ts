@@ -25,8 +25,7 @@ export const Star = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: StarObject,
-    userName: string,
+    star: StarObject,
     recipient: User
   ) => {
     if (!CONFIG.FEATURES.STAR.ENABLED) {
@@ -47,7 +46,7 @@ export const Star = {
     const now = new Date();
     const today = now.toDateString();
 
-    if (user.discord_id === recipient.id) {
+    if (interaction.user.id === recipient.id) {
       Bots.reply({
         content: replies.invalidSelf,
         ephimeral: true,
@@ -57,7 +56,7 @@ export const Star = {
       return;
     }
 
-    if (user.last_given === today) {
+    if (star.last_given === today) {
       Bots.reply({
         content: replies.invalidMax,
         ephimeral: true,
@@ -71,7 +70,7 @@ export const Star = {
       await Bots.db
         ?.collection(Bots.env.MONGODB_STARS)
         .updateOne(
-          { discord_id: user.discord_id },
+          { discord_id: interaction.user.id },
           { $inc: { total_given: 1 }, $set: { last_given: today } }
         );
 
@@ -85,11 +84,11 @@ export const Star = {
       });
     }
 
-    const recipientName = recipient.globalName || recipient.username;
-
     const botEmbed = new EmbedBuilder()
       .setColor(CONFIG.COLORS.YELLOW as ColorResolvable)
-      .setTitle(`${recipientName} got a star from ${userName}!`)
+      .setTitle(
+        `${recipient.displayName} got a star from ${interaction.user.displayName}!`
+      )
       .setDescription(
         `Endorse a community member by giving them a star! ${EMOJIS.STAR.EMBED}`
       );

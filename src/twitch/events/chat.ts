@@ -4,10 +4,28 @@ import { UserObject } from 'src/schemas';
 import { BotsProps, ObjectProps } from 'src/types';
 
 import { onGamble, onGive } from '../commands';
-import { CONFIG, COPY, IGNORE_LIST, INITIAL, URLS } from '../../constants';
+
+import {
+  CONFIG,
+  COPY,
+  EMOTES,
+  IGNORE_LIST,
+  INITIAL,
+  URLS,
+} from '../../constants';
+
 import { LogEventType } from '../../enums';
 import { getCurrency, isNumber } from '../../lib';
 import { addUser, getUserById, getUserByName } from '../../lib/db';
+
+const infoCommands = [
+  'discord',
+  'dstmods',
+  'steam',
+  'switch',
+  'twitter',
+  'web',
+];
 
 export const onChat = async (
   Bots: BotsProps,
@@ -49,11 +67,6 @@ export const onChat = async (
 
     if (!points) return;
 
-    Bots.twitch.say(
-      channel,
-      `${userstate.username} has redeemed ${points} ${CONFIG.CURRENCY.PLURAL}!`
-    );
-
     Bots.log({
       type: LogEventType.Activity,
       description: `${userstate.username} has redeemed conversion of ${
@@ -82,19 +95,32 @@ export const onChat = async (
     const args = message.slice(1).split(' ');
     const command = args.shift()?.toLowerCase();
 
-    // commands that do not expect an argument
+    if (!command) return;
 
-    if (command === COPY.COMMANDS.NAME) {
-      return Bots.twitch.say(channel, URLS.COMMANDS);
-    }
+    // commands that do not expect an argument
 
     if (command === COPY.POINTS.NAME) {
       return Bots.twitch.say(
         channel,
-        `${userstate.username} you have ${userData.cash} ${getCurrency(
+        `${userstate['display-name']} you have ${userData.cash} ${getCurrency(
           userData.cash
         )}`
       );
+    }
+
+    if (infoCommands.includes(command)) {
+      return Bots.twitch.say(channel, COPY.INFO[command]);
+    }
+
+    if (command === COPY.LURK.NAME) {
+      return Bots.twitch.say(
+        channel,
+        `/me ${userstate['display-name']} has disappeared into the shadows ${EMOTES.LURK.DEFAULT}`
+      );
+    }
+
+    if (command === COPY.COMMANDS.NAME) {
+      return Bots.twitch.say(channel, URLS.COMMANDS);
     }
 
     // commands that expect at least one (1) argument
@@ -108,6 +134,15 @@ export const onChat = async (
     const recipient = args[0].slice(0, 1) === '@' ? args[0].slice(1) : null;
 
     if (!recipient) return;
+
+    if (command === COPY.HUG.NAME) {
+      return Bots.twitch.say(
+        channel,
+        `${EMOTES.HUG.LEFT} ${userstate['display-name']} hugs ${recipient} ${EMOTES.HUG.RIGHT}`
+      );
+    }
+
+    // commands that expect a recipient and value in the arguments
 
     const amount = args[1];
 

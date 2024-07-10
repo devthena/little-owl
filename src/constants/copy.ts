@@ -56,6 +56,17 @@ export const COPY = {
     NAME: 'help',
     DESCRIPTION: 'Display official links for commands and FAQ',
   },
+  HUG: {
+    NAME: 'hug',
+  },
+  INFO: {
+    discord: 'https://discord.gg/EMsfWqk',
+    dstmods: 'https://steamcommunity.com/workshop/filedetails/?id=1783032105',
+    steam: 'https://steamcommunity.com/id/AthenaUS',
+    switch: 'SW-8136-7007-4521',
+    twitter: 'https://twitter.com/athenaus',
+    web: 'https://parthenon.app',
+  } as { [key: string]: string },
   LEADERBOARD: {
     NAME: 'leaderboard',
     DESCRIPTION: `Display a leaderboard based on amount of ${CONFIG.CURRENCY.PLURAL}`,
@@ -74,9 +85,16 @@ export const COPY = {
       SUCCESS: 'Success! Your accounts are now linked.',
     },
   },
+  LURK: {
+    NAME: 'lurk',
+  },
   POINTS: {
     NAME: 'points',
     DESCRIPTION: `Display the amount of ${CONFIG.CURRENCY.PLURAL} you have`,
+  },
+  PROFILE: {
+    NAME: 'profile',
+    DESCRIPTION: 'Display your profile',
   },
   STAR: {
     NAME: 'star',
