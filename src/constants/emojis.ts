@@ -1,4 +1,5 @@
 export const EMOJIS = {
+  BOT: '<:athena1Bot:1092867248814821466>',
   CURRENCY: ':coin:',
   GAMBLE: {
     LOST: ':money_with_wings:',

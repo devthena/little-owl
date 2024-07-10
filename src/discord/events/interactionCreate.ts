@@ -1,10 +1,10 @@
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, User } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
 import { StarObject, UserObject } from 'src/schemas';
 import { BotsProps } from 'src/types';
 
-import { CONFIG, INITIAL } from '../../constants';
+import { CONFIG, COPY, EMOJIS, INITIAL } from '../../constants';
 import { addStar, addUser, getStarById, getUserById } from '../../lib/db';
 
 import {
@@ -26,11 +26,11 @@ export const onInteractionCreate = async (
   interaction: CommandInteraction
 ) => {
   if (interaction.isChatInputCommand()) {
-    const getRecipientStar = async (): Promise<StarObject | undefined> => {
-      const recipient = interaction.options.getUser('user');
+    if (interaction.user.bot) return;
 
-      if (!recipient) return;
-
+    const getRecipientStar = async (
+      recipient: User
+    ): Promise<StarObject | undefined> => {
       const document = await getStarById(Bots, recipient.id);
 
       const data: StarObject = document ?? {
@@ -43,24 +43,20 @@ export const onInteractionCreate = async (
     };
 
     const getUserStar = async (): Promise<StarObject | undefined> => {
-      if (!interaction.member) return;
-
-      const document = await getStarById(Bots, interaction.member.user.id);
+      const document = await getStarById(Bots, interaction.user.id);
 
       const data: StarObject = document ?? {
         ...INITIAL.STAR,
-        discord_id: interaction.member?.user.id,
+        discord_id: interaction.user.id,
       };
 
       if (!document) await addStar(Bots, data);
       return data;
     };
 
-    const getRecipientData = async (): Promise<UserObject | undefined> => {
-      const recipient = interaction.options.getUser('user');
-
-      if (!recipient) return;
-
+    const getRecipientData = async (
+      recipient: User
+    ): Promise<UserObject | undefined> => {
       const document = await getUserById(Bots, recipient.id);
 
       const data: UserObject = document ?? {
@@ -76,15 +72,13 @@ export const onInteractionCreate = async (
     };
 
     const getUserData = async (): Promise<UserObject | undefined> => {
-      if (!interaction.member) return;
-
-      const document = await getUserById(Bots, interaction.member.user.id);
+      const document = await getUserById(Bots, interaction.user.id);
 
       const data: UserObject = document ?? {
         ...INITIAL.USER,
         user_id: uuidv4(),
-        discord_id: interaction.member.user.id,
-        discord_username: interaction.member.user.username,
+        discord_id: interaction.user.id,
+        discord_username: interaction.user.username,
         discord_name: interaction.user.globalName,
       };
 
@@ -95,12 +89,14 @@ export const onInteractionCreate = async (
     if (interaction.commandName === AccountLink.getName()) {
       const userData = await getUserData();
       if (!userData) return;
+
       return AccountLink.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === AccountUnlink.getName()) {
       const userData = await getUserData();
       if (!userData) return;
+
       return AccountUnlink.execute(Bots, interaction, userData);
     }
 
@@ -113,11 +109,20 @@ export const onInteractionCreate = async (
 
       if (!recipient) return;
 
+      if (recipient.bot) {
+        Bots.reply({
+          content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
+          ephimeral: true,
+          interaction: interaction,
+          source: COPY.STAR.NAME,
+        });
+        return;
+      }
+
       const userStar = await getUserStar();
-      const recipientActivity = await getRecipientStar();
+      const recipientStar = await getRecipientStar(recipient);
 
-      if (!userStar || !recipientActivity) return;
-
+      if (!userStar || !recipientStar) return;
       return Star.execute(Bots, interaction, userStar, recipient);
     }
 
@@ -169,7 +174,6 @@ export const onInteractionCreate = async (
       const userStar = await getUserStar();
 
       if (!userData || !userStar) return;
-
       return Profile.execute(Bots, interaction, userData, userStar);
     }
 
@@ -178,11 +182,25 @@ export const onInteractionCreate = async (
     }
 
     if (interaction.commandName === Give.getName()) {
+      const recipient = interaction.options.getUser('user');
+
+      if (!recipient) return;
+
+      if (recipient.bot) {
+        Bots.reply({
+          content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
+          ephimeral: true,
+          interaction: interaction,
+          source: COPY.GIVE.NAME,
+        });
+        return;
+      }
+
       const userData = await getUserData();
-      const recipientData = await getRecipientData();
+      const recipientData = await getRecipientData(recipient);
 
       if (!userData || !recipientData) return;
-      return Give.execute(Bots, interaction, userData, recipientData);
+      return Give.execute(Bots, interaction, userData, recipient);
     }
 
     if (interaction.commandName === CoinFlip.getName()) {
