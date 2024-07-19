@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { CONFIG } from '../constants';
+import { CONFIG } from '@/constants';
 
 let timer: NodeJS.Timeout | null = null;
 let pointer: number = 0;

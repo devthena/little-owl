@@ -1,9 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { weightedRandom } from '../../lib';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { weightedRandom } from '@/lib';
+import { BotsProps } from '@/types';
 
 export const CoinFlip = {
   data: new SlashCommandBuilder()

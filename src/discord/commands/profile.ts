@@ -8,13 +8,12 @@ import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer';
 
-import { StarObject, UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, MONTH_MAP } from '../../constants';
-import { LogEventType } from '../../enums';
-import { CoinIcon, StarIcon } from '../../icons';
-import { parseHexToRGB } from '../../lib';
+import { CONFIG, COPY, MONTH_MAP } from '@/constants';
+import { LogEventType } from '@/enums';
+import { CoinIcon, StarIcon } from '@/icons';
+import { parseHexToRGB } from '@/lib';
+import { StarObject, UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const Profile = {
   data: new SlashCommandBuilder()

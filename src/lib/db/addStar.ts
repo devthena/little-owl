@@ -1,7 +1,6 @@
-import { StarObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { LogEventType } from '../../enums';
+import { LogEventType } from '@/enums';
+import { StarObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const addStar = async (Bots: BotsProps, data: StarObject) => {
   try {

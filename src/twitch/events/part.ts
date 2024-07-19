@@ -1,7 +1,6 @@
-import { BotsProps } from 'src/types';
-
-import { IGNORE_LIST } from '../../constants';
-import { LogEventType } from '../../enums';
+import { IGNORE_LIST } from '@/constants';
+import { LogEventType } from '@/enums';
+import { BotsProps } from '@/types';
 
 export const onPart = (
   Bots: BotsProps,

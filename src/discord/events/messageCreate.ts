@@ -1,12 +1,11 @@
 import { Message } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, INITIAL } from '../../constants';
-import { LogEventType } from '../../enums';
-import { addUser, getUserById } from '../../lib/db';
+import { CONFIG, INITIAL } from '@/constants';
+import { LogEventType } from '@/enums';
+import { addUser, getUserById } from '@/lib/db';
+import { UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;

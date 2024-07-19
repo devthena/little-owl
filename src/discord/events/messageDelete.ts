@@ -1,6 +1,7 @@
 import { Message } from 'discord.js';
-import { BotsProps } from 'src/types';
-import { LogEventType } from '../../enums';
+
+import { LogEventType } from '@/enums';
+import { BotsProps } from '@/types';
 
 export const onMessageDelete = async (Bots: BotsProps, message: Message) => {
   let logMessage = `Message Deleted In: ${message.channel}\nAuthor: ${message.author.username}`;

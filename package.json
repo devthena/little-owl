@@ -20,11 +20,12 @@
     "@types/tmi.js": "^1.8.6",
     "@types/uuid": "^9.0.8",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   },
   "scripts": {
     "bot:register": "ts-node src/discord/register.ts",
-    "dev": "STAGING=true ts-node src/index.ts",
-    "start": "ts-node src/index.ts"
+    "dev": "STAGING=true ts-node -r tsconfig-paths/register src/index.ts",
+    "start": "ts-node -r tsconfig-paths/register -T src/index.ts"
   }
 }

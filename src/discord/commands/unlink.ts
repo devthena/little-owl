@@ -6,12 +6,11 @@ import {
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, INITIAL } from '../../constants';
-import { LogEventType } from '../../enums';
-import { addUser } from '../../lib/db';
+import { CONFIG, COPY, INITIAL } from '@/constants';
+import { LogEventType } from '@/enums';
+import { addUser } from '@/lib/db';
+import { UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const AccountUnlink = {
   data: new SlashCommandBuilder()

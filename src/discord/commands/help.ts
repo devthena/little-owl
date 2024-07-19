@@ -6,10 +6,9 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, URLS } from '../../constants';
-import { LogEventType } from '../../enums';
+import { CONFIG, COPY, URLS } from '@/constants';
+import { LogEventType } from '@/enums';
+import { BotsProps } from '@/types';
 
 export const Help = {
   data: new SlashCommandBuilder()

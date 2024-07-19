@@ -4,11 +4,10 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY } from '../../constants';
-import { LogEventType } from '../../enums';
+import { CONFIG, COPY } from '@/constants';
+import { LogEventType } from '@/enums';
+import { UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const AccountLink = {
   data: new SlashCommandBuilder()

@@ -1,11 +1,10 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { LogEventType } from '../../enums';
-import { getCurrency, weightedRandom } from '../../lib';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { LogEventType } from '@/enums';
+import { getCurrency, weightedRandom } from '@/lib';
+import { UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const Gamble = {
   data: new SlashCommandBuilder()

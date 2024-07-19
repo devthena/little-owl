@@ -1,22 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps, ObjectProps } from 'src/types';
+import { UserObject } from '@/schemas';
+import { BotsProps, ObjectProps } from '@/types';
+
+import { CONFIG, COPY, EMOTES, IGNORE_LIST, INITIAL, URLS } from '@/constants';
+import { LogEventType } from '@/enums';
+import { getCurrency, isNumber } from '@/lib';
+import { addUser, getUserById, getUserByName } from '@/lib/db';
 
 import { onGamble, onGive } from '../commands';
-
-import {
-  CONFIG,
-  COPY,
-  EMOTES,
-  IGNORE_LIST,
-  INITIAL,
-  URLS,
-} from '../../constants';
-
-import { LogEventType } from '../../enums';
-import { getCurrency, isNumber } from '../../lib';
-import { addUser, getUserById, getUserByName } from '../../lib/db';
 
 const infoCommands = [
   'discord',

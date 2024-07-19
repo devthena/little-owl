@@ -1,9 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS } from '../../constants';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const Points = {
   data: new SlashCommandBuilder()

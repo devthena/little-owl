@@ -6,11 +6,10 @@ import {
   User,
 } from 'discord.js';
 
-import { StarObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { LogEventType } from '../../enums';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { LogEventType } from '@/enums';
+import { StarObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const Star = {
   data: new SlashCommandBuilder()

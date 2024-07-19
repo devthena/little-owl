@@ -5,11 +5,10 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { LogEventType } from '../../enums';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { LogEventType } from '@/enums';
+import { UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const Leaderboard = {
   data: new SlashCommandBuilder()

@@ -1,11 +1,10 @@
 import { CommandInteraction, User } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
-import { StarObject, UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS, INITIAL } from '../../constants';
-import { addStar, addUser, getStarById, getUserById } from '../../lib/db';
+import { CONFIG, COPY, EMOJIS, INITIAL } from '@/constants';
+import { addStar, addUser, getStarById, getUserById } from '@/lib/db';
+import { StarObject, UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 import {
   AccountLink,

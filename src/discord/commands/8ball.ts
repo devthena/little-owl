@@ -4,8 +4,8 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { BotsProps } from 'src/types';
-import { CONFIG, COPY } from '../../constants';
+import { CONFIG, COPY } from '@/constants';
+import { BotsProps } from '@/types';
 
 export const EightBall = {
   data: new SlashCommandBuilder()

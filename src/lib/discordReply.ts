@@ -1,9 +1,8 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
-import { BotsProps, ReplyProps } from 'src/types';
-
-import { CONFIG } from '../constants';
-import { LogEventType } from '../enums';
+import { CONFIG } from '@/constants';
+import { LogEventType } from '@/enums';
+import { BotsProps, ReplyProps } from '@/types';
 
 export const discordReply = async (
   Bots: BotsProps,

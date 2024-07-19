@@ -1,4 +1,4 @@
-import { BankObject, StarObject, UserObject } from 'src/schemas';
+import { BankObject, StarObject, UserObject } from '@/schemas';
 
 export const INITIAL = {
   BANK: {

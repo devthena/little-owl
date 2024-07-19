@@ -1,5 +1,5 @@
-import { BotsProps, ObjectProps } from 'src/types';
-import { LogEventType } from '../../enums';
+import { LogEventType } from '@/enums';
+import { BotsProps, ObjectProps } from '@/types';
 
 export const onSubMysteryGift = (
   Bots: BotsProps,

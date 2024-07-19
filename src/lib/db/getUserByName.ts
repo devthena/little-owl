@@ -1,7 +1,6 @@
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { LogEventType } from '../../enums';
+import { LogEventType } from '@/enums';
+import { UserObject } from '@/schemas';
+import { BotsProps } from '@/types';
 
 export const getUserByName = async (
   Bots: BotsProps,

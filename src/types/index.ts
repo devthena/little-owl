@@ -3,7 +3,7 @@ import * as tmi from 'tmi.js';
 
 import { Db } from 'mongodb';
 
-import { LogEventType } from '../enums';
+import { LogEventType } from '@/enums';
 
 export interface BotsProps {
   cooldowns: ObjectProps;

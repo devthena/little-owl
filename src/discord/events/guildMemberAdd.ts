@@ -1,9 +1,8 @@
 import { GuildMember } from 'discord.js';
 
-import { BotsProps } from 'src/types';
-
-import { CONFIG } from '../../constants';
-import { LogEventType } from '../../enums';
+import { CONFIG } from '@/constants';
+import { LogEventType } from '@/enums';
+import { BotsProps } from '@/types';
 
 export const onGuildMemberAdd = async (
   Bots: BotsProps,
