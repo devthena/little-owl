@@ -1,9 +1,9 @@
 import { CommandInteraction, User } from 'discord.js';
-import { v4 as uuidv4 } from 'uuid';
 
 import { CONFIG, COPY, EMOJIS, INITIAL } from '@/constants';
-import { addStar, addUser, getStarById, getUserById } from '@/lib/db';
-import { StarObject, UserObject } from '@/schemas';
+import { addStar, getStarById } from '@/lib/db';
+import { StarObject } from '@/models/stars';
+import { getDiscordUser } from '@/services/user';
 import { BotsProps } from '@/types';
 
 import {
@@ -53,47 +53,15 @@ export const onInteractionCreate = async (
       return data;
     };
 
-    const getRecipientData = async (
-      recipient: User
-    ): Promise<UserObject | undefined> => {
-      const document = await getUserById(Bots, recipient.id);
-
-      const data: UserObject = document ?? {
-        ...INITIAL.USER,
-        user_id: uuidv4(),
-        discord_id: recipient.id,
-        discord_username: recipient.username,
-        discord_name: recipient.globalName,
-      };
-
-      if (!document) await addUser(Bots, data);
-      return data;
-    };
-
-    const getUserData = async (): Promise<UserObject | undefined> => {
-      const document = await getUserById(Bots, interaction.user.id);
-
-      const data: UserObject = document ?? {
-        ...INITIAL.USER,
-        user_id: uuidv4(),
-        discord_id: interaction.user.id,
-        discord_username: interaction.user.username,
-        discord_name: interaction.user.globalName,
-      };
-
-      if (!document) await addUser(Bots, data);
-      return data;
-    };
-
     if (interaction.commandName === AccountLink.getName()) {
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return AccountLink.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === AccountUnlink.getName()) {
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return AccountUnlink.execute(Bots, interaction, userData);
@@ -145,7 +113,7 @@ export const onInteractionCreate = async (
     }
 
     if (interaction.commandName === Points.getName()) {
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return Points.execute(Bots, interaction, userData);
@@ -162,14 +130,14 @@ export const onInteractionCreate = async (
         return;
       }
 
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return Gamble.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Profile.getName()) {
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       const userStar = await getUserStar();
 
       if (!userData || !userStar) return;
@@ -195,8 +163,8 @@ export const onInteractionCreate = async (
         return;
       }
 
-      const userData = await getUserData();
-      const recipientData = await getRecipientData(recipient);
+      const userData = await getDiscordUser(Bots, interaction.user);
+      const recipientData = await getDiscordUser(Bots, recipient);
 
       if (!userData || !recipientData) return;
       return Give.execute(Bots, interaction, userData, recipient);

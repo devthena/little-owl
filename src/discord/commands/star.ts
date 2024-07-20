@@ -8,7 +8,7 @@ import {
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { LogEventType } from '@/enums';
-import { StarObject } from '@/schemas';
+import { StarObject } from '@/models/stars';
 import { BotsProps } from '@/types';
 
 export const Star = {

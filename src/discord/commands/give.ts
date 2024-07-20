@@ -1,9 +1,9 @@
 import { CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
-import { LogEventType } from '@/enums';
+import { UserObject } from '@/interfaces/user';
 import { getCurrency } from '@/lib';
-import { UserObject } from '@/schemas';
+import { incDiscordUserCash, setDiscordUser } from '@/services/user';
 import { BotsProps } from '@/types';
 
 export const Give = {
@@ -90,23 +90,10 @@ export const Give = {
       return;
     }
 
-    try {
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne({ discord_id: recipient.id }, { $inc: { cash: amount } });
-
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: user.discord_id },
-          { $set: { cash: (user.cash -= amount) } }
-        );
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description: `Discord Database Error (Give): ` + JSON.stringify(error),
-      });
-    }
+    await incDiscordUserCash(Bots, recipient.id, amount);
+    await setDiscordUser(Bots, interaction.user.id, {
+      cash: (user.cash -= amount),
+    });
 
     Bots.reply({
       content: `${replies.success} Your new balance: ${user.cash} ${EMOJIS.CURRENCY}`,

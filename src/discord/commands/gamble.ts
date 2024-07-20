@@ -1,9 +1,9 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
-import { LogEventType } from '@/enums';
+import { UserObject } from '@/interfaces/user';
 import { getCurrency, weightedRandom } from '@/lib';
-import { UserObject } from '@/schemas';
+import { setDiscordUser } from '@/services/user';
 import { BotsProps } from '@/types';
 
 export const Gamble = {
@@ -178,17 +178,7 @@ export const Gamble = {
       return;
     }
 
-    try {
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne({ discord_id: user.discord_id }, { $set: { cash: points } });
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description:
-          `Database Error (${COPY.GAMBLE.NAME}): ` + JSON.stringify(error),
-      });
-    }
+    setDiscordUser(Bots, interaction.user.id, { cash: points });
   },
   getName: (): string => {
     return COPY.GAMBLE.NAME;

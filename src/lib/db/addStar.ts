@@ -1,5 +1,5 @@
 import { LogEventType } from '@/enums';
-import { StarObject } from '@/schemas';
+import { StarObject } from '@/models/stars';
 import { BotsProps } from '@/types';
 
 export const addStar = async (Bots: BotsProps, data: StarObject) => {

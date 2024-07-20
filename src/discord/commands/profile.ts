@@ -11,8 +11,9 @@ import puppeteer from 'puppeteer';
 import { CONFIG, COPY, MONTH_MAP } from '@/constants';
 import { LogEventType } from '@/enums';
 import { CoinIcon, StarIcon } from '@/icons';
+import { UserObject } from '@/interfaces/user';
 import { parseHexToRGB } from '@/lib';
-import { StarObject, UserObject } from '@/schemas';
+import { StarObject } from '@/models/stars';
 import { BotsProps } from '@/types';
 
 export const Profile = {

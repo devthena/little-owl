@@ -4,12 +4,10 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { v4 as uuidv4 } from 'uuid';
-
-import { CONFIG, COPY, INITIAL } from '@/constants';
+import { CONFIG, COPY } from '@/constants';
 import { LogEventType } from '@/enums';
-import { addUser } from '@/lib/db';
-import { UserObject } from '@/schemas';
+import { UserObject } from '@/interfaces/user';
+import { createUser, setDiscordUser } from '@/services/user';
 import { BotsProps } from '@/types';
 
 export const AccountUnlink = {
@@ -59,41 +57,26 @@ export const AccountUnlink = {
       return;
     }
 
-    try {
-      const twitchData: UserObject = {
-        ...INITIAL.USER,
-        user_id: uuidv4(),
-        twitch_id: user.twitch_id,
-        twitch_username: user.twitch_username,
-        cash: 0,
-      };
+    await createUser(Bots, {
+      twitch_id: user.twitch_id,
+      twitch_username: user.twitch_username,
+      cash: 0,
+    });
 
-      await addUser(Bots, twitchData);
+    await setDiscordUser(Bots, interaction.user.id, {
+      twitch_id: null,
+      twitch_username: null,
+    });
 
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { discord_id: user.discord_id },
-          { $set: { twitch_id: null, twitch_username: null } }
-        );
+    await interaction.reply({
+      content: COPY.UNLINK.RESPONSES.SUCCESS,
+      ephemeral: true,
+    });
 
-      await interaction.reply({
-        content: COPY.UNLINK.RESPONSES.SUCCESS,
-        ephemeral: true,
-      });
-
-      Bots.log({
-        type: LogEventType.Activity,
-        description: `${user.discord_username} aka ${user.discord_name} has unlinked their account: ${user.twitch_username}`,
-      });
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description:
-          `Discord Command Error (${COPY.UNLINK.NAME}): ` +
-          JSON.stringify(error),
-      });
-    }
+    Bots.log({
+      type: LogEventType.Activity,
+      description: `${user.discord_username} aka ${user.discord_name} has unlinked their account: ${user.twitch_username}`,
+    });
   },
   getName: (): string => {
     return COPY.UNLINK.NAME;

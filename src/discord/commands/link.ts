@@ -6,7 +6,8 @@ import {
 
 import { CONFIG, COPY } from '@/constants';
 import { LogEventType } from '@/enums';
-import { UserObject } from '@/schemas';
+import { UserObject } from '@/interfaces/user';
+import { deleteUser, setDiscordUser } from '@/services/user';
 import { BotsProps } from '@/types';
 
 export const AccountLink = {
@@ -46,10 +47,12 @@ export const AccountLink = {
       return;
     }
 
+    const userId = code?.toString();
+
     try {
       const twitchUser = await Bots.db
         ?.collection<UserObject>(Bots.env.MONGODB_USERS)
-        .findOne({ user_id: code?.toString() });
+        .findOne({ user_id: userId });
 
       if (!twitchUser) {
         await interaction.reply({
@@ -69,20 +72,13 @@ export const AccountLink = {
 
       let points = user.cash + twitchUser.cash;
 
-      await Bots.db?.collection(Bots.env.MONGODB_USERS).updateOne(
-        { discord_id: user.discord_id },
-        {
-          $set: {
-            twitch_id: twitchUser.twitch_id,
-            twitch_username: twitchUser.twitch_username,
-            cash: points,
-          },
-        }
-      );
+      await setDiscordUser(Bots, interaction.user.id, {
+        twitch_id: twitchUser.twitch_id,
+        twitch_username: twitchUser.twitch_username,
+        cash: points,
+      });
 
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .deleteOne({ user_id: code });
+      if (userId) await deleteUser(Bots, userId);
 
       await interaction.reply({
         content: COPY.LINK.RESPONSES.SUCCESS,

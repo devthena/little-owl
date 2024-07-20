@@ -7,7 +7,7 @@ import {
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { LogEventType } from '@/enums';
-import { UserObject } from '@/schemas';
+import { UserObject } from '@/interfaces/user';
 import { BotsProps } from '@/types';
 
 export const Leaderboard = {
