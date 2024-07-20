@@ -1,12 +1,13 @@
 import { CONFIG, COPY, EMOTES, IGNORE_LIST, URLS } from '@/constants';
-import { LogEventType } from '@/enums';
+import { LogCode } from '@/enums/logs';
+import { BotsProps, ObjectProps } from '@/interfaces/bot';
 import { getCurrency, isNumber } from '@/lib';
+
 import {
   getTwitchUserById,
   getTwitchUserByName,
-  incTwitchUserCash,
+  incTwitchUser,
 } from '@/services/user';
-import { BotsProps, ObjectProps } from '@/types';
 
 import { onGamble, onGive } from '../commands';
 
@@ -51,13 +52,13 @@ export const onChat = async (
     if (!points) return;
 
     Bots.log({
-      type: LogEventType.Activity,
+      type: LogCode.Activity,
       description: `${userstate.username} has redeemed conversion of ${
         points * 10
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
     });
 
-    await incTwitchUserCash(Bots, userstate['user-id'], points);
+    await incTwitchUser(Bots, userstate['user-id'], { cash: points });
     return;
   }
 
@@ -140,5 +141,5 @@ export const onChat = async (
 
   if (!isValid) return;
 
-  await incTwitchUserCash(Bots, userstate['user-id'], 1);
+  await incTwitchUser(Bots, userstate['user-id'], { cash: 1 });
 };

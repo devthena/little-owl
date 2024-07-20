@@ -1,4 +1,4 @@
-export enum LogEventType {
+export enum LogCode {
   Activity = 'activity',
   Alert = 'alert',
   Deleted = 'deleted',

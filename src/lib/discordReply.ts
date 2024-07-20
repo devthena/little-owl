@@ -1,12 +1,12 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
 import { CONFIG } from '@/constants';
-import { LogEventType } from '@/enums';
-import { BotsProps, ReplyProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps, ReplyProps } from '@/interfaces/bot';
 
 export const discordReply = async (
   Bots: BotsProps,
-  { content, ephimeral, interaction, source }: ReplyProps
+  { content, ephimeral, interaction }: ReplyProps
 ) => {
   try {
     const botEmbed = new EmbedBuilder()
@@ -16,8 +16,8 @@ export const discordReply = async (
     await interaction.reply({ embeds: [botEmbed], ephemeral: ephimeral });
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
-      description: `Discord Reply Error (${source}): ` + JSON.stringify(error),
+      type: LogCode.Error,
+      description: JSON.stringify(error),
     });
   }
 };

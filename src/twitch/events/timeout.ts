@@ -1,5 +1,5 @@
-import { LogEventType } from '@/enums';
-import { BotsProps, ObjectProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps, ObjectProps } from '@/interfaces/bot';
 
 export const onTimeout = (
   Bots: BotsProps,
@@ -10,7 +10,7 @@ export const onTimeout = (
   _userstate: ObjectProps
 ) => {
   Bots.log({
-    type: LogEventType.Leave,
+    type: LogCode.Leave,
     description: `${username} has been timed out for ${duration}s.\n\nReason: ${reason}`,
   });
 };

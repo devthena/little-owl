@@ -1,8 +1,8 @@
 import { CONFIG, EMOTES } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
 import { getCurrency, isNumber, weightedRandom } from '@/lib';
 import { setTwitchUser } from '@/services/user';
-import { BotsProps } from '@/types';
 
 export const onGamble = async (
   Bots: BotsProps,

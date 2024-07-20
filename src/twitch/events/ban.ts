@@ -1,6 +1,6 @@
-import { LogEventType } from '@/enums';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 import { deleteTwitchUser } from '@/services/user';
-import { BotsProps } from '@/types';
 
 export const onBan = async (
   Bots: BotsProps,
@@ -9,14 +9,14 @@ export const onBan = async (
   _reason: string
 ) => {
   Bots.log({
-    type: LogEventType.Leave,
+    type: LogCode.Leave,
     description: `${username} has been banned from ${channel}!`,
   });
 
   await deleteTwitchUser(Bots, username);
 
   Bots.log({
-    type: LogEventType.Deleted,
+    type: LogCode.Deleted,
     description: `Record with username=${username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
     footer: `Twitch Username: ${username}`,
   });

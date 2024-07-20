@@ -9,6 +9,8 @@ export interface UserDocument {
   twitch_id: string | null;
   twitch_username: string | null;
   cash: number;
+  bank?: number;
+  stars?: number;
 }
 
 export interface UserObject {
@@ -19,6 +21,14 @@ export interface UserObject {
   twitch_id: string | null;
   twitch_username: string | null;
   cash: number;
+  bank?: number;
+  stars?: number;
+}
+
+export interface UserNumberObject {
+  cash?: number;
+  bank?: number;
+  stars?: number;
 }
 
 export type UserAuthMethod = 'discord' | 'twitch';

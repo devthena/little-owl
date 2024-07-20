@@ -1,8 +1,8 @@
 import { CONFIG } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
 import { getCurrency } from '@/lib';
-import { incTwitchUserCash, setTwitchUser } from '@/services/user';
-import { BotsProps } from '@/types';
+import { incTwitchUser, setTwitchUser } from '@/services/user';
 
 export const onGive = async (
   Bots: BotsProps,
@@ -26,7 +26,7 @@ export const onGive = async (
 
   if (user.twitch_id && recipient.twitch_id) {
     await setTwitchUser(Bots, user.twitch_id, { cash: user.cash - value });
-    await incTwitchUserCash(Bots, recipient.twitch_id, value);
+    await incTwitchUser(Bots, recipient.twitch_id, { cash: value });
   }
 
   return;

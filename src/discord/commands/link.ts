@@ -5,10 +5,10 @@ import {
 } from 'discord.js';
 
 import { CONFIG, COPY } from '@/constants';
-import { LogEventType } from '@/enums';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
-import { deleteUser, setDiscordUser } from '@/services/user';
-import { BotsProps } from '@/types';
+import { deleteUser, getUserObject, setDiscordUser } from '@/services/user';
 
 export const AccountLink = {
   data: new SlashCommandBuilder()
@@ -30,7 +30,6 @@ export const AccountLink = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.LINK.NAME,
       });
       return;
     }
@@ -42,60 +41,49 @@ export const AccountLink = {
         content: COPY.LINK.RESPONSES.LINKED_DISCORD,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.LINK.NAME,
       });
       return;
     }
 
     const userId = code?.toString();
 
-    try {
-      const twitchUser = await Bots.db
-        ?.collection<UserObject>(Bots.env.MONGODB_USERS)
-        .findOne({ user_id: userId });
+    const twitchUser = userId ? await getUserObject(Bots, userId) : null;
 
-      if (!twitchUser) {
-        await interaction.reply({
-          content: COPY.LINK.RESPONSES.INVALID,
-          ephemeral: true,
-        });
-        return;
-      }
-
-      if (twitchUser && twitchUser.discord_id) {
-        await interaction.reply({
-          content: COPY.LINK.RESPONSES.LINKED_TWITCH,
-          ephemeral: true,
-        });
-        return;
-      }
-
-      let points = user.cash + twitchUser.cash;
-
-      await setDiscordUser(Bots, interaction.user.id, {
-        twitch_id: twitchUser.twitch_id,
-        twitch_username: twitchUser.twitch_username,
-        cash: points,
-      });
-
-      if (userId) await deleteUser(Bots, userId);
-
+    if (!twitchUser) {
       await interaction.reply({
-        content: COPY.LINK.RESPONSES.SUCCESS,
+        content: COPY.LINK.RESPONSES.INVALID,
         ephemeral: true,
       });
-
-      Bots.log({
-        type: LogEventType.Activity,
-        description: `${user.discord_username} aka ${user.discord_name} has linked their account: ${twitchUser.twitch_username}`,
-      });
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description:
-          `Discord Command Error (${COPY.LINK.NAME}): ` + JSON.stringify(error),
-      });
+      return;
     }
+
+    if (twitchUser && twitchUser.discord_id) {
+      await interaction.reply({
+        content: COPY.LINK.RESPONSES.LINKED_TWITCH,
+        ephemeral: true,
+      });
+      return;
+    }
+
+    let points = user.cash + twitchUser.cash;
+
+    await setDiscordUser(Bots, interaction.user.id, {
+      twitch_id: twitchUser.twitch_id,
+      twitch_username: twitchUser.twitch_username,
+      cash: points,
+    });
+
+    if (userId) await deleteUser(Bots, userId);
+
+    await interaction.reply({
+      content: COPY.LINK.RESPONSES.SUCCESS,
+      ephemeral: true,
+    });
+
+    Bots.log({
+      type: LogCode.Activity,
+      description: `${user.discord_username} aka ${user.discord_name} has linked their Twitch account: ${twitchUser.twitch_username}`,
+    });
   },
   getName: (): string => {
     return COPY.LINK.NAME;

@@ -1,10 +1,10 @@
 import { CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
 import { getCurrency } from '@/lib';
-import { incDiscordUserCash, setDiscordUser } from '@/services/user';
-import { BotsProps } from '@/types';
+import { incDiscordUser, setDiscordUser } from '@/services/user';
 
 export const Give = {
   data: new SlashCommandBuilder()
@@ -33,7 +33,6 @@ export const Give = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GIVE.NAME,
       });
       return;
     }
@@ -55,7 +54,6 @@ export const Give = {
         content: replies.noPoints,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GIVE.NAME,
       });
       return;
     }
@@ -65,7 +63,6 @@ export const Give = {
         content: replies.invalidNegative,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GIVE.NAME,
       });
       return;
     }
@@ -75,7 +72,6 @@ export const Give = {
         content: replies.notEnough,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GIVE.NAME,
       });
       return;
     }
@@ -85,12 +81,11 @@ export const Give = {
         content: replies.invalidRecipient,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GIVE.NAME,
       });
       return;
     }
 
-    await incDiscordUserCash(Bots, recipient.id, amount);
+    await incDiscordUser(Bots, recipient.id, { cash: amount });
     await setDiscordUser(Bots, interaction.user.id, {
       cash: (user.cash -= amount),
     });
@@ -99,7 +94,6 @@ export const Give = {
       content: `${replies.success} Your new balance: ${user.cash} ${EMOJIS.CURRENCY}`,
       ephimeral: false,
       interaction: interaction,
-      source: COPY.GIVE.NAME,
     });
   },
   getName: (): string => {

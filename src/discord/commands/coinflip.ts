@@ -1,8 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 import { weightedRandom } from '@/lib';
-import { BotsProps } from '@/types';
 
 export const CoinFlip = {
   data: new SlashCommandBuilder()
@@ -14,7 +14,6 @@ export const CoinFlip = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.COINFLIP.NAME,
       });
       return;
     }
@@ -26,7 +25,6 @@ export const CoinFlip = {
       content: `You got... ${result}! ${EMOJIS.CURRENCY}`,
       ephimeral: false,
       interaction: interaction,
-      source: COPY.COINFLIP.NAME,
     });
   },
   getName: (): string => {

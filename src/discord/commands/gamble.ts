@@ -1,10 +1,10 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
 import { getCurrency, weightedRandom } from '@/lib';
 import { setDiscordUser } from '@/services/user';
-import { BotsProps } from '@/types';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
@@ -26,7 +26,6 @@ export const Gamble = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }
@@ -45,7 +44,6 @@ export const Gamble = {
         content: replies.noPoints,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }
@@ -58,7 +56,6 @@ export const Gamble = {
         content: replies.invalidInput,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }
@@ -69,7 +66,6 @@ export const Gamble = {
           content: replies.maxReached,
           ephimeral: true,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
         return true;
       }
@@ -96,7 +92,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       } else {
         points = 0;
@@ -105,7 +100,6 @@ export const Gamble = {
           content: replies.lostAll,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       }
     } else if (arg === 'half') {
@@ -121,7 +115,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       } else {
         points -= halfPoints;
@@ -132,7 +125,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       }
     } else if (amount < 1) {
@@ -140,7 +132,6 @@ export const Gamble = {
         content: replies.invalidNegative,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
     } else if (amount <= user.cash) {
       if (await isOverLimit(amount)) return;
@@ -154,7 +145,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       } else {
         points -= amount;
@@ -165,7 +155,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       }
     } else if (amount > user.cash) {
@@ -173,7 +162,6 @@ export const Gamble = {
         content: replies.notEnough,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }

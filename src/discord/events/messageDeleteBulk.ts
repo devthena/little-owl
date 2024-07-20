@@ -5,8 +5,8 @@ import {
   Snowflake,
 } from 'discord.js';
 
-import { LogEventType } from '@/enums';
-import { BotsProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 
 export const onMessageDeleteBulk = async (
   Bots: BotsProps,
@@ -29,7 +29,7 @@ export const onMessageDeleteBulk = async (
     }
 
     Bots.log({
-      type: LogEventType.Deleted,
+      type: LogCode.Deleted,
       description: logMessage,
       authorIcon: message.guild?.iconURL() || undefined,
       thumbnail: message.author.displayAvatarURL() || undefined,

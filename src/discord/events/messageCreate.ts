@@ -1,8 +1,8 @@
 import { Message } from 'discord.js';
 
 import { CONFIG } from '@/constants';
-import { getDiscordUser, incDiscordUserCash } from '@/services/user';
-import { BotsProps } from '@/types';
+import { BotsProps } from '@/interfaces/bot';
+import { getDiscordUser, incDiscordUser } from '@/services/user';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;
@@ -46,5 +46,5 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!isValid) return;
 
   await getDiscordUser(Bots, message.member.user);
-  await incDiscordUserCash(Bots, message.member.id, incAmount);
+  await incDiscordUser(Bots, message.member.id, { cash: incAmount });
 };

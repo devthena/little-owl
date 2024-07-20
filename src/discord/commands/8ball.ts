@@ -5,7 +5,7 @@ import {
 } from 'discord.js';
 
 import { CONFIG, COPY } from '@/constants';
-import { BotsProps } from '@/types';
+import { BotsProps } from '@/interfaces/bot';
 
 export const EightBall = {
   data: new SlashCommandBuilder()
@@ -23,7 +23,6 @@ export const EightBall = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.EIGHTBALL.NAME,
       });
       return;
     }
@@ -38,7 +37,6 @@ export const EightBall = {
       content: `:8ball: says.. ${answer}`,
       ephimeral: false,
       interaction: interaction,
-      source: COPY.EIGHTBALL.NAME,
     });
   },
   getName: (): string => {

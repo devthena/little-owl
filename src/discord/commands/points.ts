@@ -1,8 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
-import { BotsProps } from '@/types';
 
 export const Points = {
   data: new SlashCommandBuilder()
@@ -18,7 +18,6 @@ export const Points = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.POINTS.NAME,
       });
       return;
     }
@@ -27,7 +26,6 @@ export const Points = {
       content: `Your current balance is: ${user.cash} ${EMOJIS.CURRENCY}`,
       ephimeral: false,
       interaction: interaction,
-      source: COPY.POINTS.NAME,
     });
   },
   getName: (): string => {

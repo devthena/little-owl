@@ -1,10 +1,8 @@
-import { CommandInteraction, User } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 
-import { CONFIG, COPY, EMOJIS, INITIAL } from '@/constants';
-import { addStar, getStarById } from '@/lib/db';
-import { StarObject } from '@/models/stars';
+import { CONFIG, EMOJIS } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 import { getDiscordUser } from '@/services/user';
-import { BotsProps } from '@/types';
 
 import {
   AccountLink,
@@ -27,30 +25,12 @@ export const onInteractionCreate = async (
   if (interaction.isChatInputCommand()) {
     if (interaction.user.bot) return;
 
-    const getRecipientStar = async (
-      recipient: User
-    ): Promise<StarObject | undefined> => {
-      const document = await getStarById(Bots, recipient.id);
-
-      const data: StarObject = document ?? {
-        ...INITIAL.STAR,
-        discord_id: recipient.id,
-      };
-
-      if (!document) await addStar(Bots, data);
-      return data;
-    };
-
-    const getUserStar = async (): Promise<StarObject | undefined> => {
-      const document = await getStarById(Bots, interaction.user.id);
-
-      const data: StarObject = document ?? {
-        ...INITIAL.STAR,
-        discord_id: interaction.user.id,
-      };
-
-      if (!document) await addStar(Bots, data);
-      return data;
+    const replyNoBot = () => {
+      Bots.reply({
+        content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
+        ephimeral: true,
+        interaction: interaction,
+      });
     };
 
     if (interaction.commandName === AccountLink.getName()) {
@@ -75,22 +55,9 @@ export const onInteractionCreate = async (
       const recipient = interaction.options.getUser('user');
 
       if (!recipient) return;
+      if (recipient.bot) return replyNoBot();
 
-      if (recipient.bot) {
-        Bots.reply({
-          content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
-          ephimeral: true,
-          interaction: interaction,
-          source: COPY.STAR.NAME,
-        });
-        return;
-      }
-
-      const userStar = await getUserStar();
-      const recipientStar = await getRecipientStar(recipient);
-
-      if (!userStar || !recipientStar) return;
-      return Star.execute(Bots, interaction, userStar, recipient);
+      return Star.execute(Bots, interaction, recipient);
     }
 
     const isInCasinoChannel =
@@ -107,7 +74,6 @@ export const onInteractionCreate = async (
         content: 'Please use this command in one of the bot channels.',
         ephimeral: true,
         interaction: interaction,
-        source: 'interactionCreate',
       });
       return;
     }
@@ -125,7 +91,6 @@ export const onInteractionCreate = async (
           content: 'Please use the #casino channel to gamble your points.',
           ephimeral: true,
           interaction: interaction,
-          source: 'interactionCreate',
         });
         return;
       }
@@ -138,10 +103,9 @@ export const onInteractionCreate = async (
 
     if (interaction.commandName === Profile.getName()) {
       const userData = await getDiscordUser(Bots, interaction.user);
-      const userStar = await getUserStar();
+      if (!userData) return;
 
-      if (!userData || !userStar) return;
-      return Profile.execute(Bots, interaction, userData, userStar);
+      return Profile.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Leaderboard.getName()) {
@@ -152,16 +116,7 @@ export const onInteractionCreate = async (
       const recipient = interaction.options.getUser('user');
 
       if (!recipient) return;
-
-      if (recipient.bot) {
-        Bots.reply({
-          content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
-          ephimeral: true,
-          interaction: interaction,
-          source: COPY.GIVE.NAME,
-        });
-        return;
-      }
+      if (recipient.bot) return replyNoBot();
 
       const userData = await getDiscordUser(Bots, interaction.user);
       const recipientData = await getDiscordUser(Bots, recipient);

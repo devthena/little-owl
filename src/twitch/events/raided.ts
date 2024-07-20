@@ -1,5 +1,5 @@
-import { LogEventType } from '@/enums';
-import { BotsProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 
 export const onRaided = (
   Bots: BotsProps,
@@ -8,7 +8,7 @@ export const onRaided = (
   viewers: number
 ) => {
   Bots.log({
-    type: LogEventType.Alert,
+    type: LogCode.Alert,
     description: `${username} has raided the chat with ${viewers} viewers!`,
   });
 };

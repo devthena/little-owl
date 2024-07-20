@@ -2,20 +2,21 @@ import { User } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
 import { InitialUserObject } from '@/constants/states';
-import { LogEventType } from '@/enums';
-import { UserObject } from '@/interfaces/user';
+import { LogCode } from '@/enums/logs';
+import { BotsProps, ObjectProps } from '@/interfaces/bot';
+import { UserNumberObject, UserObject } from '@/interfaces/user';
 
 import {
   addUser,
-  addUserCash,
+  getTopUsers,
+  getUser,
   getUserById,
   getUserByName,
+  incrementUser,
   removeAuthUser,
   removeUser,
   updateUser,
 } from '@/models/user';
-
-import { BotsProps, ObjectProps } from '@/types';
 
 export const createUser = async (
   Bots: BotsProps,
@@ -30,7 +31,7 @@ export const createUser = async (
     await addUser(Bots, data);
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   }
@@ -41,7 +42,7 @@ export const deleteUser = async (Bots: BotsProps, id: string) => {
     await removeUser(Bots, id);
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   }
@@ -52,7 +53,7 @@ export const deleteDiscordUser = async (Bots: BotsProps, id: string) => {
     await removeAuthUser(Bots, id, 'discord');
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   }
@@ -63,9 +64,27 @@ export const deleteTwitchUser = async (Bots: BotsProps, id: string) => {
     await removeAuthUser(Bots, id, 'twitch');
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
+  }
+};
+
+export const getLeaderboardUsers = async (
+  Bots: BotsProps,
+  category: string,
+  max: number
+) => {
+  let data: UserObject[] = [];
+  try {
+    data = (await getTopUsers(Bots, category, max)) ?? [];
+  } catch (error) {
+    Bots.log({
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+  } finally {
+    return data;
   }
 };
 
@@ -91,7 +110,7 @@ export const getDiscordUser = async (
     }
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   } finally {
@@ -120,7 +139,7 @@ export const getTwitchUserById = async (
     }
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   } finally {
@@ -136,38 +155,53 @@ export const getTwitchUserByName = async (
     return await getUserByName(Bots, username, 'twitch');
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
     return;
   }
 };
 
-export const incDiscordUserCash = async (
+export const getUserObject = async (
   Bots: BotsProps,
-  id: string,
-  value: number
-) => {
+  id: string
+): Promise<UserObject | null | undefined> => {
   try {
-    await addUserCash(Bots, id, 'discord', value);
+    return await getUser(Bots, id);
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+    return;
+  }
+};
+
+export const incDiscordUser = async (
+  Bots: BotsProps,
+  id: string,
+  values: UserNumberObject
+) => {
+  try {
+    await incrementUser(Bots, id, 'discord', values);
+  } catch (error) {
+    Bots.log({
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   }
 };
 
-export const incTwitchUserCash = async (
+export const incTwitchUser = async (
   Bots: BotsProps,
   id: string,
-  value: number
+  values: UserNumberObject
 ) => {
   try {
-    await addUserCash(Bots, id, 'twitch', value);
+    await incrementUser(Bots, id, 'twitch', values);
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   }
@@ -182,7 +216,7 @@ export const setDiscordUser = async (
     await updateUser(Bots, id, 'discord', payload);
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   }
@@ -197,7 +231,7 @@ export const setTwitchUser = async (
     await updateUser(Bots, id, 'twitch', payload);
   } catch (error) {
     Bots.log({
-      type: LogEventType.Error,
+      type: LogCode.Error,
       description: JSON.stringify(error),
     });
   }

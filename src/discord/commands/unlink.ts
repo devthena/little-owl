@@ -5,10 +5,10 @@ import {
 } from 'discord.js';
 
 import { CONFIG, COPY } from '@/constants';
-import { LogEventType } from '@/enums';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
 import { createUser, setDiscordUser } from '@/services/user';
-import { BotsProps } from '@/types';
 
 export const AccountUnlink = {
   data: new SlashCommandBuilder()
@@ -30,7 +30,6 @@ export const AccountUnlink = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.UNLINK.NAME,
       });
       return;
     }
@@ -40,7 +39,6 @@ export const AccountUnlink = {
         content: COPY.UNLINK.RESPONSES.NOLINK,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.UNLINK.NAME,
       });
       return;
     }
@@ -52,7 +50,6 @@ export const AccountUnlink = {
         content: COPY.UNLINK.RESPONSES.INVALID,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.UNLINK.NAME,
       });
       return;
     }
@@ -74,7 +71,7 @@ export const AccountUnlink = {
     });
 
     Bots.log({
-      type: LogEventType.Activity,
+      type: LogCode.Activity,
       description: `${user.discord_username} aka ${user.discord_name} has unlinked their account: ${user.twitch_username}`,
     });
   },

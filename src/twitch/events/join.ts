@@ -1,6 +1,6 @@
 import { IGNORE_LIST } from '@/constants';
-import { LogEventType } from '@/enums';
-import { BotsProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 
 export const onJoin = async (
   Bots: BotsProps,
@@ -12,7 +12,7 @@ export const onJoin = async (
   if (IGNORE_LIST.includes(username)) return;
 
   Bots.log({
-    type: LogEventType.User,
+    type: LogCode.User,
     description: `${username} has joined the chat.`,
   });
 };

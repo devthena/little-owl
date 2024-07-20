@@ -1,5 +1,5 @@
-import { LogEventType } from '@/enums';
-import { BotsProps, ObjectProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps, ObjectProps } from '@/interfaces/bot';
 
 export const onCheer = (
   Bots: BotsProps,
@@ -8,7 +8,7 @@ export const onCheer = (
   message: string
 ) => {
   Bots.log({
-    type: LogEventType.Alert,
+    type: LogCode.Alert,
     description: `${userstate.username} cheered ${userstate.bits} in the chat!\n\nMessage: ${message}`,
   });
 };

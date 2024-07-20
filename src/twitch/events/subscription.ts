@@ -1,5 +1,5 @@
-import { LogEventType } from '@/enums';
-import { BotsProps, ObjectProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps, ObjectProps } from '@/interfaces/bot';
 
 export const onSubscription = (
   Bots: BotsProps,
@@ -10,7 +10,7 @@ export const onSubscription = (
   _userstate: ObjectProps
 ) => {
   Bots.log({
-    type: LogEventType.Alert,
+    type: LogCode.Alert,
     description: `${username} has subscribed to the channel!\n\nMessage: ${message}`,
   });
 };

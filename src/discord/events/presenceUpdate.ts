@@ -6,8 +6,8 @@ import {
 } from 'discord.js';
 
 import { CONFIG } from '@/constants';
-import { LogEventType } from '@/enums';
-import { BotsProps } from '@/types';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 
 export const onPresenceUpdate = async (
   Bots: BotsProps,
@@ -54,7 +54,7 @@ export const onPresenceUpdate = async (
           .add(liveRole)
           .then(_data => {
             Bots.log({
-              type: LogEventType.Activity,
+              type: LogCode.Activity,
               description: `${newPresence.member?.user.username} aka ${newPresence.member?.displayName} has started streaming.`,
               footer: `Discord User ID: ${newPresence.member?.id}`,
             });
@@ -96,7 +96,7 @@ export const onPresenceUpdate = async (
             })
             .setTitle(`Now Streaming ${streamActivity.state}`)
             .setDescription(liveMessage)
-            .setThumbnail(newPresence.member.avatarURL())
+            .setThumbnail(newPresence.member.user.displayAvatarURL())
             .setFooter({
               text: `Posted on ${streamActivity.createdAt.toDateString()}`,
             });

@@ -1,19 +1,67 @@
-import { UserAuthMethod, UserDocument, UserObject } from '@/interfaces/user';
-import { BotsProps } from '@/types';
+import { BotsProps } from '@/interfaces/bot';
+
+import {
+  UserAuthMethod,
+  UserDocument,
+  UserNumberObject,
+  UserObject,
+} from '@/interfaces/user';
 
 export const addUser = async (Bots: BotsProps, data: UserObject) => {
   await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(data);
 };
 
-export const addUserCash = async (
+export const getTopUsers = async (
+  Bots: BotsProps,
+  category: string,
+  max: number
+): Promise<UserDocument[] | undefined> => {
+  return await Bots.db
+    ?.collection<UserDocument>(Bots.env.MONGODB_USERS)
+    .find({ discord_id: { $exists: true, $ne: null }, [category]: { $gt: 0 } })
+    .sort({ [category]: -1 })
+    .limit(max)
+    .toArray();
+};
+
+export const getUser = async (
+  Bots: BotsProps,
+  id: string
+): Promise<UserDocument | null | undefined> => {
+  return await Bots.db
+    ?.collection<UserDocument>(Bots.env.MONGODB_USERS)
+    .findOne({ user_id: id });
+};
+
+export const getUserById = async (
+  Bots: BotsProps,
+  id: string,
+  method: UserAuthMethod
+): Promise<UserDocument | null | undefined> => {
+  return await Bots.db
+    ?.collection<UserDocument>(Bots.env.MONGODB_USERS)
+    .findOne({ [`${method}_id`]: id });
+};
+
+export const getUserByName = async (
+  Bots: BotsProps,
+  username: string,
+  method: UserAuthMethod
+): Promise<UserDocument | null | undefined> => {
+  return await Bots.db
+    ?.collection<UserDocument>(Bots.env.MONGODB_USERS)
+    .findOne({ [`${method}_username`]: username.toLowerCase() });
+};
+
+export const incrementUser = async (
   Bots: BotsProps,
   id: string,
   method: UserAuthMethod,
-  value: number
+  payload: UserNumberObject
 ) => {
   await Bots.db
     ?.collection(Bots.env.MONGODB_USERS)
-    .updateOne({ [`${method}_id`]: id }, { $inc: { cash: value } });
+    .updateOne({ [`${method}_id`]: id }, { $inc: { ...payload } });
 };
 
 export const removeUser = async (Bots: BotsProps, id: string) => {
@@ -38,26 +86,6 @@ export const removeAuthUser = async (
         twitch_username: id,
       });
   }
-};
-
-export const getUserById = async (
-  Bots: BotsProps,
-  id: string,
-  method: UserAuthMethod
-): Promise<UserDocument | null | undefined> => {
-  return await Bots.db
-    ?.collection<UserDocument>(Bots.env.MONGODB_USERS)
-    .findOne({ [`${method}_id`]: id });
-};
-
-export const getUserByName = async (
-  Bots: BotsProps,
-  username: string,
-  method: UserAuthMethod
-): Promise<UserDocument | null | undefined> => {
-  return await Bots.db
-    ?.collection<UserDocument>(Bots.env.MONGODB_USERS)
-    .findOne({ [`${method}_username`]: username.toLowerCase() });
 };
 
 export const updateUser = async (
