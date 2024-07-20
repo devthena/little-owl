@@ -54,6 +54,9 @@ export const CONFIG = {
     SINGLE: 'coin',
   },
   FEATURES: {
+    BONUS: {
+      ENABLED: true,
+    },
     COINFLIP: {
       ENABLED: true,
     },

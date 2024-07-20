@@ -1,4 +1,11 @@
-import { CONFIG, COPY, EMOTES, IGNORE_LIST, URLS } from '@/constants';
+import {
+  COMMAND_MAP,
+  CONFIG,
+  COPY,
+  EMOTES,
+  IGNORE_LIST,
+  URLS,
+} from '@/constants';
 import { LogCode } from '@/enums/logs';
 import { BotsProps, ObjectProps } from '@/interfaces/bot';
 import { getCurrency, isNumber } from '@/lib';
@@ -9,7 +16,7 @@ import {
   incTwitchUser,
 } from '@/services/user';
 
-import { onGamble, onGive } from '../commands';
+import { onBonus, onGamble, onGive } from '../commands';
 
 const infoCommands = [
   'discord',
@@ -67,6 +74,7 @@ export const onChat = async (
     const command = args.shift()?.toLowerCase();
 
     if (!command) return;
+    if (!COMMAND_MAP.includes(command)) return;
 
     // commands that do not expect an argument
 
@@ -129,6 +137,11 @@ export const onChat = async (
 
     if (command === COPY.GIVE.NAME) {
       return onGive(Bots, channel, user, recipient, value);
+    }
+
+    if (command === COPY.BONUS.NAME) {
+      if (userstate.username !== channel.slice(1)) return;
+      return onBonus(Bots, channel, recipient, value);
     }
   }
 

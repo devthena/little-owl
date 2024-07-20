@@ -27,6 +27,8 @@ export const onGive = async (
   if (user.twitch_id && recipient.twitch_id) {
     await setTwitchUser(Bots, user.twitch_id, { cash: user.cash - value });
     await incTwitchUser(Bots, recipient.twitch_id, { cash: value });
+
+    Bots.twitch.say(channel, replies.success);
   }
 
   return;
