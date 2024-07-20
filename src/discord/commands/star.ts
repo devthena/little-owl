@@ -6,11 +6,18 @@ import {
   User,
 } from 'discord.js';
 
-import { StarObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { ActivityCode } from '@/enums/activities';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
 
-import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { LogEventType } from '../../enums';
+import {
+  getActivityByCode,
+  pushActivity,
+  updateStarActivity,
+} from '@/services/activities';
+
+import { incDiscordUser } from '@/services/user';
 
 export const Star = {
   data: new SlashCommandBuilder()
@@ -25,7 +32,6 @@ export const Star = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    star: StarObject,
     recipient: User
   ) => {
     if (!CONFIG.FEATURES.STAR.ENABLED) {
@@ -33,7 +39,6 @@ export const Star = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.STAR.NAME,
       });
       return;
     }
@@ -51,38 +56,34 @@ export const Star = {
         content: replies.invalidSelf,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.STAR.NAME,
       });
       return;
     }
 
-    if (star.last_given === today) {
+    const starActivity = await getActivityByCode(
+      Bots,
+      interaction.user.id,
+      ActivityCode.Star
+    );
+
+    if (starActivity && starActivity.last_given === today) {
       Bots.reply({
         content: replies.invalidMax,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.STAR.NAME,
       });
       return;
     }
 
-    try {
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_STARS)
-        .updateOne(
-          { discord_id: interaction.user.id },
-          { $inc: { total_given: 1 }, $set: { last_given: today } }
-        );
-
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_STARS)
-        .updateOne({ discord_id: recipient.id }, { $inc: { stars: 1 } });
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description: `Discord Database Error (Star): ` + JSON.stringify(error),
+    if (!starActivity) {
+      await pushActivity(Bots, interaction.user.id, {
+        [ActivityCode.Star]: { last_given: today, total_given: 1 },
       });
+    } else {
+      await updateStarActivity(Bots, interaction.user.id, today);
     }
+
+    await incDiscordUser(Bots, recipient.id, { stars: 1 });
 
     const botEmbed = new EmbedBuilder()
       .setColor(CONFIG.COLORS.YELLOW as ColorResolvable)
@@ -97,9 +98,8 @@ export const Star = {
       await interaction.reply({ embeds: [botEmbed] });
     } catch (error) {
       Bots.log({
-        type: LogEventType.Error,
-        description:
-          `Discord Command Error (${COPY.STAR.NAME}): ` + JSON.stringify(error),
+        type: LogCode.Error,
+        description: JSON.stringify(error),
       });
     }
   },

@@ -1,12 +1,8 @@
 import { Message } from 'discord.js';
-import { v4 as uuidv4 } from 'uuid';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, INITIAL } from '../../constants';
-import { LogEventType } from '../../enums';
-import { addUser, getUserById } from '../../lib/db';
+import { CONFIG } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
+import { getDiscordUser, incDiscordUser } from '@/services/user';
 
 export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;
@@ -44,38 +40,11 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
   const isValidMsg = words.length > 2 && words.some(word => pattern.test(word));
   const isValidAttachment = !!message.attachments.first();
+  const incAmount = isValidAttachment ? 2 : 1;
   const isValid = isValidMsg || isValidAttachment;
 
   if (!isValid) return;
 
-  const document = await getUserById(Bots, message.member.id);
-  const incAmount = isValidAttachment ? 2 : 1;
-
-  if (!document) {
-    const userData: UserObject = {
-      ...INITIAL.USER,
-      user_id: uuidv4(),
-      discord_id: message.member.id,
-      discord_username: message.member.user.username,
-      discord_name: message.member.user.globalName,
-      cash: INITIAL.USER.cash + incAmount,
-    };
-
-    return await addUser(Bots, userData);
-  }
-
-  try {
-    await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .updateOne(
-        { discord_id: message.member.id },
-        { $inc: { cash: incAmount } }
-      );
-  } catch (error) {
-    Bots.log({
-      type: LogEventType.Error,
-      description:
-        `Discord Database Error (messageCreate): ` + JSON.stringify(error),
-    });
-  }
+  await getDiscordUser(Bots, message.member.user);
+  await incDiscordUser(Bots, message.member.id, { cash: incAmount });
 };

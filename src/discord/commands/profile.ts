@@ -8,13 +8,14 @@ import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer';
 
-import { StarObject, UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
+import { CONFIG, COPY, MONTH_MAP } from '@/constants';
+import { LogCode } from '@/enums/logs';
+import { CoinIcon, StarIcon } from '@/icons';
 
-import { CONFIG, COPY, MONTH_MAP } from '../../constants';
-import { LogEventType } from '../../enums';
-import { CoinIcon, StarIcon } from '../../icons';
-import { parseHexToRGB } from '../../lib';
+import { BotsProps } from '@/interfaces/bot';
+import { UserObject } from '@/interfaces/user';
+
+import { parseHexToRGB } from '@/lib';
 
 export const Profile = {
   data: new SlashCommandBuilder()
@@ -23,15 +24,13 @@ export const Profile = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserObject,
-    star: StarObject
+    user: UserObject
   ) => {
     if (!CONFIG.FEATURES.PROFILE.ENABLED) {
       Bots.reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.PROFILE.NAME,
       });
       return;
     }
@@ -162,7 +161,7 @@ export const Profile = {
                 </div>
                 <div class="stars">
                   ${StarIcon}
-                  <span>${star.stars}</span>
+                  <span>${user.stars}</span>
                 </div>
               </div>
             </div>
@@ -210,10 +209,8 @@ export const Profile = {
           await interaction.editReply({ files: [attachment] });
         } catch (error) {
           Bots.log({
-            type: LogEventType.Error,
-            description:
-              `Discord Command Error (${COPY.PROFILE.NAME}): ` +
-              JSON.stringify(error),
+            type: LogCode.Error,
+            description: JSON.stringify(error),
           });
         } finally {
           fs.unlinkSync(screenshotPath);

@@ -1,11 +1,8 @@
-import { CommandInteraction, User } from 'discord.js';
-import { v4 as uuidv4 } from 'uuid';
+import { CommandInteraction } from 'discord.js';
 
-import { StarObject, UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS, INITIAL } from '../../constants';
-import { addStar, addUser, getStarById, getUserById } from '../../lib/db';
+import { CONFIG, EMOJIS } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
+import { getDiscordUser } from '@/services/user';
 
 import {
   AccountLink,
@@ -28,73 +25,23 @@ export const onInteractionCreate = async (
   if (interaction.isChatInputCommand()) {
     if (interaction.user.bot) return;
 
-    const getRecipientStar = async (
-      recipient: User
-    ): Promise<StarObject | undefined> => {
-      const document = await getStarById(Bots, recipient.id);
-
-      const data: StarObject = document ?? {
-        ...INITIAL.STAR,
-        discord_id: recipient.id,
-      };
-
-      if (!document) await addStar(Bots, data);
-      return data;
-    };
-
-    const getUserStar = async (): Promise<StarObject | undefined> => {
-      const document = await getStarById(Bots, interaction.user.id);
-
-      const data: StarObject = document ?? {
-        ...INITIAL.STAR,
-        discord_id: interaction.user.id,
-      };
-
-      if (!document) await addStar(Bots, data);
-      return data;
-    };
-
-    const getRecipientData = async (
-      recipient: User
-    ): Promise<UserObject | undefined> => {
-      const document = await getUserById(Bots, recipient.id);
-
-      const data: UserObject = document ?? {
-        ...INITIAL.USER,
-        user_id: uuidv4(),
-        discord_id: recipient.id,
-        discord_username: recipient.username,
-        discord_name: recipient.globalName,
-      };
-
-      if (!document) await addUser(Bots, data);
-      return data;
-    };
-
-    const getUserData = async (): Promise<UserObject | undefined> => {
-      const document = await getUserById(Bots, interaction.user.id);
-
-      const data: UserObject = document ?? {
-        ...INITIAL.USER,
-        user_id: uuidv4(),
-        discord_id: interaction.user.id,
-        discord_username: interaction.user.username,
-        discord_name: interaction.user.globalName,
-      };
-
-      if (!document) await addUser(Bots, data);
-      return data;
+    const replyNoBot = () => {
+      Bots.reply({
+        content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
+        ephimeral: true,
+        interaction: interaction,
+      });
     };
 
     if (interaction.commandName === AccountLink.getName()) {
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return AccountLink.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === AccountUnlink.getName()) {
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return AccountUnlink.execute(Bots, interaction, userData);
@@ -108,22 +55,9 @@ export const onInteractionCreate = async (
       const recipient = interaction.options.getUser('user');
 
       if (!recipient) return;
+      if (recipient.bot) return replyNoBot();
 
-      if (recipient.bot) {
-        Bots.reply({
-          content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
-          ephimeral: true,
-          interaction: interaction,
-          source: COPY.STAR.NAME,
-        });
-        return;
-      }
-
-      const userStar = await getUserStar();
-      const recipientStar = await getRecipientStar(recipient);
-
-      if (!userStar || !recipientStar) return;
-      return Star.execute(Bots, interaction, userStar, recipient);
+      return Star.execute(Bots, interaction, recipient);
     }
 
     const isInCasinoChannel =
@@ -140,13 +74,12 @@ export const onInteractionCreate = async (
         content: 'Please use this command in one of the bot channels.',
         ephimeral: true,
         interaction: interaction,
-        source: 'interactionCreate',
       });
       return;
     }
 
     if (interaction.commandName === Points.getName()) {
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return Points.execute(Bots, interaction, userData);
@@ -158,23 +91,21 @@ export const onInteractionCreate = async (
           content: 'Please use the #casino channel to gamble your points.',
           ephimeral: true,
           interaction: interaction,
-          source: 'interactionCreate',
         });
         return;
       }
 
-      const userData = await getUserData();
+      const userData = await getDiscordUser(Bots, interaction.user);
       if (!userData) return;
 
       return Gamble.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Profile.getName()) {
-      const userData = await getUserData();
-      const userStar = await getUserStar();
+      const userData = await getDiscordUser(Bots, interaction.user);
+      if (!userData) return;
 
-      if (!userData || !userStar) return;
-      return Profile.execute(Bots, interaction, userData, userStar);
+      return Profile.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Leaderboard.getName()) {
@@ -185,19 +116,10 @@ export const onInteractionCreate = async (
       const recipient = interaction.options.getUser('user');
 
       if (!recipient) return;
+      if (recipient.bot) return replyNoBot();
 
-      if (recipient.bot) {
-        Bots.reply({
-          content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
-          ephimeral: true,
-          interaction: interaction,
-          source: COPY.GIVE.NAME,
-        });
-        return;
-      }
-
-      const userData = await getUserData();
-      const recipientData = await getRecipientData(recipient);
+      const userData = await getDiscordUser(Bots, interaction.user);
+      const recipientData = await getDiscordUser(Bots, recipient);
 
       if (!userData || !recipientData) return;
       return Give.execute(Bots, interaction, userData, recipient);

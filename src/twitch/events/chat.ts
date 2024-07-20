@@ -1,22 +1,22 @@
-import { v4 as uuidv4 } from 'uuid';
-
-import { UserObject } from 'src/schemas';
-import { BotsProps, ObjectProps } from 'src/types';
-
-import { onGamble, onGive } from '../commands';
-
 import {
+  COMMAND_MAP,
   CONFIG,
   COPY,
   EMOTES,
   IGNORE_LIST,
-  INITIAL,
   URLS,
-} from '../../constants';
+} from '@/constants';
+import { LogCode } from '@/enums/logs';
+import { BotsProps, ObjectProps } from '@/interfaces/bot';
+import { getCurrency, isNumber } from '@/lib';
 
-import { LogEventType } from '../../enums';
-import { getCurrency, isNumber } from '../../lib';
-import { addUser, getUserById, getUserByName } from '../../lib/db';
+import {
+  getTwitchUserById,
+  getTwitchUserByName,
+  incTwitchUser,
+} from '@/services/user';
+
+import { onBonus, onGamble, onGive } from '../commands';
 
 const infoCommands = [
   'discord',
@@ -37,16 +37,7 @@ export const onChat = async (
   if (self) return;
   if (IGNORE_LIST.includes(userstate.username)) return;
 
-  const document = await getUserById(Bots, userstate['user-id'], true);
-
-  const userData: UserObject = document ?? {
-    ...INITIAL.USER,
-    user_id: uuidv4(),
-    twitch_id: userstate['user-id'],
-    twitch_username: userstate.username,
-  };
-
-  if (!document) await addUser(Bots, userData);
+  const user = await getTwitchUserById(Bots, userstate);
 
   const redeemId = userstate['custom-reward-id'];
 
@@ -68,26 +59,13 @@ export const onChat = async (
     if (!points) return;
 
     Bots.log({
-      type: LogEventType.Activity,
+      type: LogCode.Activity,
       description: `${userstate.username} has redeemed conversion of ${
         points * 10
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
     });
 
-    try {
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne(
-          { twitch_id: userstate['user-id'] },
-          { $inc: { cash: points } }
-        );
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description: `Twitch Database Error (Chat): ` + JSON.stringify(error),
-      });
-    }
-
+    await incTwitchUser(Bots, userstate['user-id'], { cash: points });
     return;
   }
 
@@ -96,14 +74,15 @@ export const onChat = async (
     const command = args.shift()?.toLowerCase();
 
     if (!command) return;
+    if (!COMMAND_MAP.includes(command)) return;
 
     // commands that do not expect an argument
 
     if (command === COPY.POINTS.NAME) {
       return Bots.twitch.say(
         channel,
-        `${userstate['display-name']} you have ${userData.cash} ${getCurrency(
-          userData.cash
+        `${userstate['display-name']} you have ${user.cash} ${getCurrency(
+          user.cash
         )}`
       );
     }
@@ -126,19 +105,19 @@ export const onChat = async (
     // commands that expect at least one (1) argument
 
     if (command === COPY.GAMBLE.NAME) {
-      return onGamble(Bots, channel, userData, args);
+      return onGamble(Bots, channel, user, args);
     }
 
     // commands that expect a recipient in the argument
 
-    const recipient = args[0].slice(0, 1) === '@' ? args[0].slice(1) : null;
+    const recipientName = args[0].slice(0, 1) === '@' ? args[0].slice(1) : null;
 
-    if (!recipient) return;
+    if (!recipientName) return;
 
     if (command === COPY.HUG.NAME) {
       return Bots.twitch.say(
         channel,
-        `${EMOTES.HUG.LEFT} ${userstate['display-name']} hugs ${recipient} ${EMOTES.HUG.RIGHT}`
+        `${EMOTES.HUG.LEFT} ${userstate['display-name']} hugs ${recipientName} ${EMOTES.HUG.RIGHT}`
       );
     }
 
@@ -152,32 +131,28 @@ export const onChat = async (
 
     if (value < 1) return;
 
-    const recipientData = await getUserByName(Bots, recipient, true);
+    const recipient = await getTwitchUserByName(Bots, recipientName);
 
-    if (!recipientData) return;
+    if (!recipient) return;
 
     if (command === COPY.GIVE.NAME) {
-      return onGive(Bots, channel, userData, recipientData, value);
+      return onGive(Bots, channel, user, recipient, value);
+    }
+
+    if (command === COPY.BONUS.NAME) {
+      if (userstate.username !== channel.slice(1)) return;
+      return onBonus(Bots, channel, recipient, value);
     }
   }
+
+  // if message is not a command, reward coins if possible
 
   const words = message.split(/ +/g);
   const pattern = /[A-Za-z].{2,}/;
 
   const isValid = words.length > 2 && words.some(word => pattern.test(word));
 
-  // @todo: Add logic to detect spam messages
-
   if (!isValid) return;
 
-  try {
-    await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .updateOne({ twitch_id: userstate['user-id'] }, { $inc: { cash: 1 } });
-  } catch (error) {
-    Bots.log({
-      type: LogEventType.Error,
-      description: `Twitch Database Error (Chat): ` + JSON.stringify(error),
-    });
-  }
+  await incTwitchUser(Bots, userstate['user-id'], { cash: 1 });
 };

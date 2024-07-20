@@ -14,7 +14,7 @@ import * as tmi from 'tmi.js';
 import { MongoClient } from 'mongodb';
 const dbClient = new MongoClient(process.env.MONGODB_URL || '');
 
-import { BotsProps, LogProps, ReplyProps } from './types';
+import { BotsProps, LogProps, ReplyProps } from '@/interfaces/bot';
 
 import {
   onGuildBanAdd,
@@ -26,7 +26,7 @@ import {
   onMessageDeleteBulk,
   onPresenceUpdate,
   onReady,
-} from './discord/events';
+} from '@/discord/events';
 
 import {
   onBan,
@@ -40,9 +40,9 @@ import {
   onSubMysteryGift,
   onSubscription,
   onTimeout,
-} from './twitch/events';
+} from '@/twitch/events';
 
-import { discordReply, logEvent } from './lib';
+import { discordReply, logEvent } from '@/lib';
 
 const Bots: BotsProps = {
   cooldowns: {
@@ -63,7 +63,7 @@ const Bots: BotsProps = {
   }),
   env: {
     ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    MONGODB_STARS: process.env.MONGODB_STARS || '',
+    MONGODB_ACTS: process.env.MONGODB_ACTS || '',
     MONGODB_STATS: process.env.MONGODB_STATS || '',
     MONGODB_USERS: process.env.MONGODB_USERS || '',
     SERVER_ID: process.env.SERVER_ID || '',

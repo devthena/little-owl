@@ -1,9 +1,8 @@
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, EMOTES } from '../../constants';
-import { LogEventType } from '../../enums';
-import { getCurrency, isNumber, weightedRandom } from '../../lib';
+import { CONFIG, EMOTES } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
+import { UserObject } from '@/interfaces/user';
+import { getCurrency, isNumber, weightedRandom } from '@/lib';
+import { setTwitchUser } from '@/services/user';
 
 export const onGamble = async (
   Bots: BotsProps,
@@ -114,14 +113,7 @@ export const onGamble = async (
     return;
   }
 
-  try {
-    await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .updateOne({ twitch_id: user.twitch_id }, { $set: { cash: points } });
-  } catch (error) {
-    Bots.log({
-      type: LogEventType.Error,
-      description: `Twitch Database Error (Gamble): ` + JSON.stringify(error),
-    });
+  if (user.twitch_id) {
+    await setTwitchUser(Bots, user.twitch_id, { cash: points });
   }
 };

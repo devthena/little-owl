@@ -3,6 +3,9 @@ import { URLS } from './urls';
 
 export const COPY = {
   DISABLED: 'This command is not enabled in the server.',
+  BONUS: {
+    NAME: 'bonus',
+  },
   COINFLIP: {
     NAME: 'coinflip',
     DESCRIPTION: 'Flip a coin!',

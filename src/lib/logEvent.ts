@@ -1,7 +1,7 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
-import { BotsProps, LogProps } from 'src/types';
-import { CONFIG } from '../constants';
+import { CONFIG } from '@/constants';
+import { BotsProps, LogProps } from '@/interfaces/bot';
 
 const typeMap = {
   activity: {

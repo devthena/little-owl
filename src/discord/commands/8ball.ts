@@ -4,8 +4,8 @@ import {
   SlashCommandStringOption,
 } from 'discord.js';
 
-import { BotsProps } from 'src/types';
-import { CONFIG, COPY } from '../../constants';
+import { CONFIG, COPY } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
 
 export const EightBall = {
   data: new SlashCommandBuilder()
@@ -23,7 +23,6 @@ export const EightBall = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.EIGHTBALL.NAME,
       });
       return;
     }
@@ -38,7 +37,6 @@ export const EightBall = {
       content: `:8ball: says.. ${answer}`,
       ephimeral: false,
       interaction: interaction,
-      source: COPY.EIGHTBALL.NAME,
     });
   },
   getName: (): string => {

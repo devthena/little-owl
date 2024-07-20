@@ -1,37 +1,47 @@
 import { GuildBan } from 'discord.js';
 
-import { BotsProps } from 'src/types';
-import { LogEventType } from '../../enums';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
+
+import { deleteActivity } from '@/services/activities';
+import { deleteStats } from '@/services/statistics';
+import { deleteDiscordUser } from '@/services/user';
 
 export const onGuildBanAdd = async (Bots: BotsProps, guildBan: GuildBan) => {
   const { user, reason } = guildBan;
   const reasonStr = reason ? `\nReason: ${reason}` : '';
 
   Bots.log({
-    type: LogEventType.Leave,
+    type: LogCode.Leave,
     description: `${user.username} has been banned from the server.${reasonStr}`,
     thumbnail: user.displayAvatarURL() || undefined,
     footer: `Discord User ID: ${user.id}`,
   });
 
-  try {
-    await Bots.db
-      ?.collection(Bots.env.MONGODB_USERS)
-      .findOneAndDelete({ discord_id: user.id });
+  await deleteActivity(Bots, user.id);
 
-    Bots.log({
-      type: LogEventType.Deleted,
-      description: `Record with discord_id=${user.username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
-      thumbnail: user.displayAvatarURL() || undefined,
-      footer: `Discord User ID: ${user.id}`,
-    });
-  } catch (error) {
-    const description = `Discord Database Error (guildBanAdd):\nError deleting record with discord_id=${user.username} from collection ${Bots.env.MONGODB_USERS}.`;
+  Bots.log({
+    type: LogCode.Deleted,
+    description: `Record with discord_id ${user.username} has been removed from collection ${Bots.env.MONGODB_ACTS}.`,
+    thumbnail: user.displayAvatarURL() || undefined,
+    footer: `Discord User ID: ${user.id}`,
+  });
 
-    Bots.log({
-      type: LogEventType.Error,
-      description: description + `\n\nDetails:\n${JSON.stringify(error)}`,
-      thumbnail: user.displayAvatarURL() || undefined,
-    });
-  }
+  await deleteStats(Bots, user.id);
+
+  Bots.log({
+    type: LogCode.Deleted,
+    description: `Record with discord_id ${user.username} has been removed from collection ${Bots.env.MONGODB_STATS}.`,
+    thumbnail: user.displayAvatarURL() || undefined,
+    footer: `Discord User ID: ${user.id}`,
+  });
+
+  await deleteDiscordUser(Bots, user.id);
+
+  Bots.log({
+    type: LogCode.Deleted,
+    description: `Record with discord_id ${user.username} has been removed from collection ${Bots.env.MONGODB_USERS}.`,
+    thumbnail: user.displayAvatarURL() || undefined,
+    footer: `Discord User ID: ${user.id}`,
+  });
 };

@@ -1,11 +1,10 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { LogEventType } from '../../enums';
-import { getCurrency, weightedRandom } from '../../lib';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { BotsProps } from '@/interfaces/bot';
+import { UserObject } from '@/interfaces/user';
+import { getCurrency, weightedRandom } from '@/lib';
+import { setDiscordUser } from '@/services/user';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
@@ -27,7 +26,6 @@ export const Gamble = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }
@@ -46,7 +44,6 @@ export const Gamble = {
         content: replies.noPoints,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }
@@ -59,7 +56,6 @@ export const Gamble = {
         content: replies.invalidInput,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }
@@ -70,7 +66,6 @@ export const Gamble = {
           content: replies.maxReached,
           ephimeral: true,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
         return true;
       }
@@ -97,7 +92,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       } else {
         points = 0;
@@ -106,7 +100,6 @@ export const Gamble = {
           content: replies.lostAll,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       }
     } else if (arg === 'half') {
@@ -122,7 +115,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       } else {
         points -= halfPoints;
@@ -133,7 +125,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       }
     } else if (amount < 1) {
@@ -141,7 +132,6 @@ export const Gamble = {
         content: replies.invalidNegative,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
     } else if (amount <= user.cash) {
       if (await isOverLimit(amount)) return;
@@ -155,7 +145,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       } else {
         points -= amount;
@@ -166,7 +155,6 @@ export const Gamble = {
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
           ephimeral: false,
           interaction: interaction,
-          source: COPY.GAMBLE.NAME,
         });
       }
     } else if (amount > user.cash) {
@@ -174,22 +162,11 @@ export const Gamble = {
         content: replies.notEnough,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.GAMBLE.NAME,
       });
       return;
     }
 
-    try {
-      await Bots.db
-        ?.collection(Bots.env.MONGODB_USERS)
-        .updateOne({ discord_id: user.discord_id }, { $set: { cash: points } });
-    } catch (error) {
-      Bots.log({
-        type: LogEventType.Error,
-        description:
-          `Database Error (${COPY.GAMBLE.NAME}): ` + JSON.stringify(error),
-      });
-    }
+    setDiscordUser(Bots, interaction.user.id, { cash: points });
   },
   getName: (): string => {
     return COPY.GAMBLE.NAME;

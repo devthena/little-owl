@@ -5,11 +5,10 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { UserObject } from 'src/schemas';
-import { BotsProps } from 'src/types';
-
-import { CONFIG, COPY, EMOJIS } from '../../constants';
-import { LogEventType } from '../../enums';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { LogCode } from '@/enums/logs';
+import { BotsProps } from '@/interfaces/bot';
+import { getLeaderboardUsers } from '@/services/user';
 
 export const Leaderboard = {
   data: new SlashCommandBuilder()
@@ -21,21 +20,14 @@ export const Leaderboard = {
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
-        source: COPY.LEADERBOARD.NAME,
       });
       return;
     }
 
     const description = `Here are the users with the highest ${CONFIG.CURRENCY.PLURAL}!`;
+    const topUsers = await getLeaderboardUsers(Bots, 'cash', 5);
 
-    const topUsers = await Bots.db
-      ?.collection<UserObject>(Bots.env.MONGODB_USERS)
-      .find({ discord_id: { $exists: true, $ne: null }, cash: { $gt: 0 } })
-      .sort({ cash: -1 })
-      .limit(5)
-      .toArray();
-
-    if (!topUsers) {
+    if (!topUsers.length) {
       return await interaction.reply({
         content: `Awkward.. it looks like nobody has any ${CONFIG.CURRENCY.SINGLE} right now.`,
         ephemeral: true,
@@ -79,10 +71,8 @@ export const Leaderboard = {
       await interaction.reply({ embeds: [botEmbed] });
     } catch (error) {
       Bots.log({
-        type: LogEventType.Error,
-        description:
-          `Discord Command Error (${COPY.LEADERBOARD.NAME}): ` +
-          JSON.stringify(error),
+        type: LogCode.Error,
+        description: JSON.stringify(error),
       });
     }
     return;
