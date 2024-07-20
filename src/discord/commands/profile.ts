@@ -161,7 +161,7 @@ export const Profile = {
                 </div>
                 <div class="stars">
                   ${StarIcon}
-                  <span>${user.stars}</span>
+                  <span>${user.stars ?? 0}</span>
                 </div>
               </div>
             </div>
