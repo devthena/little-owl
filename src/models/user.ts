@@ -11,6 +11,25 @@ export const addUser = async (Bots: BotsProps, data: UserObject) => {
   await Bots.db?.collection(Bots.env.MONGODB_USERS).insertOne(data);
 };
 
+export const getRank = async (
+  Bots: BotsProps,
+  value: number
+): Promise<number | null> => {
+  const userCollection = await Bots.db?.collection<UserDocument>(
+    Bots.env.MONGODB_USERS
+  );
+
+  if (userCollection) {
+    const rank = await userCollection.countDocuments({
+      discord_id: { $exists: true, $ne: null },
+      cash: { $gt: value },
+    });
+    return rank + 1;
+  }
+
+  return null;
+};
+
 export const getTopUsers = async (
   Bots: BotsProps,
   category: string,

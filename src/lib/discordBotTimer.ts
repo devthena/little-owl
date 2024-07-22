@@ -6,8 +6,12 @@ let pointer: number = 0;
 
 export const discordBotTimer = (Bot: Client) => {
   if (pointer < CONFIG.ACTIVITIES.length) {
-    const activityName = CONFIG.ACTIVITIES[pointer].name;
-    const activityType = CONFIG.ACTIVITIES[pointer].type;
+    const activityName = process.env.STAGING
+      ? 'TEST MODE'
+      : CONFIG.ACTIVITIES[pointer].name;
+    const activityType = process.env.STAGING
+      ? 0
+      : CONFIG.ACTIVITIES[pointer].type;
 
     Bot.user?.setActivity(activityName, {
       type: activityType,
