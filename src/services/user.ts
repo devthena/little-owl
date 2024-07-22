@@ -8,6 +8,7 @@ import { UserNumberObject, UserObject } from '@/interfaces/user';
 
 import {
   addUser,
+  getRank,
   getTopUsers,
   getUser,
   getUserById,
@@ -168,6 +169,21 @@ export const getUserObject = async (
 ): Promise<UserObject | null | undefined> => {
   try {
     return await getUser(Bots, id);
+  } catch (error) {
+    Bots.log({
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+    return;
+  }
+};
+
+export const getUserRank = async (
+  Bots: BotsProps,
+  value: number
+): Promise<number | null | undefined> => {
+  try {
+    return await getRank(Bots, value);
   } catch (error) {
     Bots.log({
       type: LogCode.Error,

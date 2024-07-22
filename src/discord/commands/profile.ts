@@ -16,6 +16,7 @@ import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
 
 import { parseHexToRGB } from '@/lib';
+import { getUserRank } from '@/services/user';
 
 export const Profile = {
   data: new SlashCommandBuilder()
@@ -45,6 +46,8 @@ export const Profile = {
       });
       return;
     }
+
+    const userRank = (await getUserRank(Bots, user.cash)) ?? 'N/A';
 
     const whiteRGB = { r: 248, g: 248, b: 255 };
     const roleColorRGB = parseHexToRGB(member.displayHexColor);
@@ -136,6 +139,16 @@ export const Profile = {
             font-size: 16px;
             margin-left: 25px;
           }
+          .rank {
+            font-size: 10px;
+            margin: 0;
+            position: absolute;
+            bottom: 17px;
+            right: 17px;
+          }
+          .rank > span {
+            font-size: 20px;
+          }
         </style>
       </head>
       <body>
@@ -166,6 +179,7 @@ export const Profile = {
               </div>
             </div>
           </div>
+          <p class="rank">RANK #<span>${userRank}</span></p>
         </div>
       </body>
       </html>
