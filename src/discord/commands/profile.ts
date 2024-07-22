@@ -16,7 +16,7 @@ import { BotsProps } from '@/interfaces/bot';
 import { UserObject } from '@/interfaces/user';
 
 import { parseHexToRGB } from '@/lib';
-import { getUserRank } from '@/services/user';
+import { getUserRank, setDiscordUser } from '@/services/user';
 
 export const Profile = {
   data: new SlashCommandBuilder()
@@ -163,7 +163,7 @@ export const Profile = {
               })}" />
             </figure>
             <div class="info">
-              <h1 class="name">${interaction.user.displayName}</h1>
+              <h1 class="name">${member.displayName}</h1>
               <p class="username">${interaction.user.username}</p>
               <div class="values">
                 <div class="balance">
@@ -221,6 +221,12 @@ export const Profile = {
 
         try {
           await interaction.editReply({ files: [attachment] });
+
+          if (user.discord_name !== member.displayName) {
+            await setDiscordUser(Bots, interaction.user.id, {
+              discord_name: member.displayName,
+            });
+          }
         } catch (error) {
           Bots.log({
             type: LogCode.Error,
