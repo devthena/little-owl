@@ -1,62 +1,82 @@
-import { ActivityCode } from '@/enums/activities';
 import { LogCode } from '@/enums/logs';
+import { ActivityDocument, StarActivity } from '@/interfaces/activities';
+import { ActivityModel } from '@/models/activities';
 
-import { ActivityObject, ActivityPayload } from '@/interfaces/activities';
-import { BotsProps } from '@/interfaces/bot';
-
-import {
-  addActivity,
-  getActivity,
-  removeActivity,
-  setStarActivity,
-} from '@/models/activities';
-
-export const deleteActivity = async (Bots: BotsProps, id: string) => {
+export const deleteActivity = async (
+  log: Function,
+  id: string
+): Promise<ActivityDocument | null> => {
   try {
-    await removeActivity(Bots, id);
+    const deleted = await ActivityModel.findOneAndDelete({ discord_id: id });
+    return deleted;
   } catch (error) {
-    Bots.log({
+    log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
+    return null;
   }
 };
 
-export const getActivityByCode = async (
-  Bots: BotsProps,
-  id: string,
-  code: ActivityCode
-): Promise<ActivityObject | null | undefined> => {
-  const document = await getActivity(Bots, id);
-  return document ? document[code] : null;
-};
-
-export const pushActivity = async (
-  Bots: BotsProps,
-  id: string,
-  payload: ActivityPayload
-) => {
+export const findOrCreateStarActivity = async (
+  log: Function,
+  id: string
+): Promise<StarActivity | null> => {
   try {
-    await addActivity(Bots, id, payload);
+    const activity = await ActivityModel.findOne(
+      { discord_id: id },
+      { star: 1 }
+    ).exec();
+
+    if (activity) {
+      if (!activity.star) {
+        activity.star = {
+          last_given: '',
+          total_given: 0,
+        };
+
+        await activity.save();
+      }
+      return activity.star;
+    }
+
+    const newActivity = new ActivityModel({
+      discord_id: id,
+      star: {
+        last_given: '',
+        total_given: 0,
+      },
+    });
+
+    await newActivity.save();
+    return newActivity.star ?? null;
   } catch (error) {
-    Bots.log({
+    log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
+    return null;
   }
 };
 
 export const updateStarActivity = async (
-  Bots: BotsProps,
-  id: string,
-  date: string
-) => {
+  log: Function,
+  id: string
+): Promise<ActivityDocument | null> => {
   try {
-    await setStarActivity(Bots, id, date);
+    const activity = await ActivityModel.findOneAndUpdate(
+      { discord_id: id },
+      {
+        $inc: { 'star.total_given': 1 },
+        $set: { 'star.last_given': new Date().toDateString() },
+      }
+    ).exec();
+    return activity;
   } catch (error) {
-    Bots.log({
+    log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
+    return null;
   }
 };

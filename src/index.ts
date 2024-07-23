@@ -11,9 +11,6 @@ require('dotenv').config();
 import * as djs from 'discord.js';
 import * as tmi from 'tmi.js';
 
-import { MongoClient } from 'mongodb';
-const dbClient = new MongoClient(process.env.MONGODB_URL || '');
-
 import { BotsProps, LogProps, ReplyProps } from '@/interfaces/bot';
 
 import {
@@ -43,12 +40,12 @@ import {
 } from '@/twitch/events';
 
 import { discordReply, logEvent } from '@/lib';
+import { connectDatabase } from '@/lib/config';
 
 const Bots: BotsProps = {
   cooldowns: {
     streamAlerts: false,
   },
-  db: null,
   discord: new djs.Client({
     intents: [
       djs.GatewayIntentBits.DirectMessages,
@@ -61,15 +58,8 @@ const Bots: BotsProps = {
       djs.GatewayIntentBits.MessageContent,
     ],
   }),
-  env: {
-    ADMIN_SERVER_ID: process.env.ADMIN_SERVER_ID || '',
-    MONGODB_ACTS: process.env.MONGODB_ACTS || '',
-    MONGODB_STATS: process.env.MONGODB_STATS || '',
-    MONGODB_USERS: process.env.MONGODB_USERS || '',
-    SERVER_ID: process.env.SERVER_ID || '',
-  },
   log: (props: LogProps) => {
-    logEvent(Bots, props);
+    logEvent(Bots.discord, props);
   },
   reply: (props: ReplyProps) => {
     discordReply(Bots, props);
@@ -85,19 +75,7 @@ const Bots: BotsProps = {
 };
 
 const initBots = async () => {
-  try {
-    await dbClient.connect();
-  } catch (error) {
-    return console.warn(error);
-  }
-
-  console.log('* Database connection successful *');
-
-  const database = process.env.STAGING
-    ? process.env.MONGODB_DB_TEST
-    : process.env.MONGODB_DB;
-
-  Bots.db = dbClient.db(database);
+  await connectDatabase();
 
   Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
   Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));

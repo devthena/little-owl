@@ -2,7 +2,7 @@ import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { BotsProps } from '@/interfaces/bot';
-import { UserObject } from '@/interfaces/user';
+import { UserDocument } from '@/interfaces/user';
 import { getCurrency, weightedRandom } from '@/lib';
 import { setDiscordUser } from '@/services/user';
 
@@ -19,7 +19,7 @@ export const Gamble = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserObject
+    user: UserDocument
   ) => {
     if (!CONFIG.FEATURES.GAMBLE.ENABLED) {
       Bots.reply({
@@ -166,7 +166,7 @@ export const Gamble = {
       return;
     }
 
-    setDiscordUser(Bots, interaction.user.id, { cash: points });
+    setDiscordUser(Bots.log, interaction.user.id, { cash: points });
   },
   getName: (): string => {
     return COPY.GAMBLE.NAME;

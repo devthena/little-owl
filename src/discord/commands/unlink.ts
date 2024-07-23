@@ -7,7 +7,7 @@ import {
 import { CONFIG, COPY } from '@/constants';
 import { LogCode } from '@/enums/logs';
 import { BotsProps } from '@/interfaces/bot';
-import { UserObject } from '@/interfaces/user';
+import { UserDocument } from '@/interfaces/user';
 import { createUser, setDiscordUser } from '@/services/user';
 
 export const AccountUnlink = {
@@ -23,7 +23,7 @@ export const AccountUnlink = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserObject
+    user: UserDocument
   ) => {
     if (!CONFIG.FEATURES.UNLINK.ENABLED) {
       Bots.reply({
@@ -54,13 +54,13 @@ export const AccountUnlink = {
       return;
     }
 
-    await createUser(Bots, {
+    await createUser(Bots.log, {
       twitch_id: user.twitch_id,
       twitch_username: user.twitch_username,
       cash: 0,
     });
 
-    await setDiscordUser(Bots, interaction.user.id, {
+    await setDiscordUser(Bots.log, interaction.user.id, {
       twitch_id: null,
       twitch_username: null,
     });

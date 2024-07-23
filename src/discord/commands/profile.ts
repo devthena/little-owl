@@ -13,7 +13,7 @@ import { LogCode } from '@/enums/logs';
 import { CoinIcon, StarIcon } from '@/icons';
 
 import { BotsProps } from '@/interfaces/bot';
-import { UserObject } from '@/interfaces/user';
+import { UserDocument } from '@/interfaces/user';
 
 import { parseHexToRGB } from '@/lib';
 import { getUserRank, setDiscordUser } from '@/services/user';
@@ -25,7 +25,7 @@ export const Profile = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserObject
+    user: UserDocument
   ) => {
     if (!CONFIG.FEATURES.PROFILE.ENABLED) {
       Bots.reply({
@@ -47,7 +47,7 @@ export const Profile = {
       return;
     }
 
-    const userRank = (await getUserRank(Bots, user.cash)) ?? 'N/A';
+    const userRank = (await getUserRank(Bots.log, user.cash)) ?? 'N/A';
 
     const whiteRGB = { r: 248, g: 248, b: 255 };
     const roleColorRGB = parseHexToRGB(member.displayHexColor);
@@ -223,7 +223,7 @@ export const Profile = {
           await interaction.editReply({ files: [attachment] });
 
           if (user.discord_name !== member.displayName) {
-            await setDiscordUser(Bots, interaction.user.id, {
+            await setDiscordUser(Bots.log, interaction.user.id, {
               discord_name: member.displayName,
             });
           }

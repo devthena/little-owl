@@ -1,13 +1,13 @@
 import { CONFIG, EMOTES } from '@/constants';
 import { BotsProps } from '@/interfaces/bot';
-import { UserObject } from '@/interfaces/user';
+import { UserDocument } from '@/interfaces/user';
 import { getCurrency, isNumber, weightedRandom } from '@/lib';
 import { setTwitchUser } from '@/services/user';
 
 export const onGamble = async (
   Bots: BotsProps,
   channel: string,
-  user: UserObject,
+  user: UserDocument,
   args: string[]
 ) => {
   if (!CONFIG.FEATURES.GAMBLE.ENABLED) return;
@@ -114,6 +114,6 @@ export const onGamble = async (
   }
 
   if (user.twitch_id) {
-    await setTwitchUser(Bots, user.twitch_id, { cash: points });
+    await setTwitchUser(Bots.log, user.twitch_id, { cash: points });
   }
 };

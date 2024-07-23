@@ -7,13 +7,11 @@ import {
 } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
-import { ActivityCode } from '@/enums/activities';
 import { LogCode } from '@/enums/logs';
 import { BotsProps } from '@/interfaces/bot';
 
 import {
-  getActivityByCode,
-  pushActivity,
+  findOrCreateStarActivity,
   updateStarActivity,
 } from '@/services/activities';
 
@@ -44,12 +42,10 @@ export const Star = {
     }
 
     const replies = {
+      error: 'Something went wrong. Please try again later.',
       invalidMax: `You can only give one star per day. ${EMOJIS.STAR.INVALID}`,
       invalidSelf: `You can't give yourself a star. ${EMOJIS.STAR.INVALID}`,
     };
-
-    const now = new Date();
-    const today = now.toDateString();
 
     if (interaction.user.id === recipient.id) {
       Bots.reply({
@@ -60,13 +56,23 @@ export const Star = {
       return;
     }
 
-    const starActivity = await getActivityByCode(
-      Bots,
-      interaction.user.id,
-      ActivityCode.Star
+    const starActivity = await findOrCreateStarActivity(
+      Bots.log,
+      interaction.user.id
     );
 
-    if (starActivity && starActivity.last_given === today) {
+    if (!starActivity) {
+      Bots.reply({
+        content: replies.error,
+        ephimeral: true,
+        interaction: interaction,
+      });
+      return;
+    }
+
+    const today = new Date().toDateString();
+
+    if (starActivity.last_given === today) {
       Bots.reply({
         content: replies.invalidMax,
         ephimeral: true,
@@ -75,15 +81,8 @@ export const Star = {
       return;
     }
 
-    if (!starActivity) {
-      await pushActivity(Bots, interaction.user.id, {
-        [ActivityCode.Star]: { last_given: today, total_given: 1 },
-      });
-    } else {
-      await updateStarActivity(Bots, interaction.user.id, today);
-    }
-
-    await incDiscordUser(Bots, recipient.id, { stars: 1 });
+    await updateStarActivity(Bots.log, interaction.user.id);
+    await incDiscordUser(Bots.log, recipient.id, { stars: 1 });
 
     const botEmbed = new EmbedBuilder()
       .setColor(CONFIG.COLORS.YELLOW as ColorResolvable)
