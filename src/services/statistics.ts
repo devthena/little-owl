@@ -1,19 +1,14 @@
 import { LogCode } from '@/enums/logs';
-import { StatsDocument } from '@/interfaces/statistics';
-import { StatsModel } from '@/models/statistics';
+import { BotsProps } from '@/interfaces/bot';
+import { removeStats } from '@/models/statistics';
 
-export const deleteStats = async (
-  log: Function,
-  id: string
-): Promise<StatsDocument | null> => {
+export const deleteStats = async (Bots: BotsProps, id: string) => {
   try {
-    const deleted = await StatsModel.findOneAndDelete({ discord_id: id });
-    return deleted;
+    await removeStats(Bots, id);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
   }
 };

@@ -8,7 +8,7 @@ import {
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { LogCode } from '@/enums/logs';
 import { BotsProps } from '@/interfaces/bot';
-import { getUsersByCategory } from '@/services/user';
+import { getLeaderboardUsers } from '@/services/user';
 
 export const Leaderboard = {
   data: new SlashCommandBuilder()
@@ -25,9 +25,9 @@ export const Leaderboard = {
     }
 
     const description = `Here are the users with the highest ${CONFIG.CURRENCY.PLURAL}!`;
-    const leaderboardUsers = await getUsersByCategory(Bots.log, 'cash', 5);
+    const topUsers = await getLeaderboardUsers(Bots, 'cash', 5);
 
-    if (!leaderboardUsers.length) {
+    if (!topUsers.length) {
       return await interaction.reply({
         content: `Awkward.. it looks like nobody has any ${CONFIG.CURRENCY.SINGLE} right now.`,
         ephemeral: true,
@@ -39,27 +39,29 @@ export const Leaderboard = {
       .setColor(CONFIG.COLORS.YELLOW as ColorResolvable);
 
     let content = '';
-    leaderboardUsers.forEach((user, i) => {
-      const name = user.discord_name || user.discord_username || '';
+    topUsers.forEach((top, i) => {
+      let name = top.discord_name?.length
+        ? top.discord_name
+        : top.discord_username || '';
 
       switch (i) {
         case 0:
-          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.FIRST}  •  ${
-            user.cash
-          }  ${EMOJIS.CURRENCY}\n`;
+          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.FIRST}  |  ${
+            top.cash
+          } ${EMOJIS.CURRENCY}\n`;
           break;
         case 1:
-          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.SECOND}  •  ${
-            user.cash
-          }  ${EMOJIS.CURRENCY}\n`;
+          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.SECOND}  |  ${
+            top.cash
+          } ${EMOJIS.CURRENCY}\n`;
           break;
         case 2:
-          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.THIRD}  •  ${
-            user.cash
-          }  ${EMOJIS.CURRENCY}\n`;
+          content += `${i + 1}. ${name} ${EMOJIS.LEADERBOARD.THIRD}  |  ${
+            top.cash
+          } ${EMOJIS.CURRENCY}\n`;
           break;
         default:
-          content += `${i + 1}. ${name}  •  ${user.cash}  ${EMOJIS.CURRENCY}\n`;
+          content += `${i + 1}. ${name}  |  ${top.cash} ${EMOJIS.CURRENCY}\n`;
       }
     });
 

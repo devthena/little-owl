@@ -1,6 +1,7 @@
-import { Document } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
-export interface UserDocument extends Document {
+export interface UserDocument {
+  _id: ObjectId;
   user_id: string;
   discord_id: string | null;
   discord_username: string | null;
@@ -12,8 +13,22 @@ export interface UserDocument extends Document {
   stars?: number;
 }
 
-export type UserIncrementFields = {
+export interface UserObject {
+  user_id: string;
+  discord_id: string | null;
+  discord_username: string | null;
+  discord_name: string | null;
+  twitch_id: string | null;
+  twitch_username: string | null;
+  cash: number;
+  bank?: number;
+  stars?: number;
+}
+
+export interface UserNumberObject {
   cash?: number;
   bank?: number;
   stars?: number;
-};
+}
+
+export type UserAuthMethod = 'discord' | 'twitch';

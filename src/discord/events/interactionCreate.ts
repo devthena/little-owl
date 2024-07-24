@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js';
 
 import { CONFIG, EMOJIS } from '@/constants';
 import { BotsProps } from '@/interfaces/bot';
-import { findOrCreateDiscordUser } from '@/services/user';
+import { getDiscordUser } from '@/services/user';
 
 import {
   AccountLink,
@@ -34,17 +34,17 @@ export const onInteractionCreate = async (
     };
 
     if (interaction.commandName === AccountLink.getName()) {
-      const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
-      if (!user) return;
+      const userData = await getDiscordUser(Bots, interaction.user);
+      if (!userData) return;
 
-      return AccountLink.execute(Bots, interaction, user);
+      return AccountLink.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === AccountUnlink.getName()) {
-      const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
-      if (!user) return;
+      const userData = await getDiscordUser(Bots, interaction.user);
+      if (!userData) return;
 
-      return AccountUnlink.execute(Bots, interaction, user);
+      return AccountUnlink.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Help.getName()) {
@@ -79,10 +79,10 @@ export const onInteractionCreate = async (
     }
 
     if (interaction.commandName === Points.getName()) {
-      const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
-      if (!user) return;
+      const userData = await getDiscordUser(Bots, interaction.user);
+      if (!userData) return;
 
-      return Points.execute(Bots, interaction, user);
+      return Points.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Gamble.getName()) {
@@ -95,17 +95,17 @@ export const onInteractionCreate = async (
         return;
       }
 
-      const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
-      if (!user) return;
+      const userData = await getDiscordUser(Bots, interaction.user);
+      if (!userData) return;
 
-      return Gamble.execute(Bots, interaction, user);
+      return Gamble.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Profile.getName()) {
-      const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
-      if (!user) return;
+      const userData = await getDiscordUser(Bots, interaction.user);
+      if (!userData) return;
 
-      return Profile.execute(Bots, interaction, user);
+      return Profile.execute(Bots, interaction, userData);
     }
 
     if (interaction.commandName === Leaderboard.getName()) {
@@ -113,16 +113,16 @@ export const onInteractionCreate = async (
     }
 
     if (interaction.commandName === Give.getName()) {
-      const mentioned = interaction.options.getUser('user');
+      const recipient = interaction.options.getUser('user');
 
-      if (!mentioned) return;
-      if (mentioned.bot) return replyNoBot();
+      if (!recipient) return;
+      if (recipient.bot) return replyNoBot();
 
-      const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
-      const recipient = await findOrCreateDiscordUser(Bots.log, mentioned);
+      const userData = await getDiscordUser(Bots, interaction.user);
+      const recipientData = await getDiscordUser(Bots, recipient);
 
-      if (!user || !recipient) return;
-      return Give.execute(Bots, interaction, user, mentioned);
+      if (!userData || !recipientData) return;
+      return Give.execute(Bots, interaction, userData, recipient);
     }
 
     if (interaction.commandName === CoinFlip.getName()) {
