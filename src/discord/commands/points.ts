@@ -2,7 +2,7 @@ import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { BotsProps } from '@/interfaces/bot';
-import { UserObject } from '@/interfaces/user';
+import { UserDocument } from '@/interfaces/user';
 
 export const Points = {
   data: new SlashCommandBuilder()
@@ -11,7 +11,7 @@ export const Points = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserObject
+    user: UserDocument
   ) => {
     if (!CONFIG.FEATURES.POINTS.ENABLED) {
       Bots.reply({

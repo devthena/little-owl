@@ -11,7 +11,7 @@ import { BotsProps, ObjectProps } from '@/interfaces/bot';
 import { getCurrency, isNumber } from '@/lib';
 
 import {
-  getTwitchUserById,
+  findOrCreateTwitchUser,
   getTwitchUserByName,
   incTwitchUser,
 } from '@/services/user';
@@ -37,7 +37,9 @@ export const onChat = async (
   if (self) return;
   if (IGNORE_LIST.includes(userstate.username)) return;
 
-  const user = await getTwitchUserById(Bots, userstate);
+  const user = await findOrCreateTwitchUser(Bots.log, userstate);
+
+  if (!user) return;
 
   const redeemId = userstate['custom-reward-id'];
 
@@ -65,7 +67,7 @@ export const onChat = async (
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
     });
 
-    await incTwitchUser(Bots, userstate['user-id'], { cash: points });
+    await incTwitchUser(Bots.log, userstate['user-id'], { cash: points });
     return;
   }
 
@@ -131,7 +133,7 @@ export const onChat = async (
 
     if (value < 1) return;
 
-    const recipient = await getTwitchUserByName(Bots, recipientName);
+    const recipient = await getTwitchUserByName(Bots.log, recipientName);
 
     if (!recipient) return;
 
@@ -154,5 +156,5 @@ export const onChat = async (
 
   if (!isValid) return;
 
-  await incTwitchUser(Bots, userstate['user-id'], { cash: 1 });
+  await incTwitchUser(Bots.log, userstate['user-id'], { cash: 1 });
 };
