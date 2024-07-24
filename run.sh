@@ -1,0 +1,1 @@
+ts-node -r tsconfig-paths/register -T src/index.ts
