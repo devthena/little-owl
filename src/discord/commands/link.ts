@@ -7,9 +7,8 @@ import {
 import { CONFIG, COPY } from '@/constants';
 import { LogCode } from '@/enums/logs';
 import { BotsProps } from '@/interfaces/bot';
-import { UserDocument } from '@/interfaces/user';
-
-import { deleteUser, getUserById, setDiscordUser } from '@/services/user';
+import { UserObject } from '@/interfaces/user';
+import { deleteUser, getUserObject, setDiscordUser } from '@/services/user';
 
 export const AccountLink = {
   data: new SlashCommandBuilder()
@@ -24,7 +23,7 @@ export const AccountLink = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserDocument
+    user: UserObject
   ) => {
     if (!CONFIG.FEATURES.LINK.ENABLED) {
       Bots.reply({
@@ -47,7 +46,8 @@ export const AccountLink = {
     }
 
     const userId = code?.toString();
-    const twitchUser = userId ? await getUserById(Bots.log, userId) : null;
+
+    const twitchUser = userId ? await getUserObject(Bots, userId) : null;
 
     if (!twitchUser) {
       await interaction.reply({
@@ -67,13 +67,13 @@ export const AccountLink = {
 
     let points = user.cash + twitchUser.cash;
 
-    await setDiscordUser(Bots.log, interaction.user.id, {
+    await setDiscordUser(Bots, interaction.user.id, {
       twitch_id: twitchUser.twitch_id,
       twitch_username: twitchUser.twitch_username,
       cash: points,
     });
 
-    if (userId) await deleteUser(Bots.log, userId);
+    if (userId) await deleteUser(Bots, userId);
 
     await interaction.reply({
       content: COPY.LINK.RESPONSES.SUCCESS,

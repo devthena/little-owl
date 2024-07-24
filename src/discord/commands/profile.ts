@@ -13,7 +13,7 @@ import { LogCode } from '@/enums/logs';
 import { CoinIcon, StarIcon } from '@/icons';
 
 import { BotsProps } from '@/interfaces/bot';
-import { UserDocument } from '@/interfaces/user';
+import { UserObject } from '@/interfaces/user';
 
 import { parseHexToRGB } from '@/lib';
 import { getUserRank, setDiscordUser } from '@/services/user';
@@ -25,7 +25,7 @@ export const Profile = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserDocument
+    user: UserObject
   ) => {
     if (!CONFIG.FEATURES.PROFILE.ENABLED) {
       Bots.reply({
@@ -47,7 +47,7 @@ export const Profile = {
       return;
     }
 
-    const userRank = (await getUserRank(Bots.log, user.cash)) ?? 'N/A';
+    const userRank = (await getUserRank(Bots, user.cash)) ?? 'N/A';
 
     const whiteRGB = { r: 248, g: 248, b: 255 };
     const roleColorRGB = parseHexToRGB(member.displayHexColor);
@@ -159,7 +159,7 @@ export const Profile = {
           <div class="content">
             <figure class="avatar">
               <img alt="avatar" src="${member.displayAvatarURL({
-                size: 256,
+                size: 128,
               })}" />
             </figure>
             <div class="info">
@@ -186,18 +186,13 @@ export const Profile = {
     `;
 
     const browser = await puppeteer.launch({
-      // executablePath: '/usr/bin/chromium-browser',
+      executablePath: '/usr/bin/chromium-browser',
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
     const page = await browser.newPage();
 
-    await page.setViewport({
-      width: 2560,
-      height: 1440,
-      deviceScaleFactor: 2,
-    });
-
+    await page.setViewport({ width: 1920, height: 1080 });
     await page.setContent(htmlContent);
 
     await page.evaluate(async () => {
@@ -215,8 +210,6 @@ export const Profile = {
         await page.screenshot({
           path: screenshotPath,
           clip: boundingBox,
-          type: 'png',
-          fullPage: false,
         });
 
         await browser.close();
@@ -230,7 +223,7 @@ export const Profile = {
           await interaction.editReply({ files: [attachment] });
 
           if (user.discord_name !== member.displayName) {
-            await setDiscordUser(Bots.log, interaction.user.id, {
+            await setDiscordUser(Bots, interaction.user.id, {
               discord_name: member.displayName,
             });
           }
