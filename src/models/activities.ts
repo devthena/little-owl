@@ -1,36 +1,44 @@
-import { model, Schema } from 'mongoose';
+import { ActivityDocument, ActivityPayload } from '@/interfaces/activities';
+import { BotsProps } from '@/interfaces/bot';
 
-import { ActivityDocument } from '@/interfaces/activities';
-import { getENV } from '@/lib/config';
+export const addActivity = async (
+  Bots: BotsProps,
+  id: string,
+  data: ActivityPayload
+) => {
+  await Bots.db?.collection(Bots.env.MONGODB_ACTS).insertOne({
+    discord_id: id,
+    ...data,
+  });
+};
 
-const { MONGODB_ACTS } = getENV();
+export const getActivity = async (
+  Bots: BotsProps,
+  id: string
+): Promise<ActivityDocument | null | undefined> => {
+  return await Bots.db
+    ?.collection<ActivityDocument>(Bots.env.MONGODB_ACTS)
+    .findOne({
+      discord_id: id,
+    });
+};
 
-const activitySchema = new Schema<ActivityDocument>(
-  {
-    discord_id: { type: String, required: true },
-    bank: {
-      last_deposit: { type: String },
-      total_deposits: { type: Number },
-      last_withdraw: { type: String },
-      total_withdraws: { type: Number },
-    },
-    gamble: {
-      last_gamble: { type: String },
-      total_won: { type: Number },
-      total_lost: { type: Number },
-    },
-    star: {
-      last_given: { type: String },
-      total_given: { type: Number },
-    },
-    wordle: {
-      last_played: { type: String },
-    },
-  },
-  { collection: MONGODB_ACTS, versionKey: false }
-);
+export const removeActivity = async (Bots: BotsProps, id: string) => {
+  await Bots.db?.collection(Bots.env.MONGODB_ACTS).deleteOne({
+    discord_id: id,
+  });
+};
 
-export const ActivityModel = model<ActivityDocument>(
-  'Activity',
-  activitySchema
-);
+export const setStarActivity = async (
+  Bots: BotsProps,
+  id: string,
+  date: string
+) => {
+  await Bots.db?.collection(Bots.env.MONGODB_ACTS).updateOne(
+    { discord_id: id },
+    {
+      $inc: { 'star.total_given': 1 },
+      $set: { 'star.last_given': date },
+    }
+  );
+};

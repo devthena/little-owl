@@ -1,236 +1,207 @@
 import { User } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
+import { InitialUserObject } from '@/constants/states';
 import { LogCode } from '@/enums/logs';
-import { ObjectProps } from '@/interfaces/bot';
-import { UserDocument, UserIncrementFields } from '@/interfaces/user';
-import { UserModel } from '@/models/user';
+import { BotsProps, ObjectProps } from '@/interfaces/bot';
+import { UserNumberObject, UserObject } from '@/interfaces/user';
+
+import {
+  addUser,
+  getRank,
+  getTopUsers,
+  getUser,
+  getUserById,
+  getUserByName,
+  incrementUser,
+  removeAuthUser,
+  removeUser,
+  updateUser,
+} from '@/models/user';
 
 export const createUser = async (
-  log: Function,
-  payload: Partial<UserDocument>
-): Promise<UserDocument | undefined> => {
+  Bots: BotsProps,
+  payload: Partial<UserObject>
+) => {
   try {
-    const user = new UserModel(payload);
-    return user.save();
+    const data: UserObject = {
+      ...InitialUserObject,
+      ...payload,
+    };
+
+    await addUser(Bots, data);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return;
   }
 };
 
-export const deleteUser = async (
-  log: Function,
-  id: string
-): Promise<UserDocument | null> => {
+export const deleteUser = async (Bots: BotsProps, id: string) => {
   try {
-    const deleted = await UserModel.findOneAndDelete({ user_id: id });
-    return deleted;
+    await removeUser(Bots, id);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
   }
 };
 
-export const deleteUserByDiscordId = async (
-  log: Function,
-  id: string
-): Promise<UserDocument | null> => {
+export const deleteDiscordUser = async (Bots: BotsProps, id: string) => {
   try {
-    const deleted = await UserModel.findOneAndDelete({ discord_id: id });
-    return deleted;
+    await removeAuthUser(Bots, id, 'discord');
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
   }
 };
 
-export const deleteUserByTwitchUsername = async (
-  log: Function,
-  username: string
-): Promise<UserDocument | null> => {
+export const deleteTwitchUser = async (Bots: BotsProps, id: string) => {
   try {
-    const deleted = await UserModel.findOneAndDelete({
-      twitch_username: username,
-    });
-    return deleted;
+    await removeAuthUser(Bots, id, 'twitch');
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
   }
 };
 
-export const findOrCreateDiscordUser = async (
-  log: Function,
+export const getLeaderboardUsers = async (
+  Bots: BotsProps,
+  category: string,
+  max: number
+) => {
+  let data: UserObject[] = [];
+  try {
+    data = (await getTopUsers(Bots, category, max)) ?? [];
+  } catch (error) {
+    Bots.log({
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+  } finally {
+    return data;
+  }
+};
+
+export const getDiscordUser = async (
+  Bots: BotsProps,
   discordUser: User
-): Promise<UserDocument | undefined> => {
+): Promise<UserObject> => {
+  let data: UserObject = {
+    ...InitialUserObject,
+    user_id: uuidv4(),
+    discord_id: discordUser.id,
+    discord_username: discordUser.username,
+    discord_name: discordUser.globalName,
+  };
+
   try {
-    let user = await UserModel.findOne({ discord_id: discordUser.id }).exec();
+    const document = await getUserById(Bots, discordUser.id, 'discord');
 
-    if (!user) {
-      user = new UserModel({
-        user_id: uuidv4(),
-        discord_id: discordUser.id,
-        discord_username: discordUser.username,
-        discord_name: discordUser.displayName,
-      });
-
-      await user.save();
+    if (!document) await addUser(Bots, data);
+    else {
+      const { _id, ...rest } = document;
+      data = { ...rest };
     }
-
-    return user;
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return;
+  } finally {
+    return data;
   }
 };
 
-export const findOrCreateTwitchUser = async (
-  log: Function,
+export const getTwitchUserById = async (
+  Bots: BotsProps,
   userstate: ObjectProps
-): Promise<UserDocument | undefined> => {
+): Promise<UserObject> => {
+  let data: UserObject = {
+    ...InitialUserObject,
+    user_id: uuidv4(),
+    twitch_id: userstate['user-id'],
+    twitch_username: userstate.username,
+  };
+
   try {
-    let user = await UserModel.findOne({
-      twitch_id: userstate['user-id'],
-    }).exec();
+    const document = await getUserById(Bots, userstate['user-id'], 'twitch');
 
-    if (!user) {
-      user = new UserModel({
-        user_id: uuidv4(),
-        twitch_id: userstate['user-id'],
-        twitch_username: userstate.username,
-      });
-
-      await user.save();
+    if (!document) await addUser(Bots, data);
+    else {
+      const { _id, ...rest } = document;
+      data = { ...rest };
     }
-
-    return user;
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return;
+  } finally {
+    return data;
   }
 };
 
 export const getTwitchUserByName = async (
-  log: Function,
+  Bots: BotsProps,
   username: string
-): Promise<UserDocument | null> => {
+): Promise<UserObject | null | undefined> => {
   try {
-    const user = await UserModel.findOne({
-      twitch_username: username,
-    }).exec();
-    return user;
+    return await getUserByName(Bots, username, 'twitch');
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
+    return;
   }
 };
 
-export const getUserById = async (
-  log: Function,
+export const getUserObject = async (
+  Bots: BotsProps,
   id: string
-): Promise<UserDocument | null> => {
+): Promise<UserObject | null | undefined> => {
   try {
-    const user = await UserModel.findOne({
-      user_id: id,
-    }).exec();
-    return user;
+    return await getUser(Bots, id);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
-  }
-};
-
-export const getUsersByCategory = async (
-  log: Function,
-  category: string,
-  max: number
-): Promise<UserDocument[]> => {
-  try {
-    const users = await UserModel.find({
-      discord_id: { $exists: true, $ne: null },
-      [category]: { $gt: 0 },
-    })
-      .sort({ [category]: -1 })
-      .limit(max)
-      .exec();
-
-    return users;
-  } catch (error) {
-    log({
-      type: LogCode.Error,
-      description: JSON.stringify(error),
-    });
-    return [];
+    return;
   }
 };
 
 export const getUserRank = async (
-  log: Function,
+  Bots: BotsProps,
   value: number
-): Promise<number | null> => {
+): Promise<number | null | undefined> => {
   try {
-    const rank = await UserModel.countDocuments({
-      discord_id: { $exists: true, $ne: null },
-      cash: { $gt: value },
-    });
-    return rank + 1;
+    return await getRank(Bots, value);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
+    return;
   }
 };
 
 export const incDiscordUser = async (
-  log: Function,
+  Bots: BotsProps,
   id: string,
-  values: UserIncrementFields
+  values: UserNumberObject
 ) => {
-  if (Object.keys(values).length === 0) {
-    throw new Error('No fields specified for increment.');
-  }
-
   try {
-    const result = await UserModel.updateOne(
-      { discord_id: id },
-      { $inc: values }
-    );
-
-    if (result.modifiedCount === 0) {
-      log({
-        type: LogCode.Error,
-        description: `Increment Discord User: No user found with Discord ID: ${id}`,
-      });
-    }
+    await incrementUser(Bots, id, 'discord', values);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
@@ -238,28 +209,14 @@ export const incDiscordUser = async (
 };
 
 export const incTwitchUser = async (
-  log: Function,
+  Bots: BotsProps,
   id: string,
-  values: UserIncrementFields
+  values: UserNumberObject
 ) => {
-  if (Object.keys(values).length === 0) {
-    throw new Error('No fields specified for increment.');
-  }
-
   try {
-    const result = await UserModel.updateOne(
-      { twitch_id: id },
-      { $inc: values }
-    );
-
-    if (result.modifiedCount === 0) {
-      log({
-        type: LogCode.Error,
-        description: `Increment Discord User: No user found with Discord ID: ${id}`,
-      });
-    }
+    await incrementUser(Bots, id, 'twitch', values);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
@@ -267,41 +224,31 @@ export const incTwitchUser = async (
 };
 
 export const setDiscordUser = async (
-  log: Function,
+  Bots: BotsProps,
   id: string,
-  payload: Partial<UserDocument>
-): Promise<UserDocument | null> => {
+  payload: Partial<UserObject>
+) => {
   try {
-    const user = await UserModel.findOneAndUpdate(
-      { discord_id: id },
-      { $set: { ...payload } }
-    );
-    return user;
+    await updateUser(Bots, id, 'discord', payload);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
   }
 };
 
 export const setTwitchUser = async (
-  log: Function,
+  Bots: BotsProps,
   id: string,
-  payload: Partial<UserDocument>
-): Promise<UserDocument | null> => {
+  payload: Partial<UserObject>
+) => {
   try {
-    const user = await UserModel.findOneAndUpdate(
-      { twitch_id: id },
-      { $set: { ...payload } }
-    );
-    return user;
+    await updateUser(Bots, id, 'twitch', payload);
   } catch (error) {
-    log({
+    Bots.log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return null;
   }
 };

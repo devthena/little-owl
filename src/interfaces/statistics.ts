@@ -1,6 +1,11 @@
-import { Document } from 'mongoose';
-
 import { GameCode } from '@/enums/statistics';
+import { ObjectId } from 'mongodb';
+
+export interface StatsDocument {
+  _id: ObjectId;
+  discord_id: string;
+  [GameCode.Wordle]?: WordleObject;
+}
 
 export interface WordleObject {
   currentStreak: number;
@@ -8,9 +13,4 @@ export interface WordleObject {
   maxStreak: number;
   totalPlayed: number;
   totalWon: number;
-}
-
-export interface StatsDocument extends Document {
-  discord_id: string;
-  [GameCode.Wordle]?: WordleObject;
 }

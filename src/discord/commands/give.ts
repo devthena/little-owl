@@ -2,7 +2,7 @@ import { CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { BotsProps } from '@/interfaces/bot';
-import { UserDocument } from '@/interfaces/user';
+import { UserObject } from '@/interfaces/user';
 import { getCurrency } from '@/lib';
 import { incDiscordUser, setDiscordUser } from '@/services/user';
 
@@ -25,7 +25,7 @@ export const Give = {
   execute: async (
     Bots: BotsProps,
     interaction: CommandInteraction,
-    user: UserDocument,
+    user: UserObject,
     recipient: User
   ) => {
     if (!CONFIG.FEATURES.GIVE.ENABLED) {
@@ -85,8 +85,8 @@ export const Give = {
       return;
     }
 
-    await incDiscordUser(Bots.log, recipient.id, { cash: amount });
-    await setDiscordUser(Bots.log, interaction.user.id, {
+    await incDiscordUser(Bots, recipient.id, { cash: amount });
+    await setDiscordUser(Bots, interaction.user.id, {
       cash: (user.cash -= amount),
     });
 
