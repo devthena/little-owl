@@ -1,4 +1,5 @@
 import { CONFIG } from './config';
+import { EMOJIS } from './emojis';
 import { URLS } from './urls';
 
 export const COPY = {
@@ -90,6 +91,12 @@ export const COPY = {
   },
   LURK: {
     NAME: 'lurk',
+  },
+  PET: {
+    ALIVE:
+      'He has been revived and is back to full health. You can now resume earning coins and taking care of him.',
+    DEAD: 'Revive him with Honey Cake or wait for his return in the next couple of days. Earning coins has halted until he is revived.',
+    NEW: `Cerberus has arrived to guard and protect our server. Keep him well-fed and happy to unlock rewards and benefits. Let's make him feel at home! ${EMOJIS.PET.NEW}`,
   },
   POINTS: {
     NAME: 'points',

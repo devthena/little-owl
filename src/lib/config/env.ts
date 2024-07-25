@@ -2,6 +2,7 @@ export const getENV = () => {
   const ADMIN_SERVER_ID = process.env.ADMIN_SERVER_ID;
 
   const MONGODB_ACTS = process.env.MONGODB_ACTS;
+  const MONGODB_PETS = process.env.MONGODB_PETS;
   const MONGODB_STATS = process.env.MONGODB_STATS;
   const MONGODB_USERS = process.env.MONGODB_USERS;
 
@@ -10,6 +11,7 @@ export const getENV = () => {
   if (
     !ADMIN_SERVER_ID ||
     !MONGODB_ACTS ||
+    !MONGODB_PETS ||
     !MONGODB_STATS ||
     !MONGODB_USERS ||
     !SERVER_ID
@@ -20,6 +22,7 @@ export const getENV = () => {
   return {
     ADMIN_SERVER_ID,
     MONGODB_ACTS,
+    MONGODB_PETS,
     MONGODB_STATS,
     MONGODB_USERS,
     SERVER_ID,

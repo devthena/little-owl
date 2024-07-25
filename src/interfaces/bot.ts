@@ -13,7 +13,9 @@ export interface BotsProps {
 
 export interface LogProps {
   type: LogCode;
+  title?: string;
   description: string;
+  image?: string;
   authorIcon?: string;
   thumbnail?: string;
   footer?: string;

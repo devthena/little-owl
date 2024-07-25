@@ -42,6 +42,9 @@ import {
 import { discordReply, logEvent } from '@/lib';
 import { connectDatabase } from '@/lib/config';
 
+import { scheduleTasks } from '@/scheduler';
+import { createServerPet } from '@/services/pet';
+
 const Bots: BotsProps = {
   cooldowns: {
     streamAlerts: false,
@@ -99,8 +102,11 @@ const initBots = async () => {
   Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
-  Bots.discord.login(process.env.DISCORD_TOKEN);
-  Bots.twitch.connect();
+  await Bots.discord.login(process.env.DISCORD_TOKEN);
+  await Bots.twitch.connect();
+
+  createServerPet(Bots.log);
 };
 
 initBots();
+scheduleTasks(Bots);

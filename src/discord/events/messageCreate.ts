@@ -9,8 +9,8 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   if (!message.guild?.available) return;
   if (!message.channel.isTextBased()) return;
   if (!message.member) return;
-  if (message.author.bot) return;
   if (message.author.system) return;
+  if (message.author.bot && message.author.id !== Bots.discord.user?.id) return;
 
   const { ADMIN_SERVER_ID, SERVER_ID } = getENV();
 
@@ -29,6 +29,7 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
     if (channel?.isTextBased()) {
       channel.send({
         content: message.content,
+        embeds: [...message.embeds],
         files: [...message.attachments.values()],
       });
     }
@@ -37,6 +38,7 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   }
 
   if (message.guild.id !== SERVER_ID) return;
+  if (message.author.id === Bots.discord.user?.id) return;
 
   const words = message.content.split(/ +/g);
   const pattern = new RegExp('[A-Za-z].{2,}');

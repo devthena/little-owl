@@ -14,6 +14,9 @@ export const EMOJIS = {
     SECOND: ':second_place:',
     THIRD: ':third_place:',
   },
+  PET: {
+    NEW: ':paw_prints:',
+  },
   STAR: {
     EMBED: ':sparkles:',
     INVALID: ':neutral_face:',
