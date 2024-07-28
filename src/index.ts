@@ -45,6 +45,8 @@ import { connectDatabase } from '@/lib/config';
 import { scheduleTasks } from '@/scheduler';
 import { createServerPet } from '@/services/pet';
 
+import { registerDiscordCommands } from '@/discord/helpers';
+
 const Bots: BotsProps = {
   cooldowns: {
     streamAlerts: false,
@@ -61,6 +63,7 @@ const Bots: BotsProps = {
       djs.GatewayIntentBits.MessageContent,
     ],
   }),
+  interactions: new Map(),
   log: (props: LogProps) => {
     logEvent(Bots.discord, props);
   },
@@ -107,6 +110,8 @@ const initBots = async () => {
 
   createServerPet(Bots.log);
 };
+
+if (!process.env.STAGING) registerDiscordCommands();
 
 initBots();
 scheduleTasks(Bots);

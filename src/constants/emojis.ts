@@ -16,6 +16,9 @@ export const EMOJIS = {
   },
   PET: {
     NEW: ':paw_prints:',
+    HAPPINESS: ':smiling_face:',
+    HEALTH: ':red_heart:',
+    HUNGER: ':meat_on_bone:',
   },
   STAR: {
     EMBED: ':sparkles:',

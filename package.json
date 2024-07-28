@@ -23,10 +23,10 @@
     "node-cron": "^3.0.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   },
   "scripts": {
-    "bot:register": "ts-node src/discord/register.ts",
+    "bot:register": "ts-node -r tsconfig-paths/register src/discord/register.ts",
     "dev": "STAGING=true ts-node -r tsconfig-paths/register src/index.ts",
     "start": "ts-node -r tsconfig-paths/register -T src/index.ts"
   }

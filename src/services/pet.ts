@@ -1,7 +1,22 @@
-import { COPY } from '@/constants';
+import { CONFIG, COPY } from '@/constants';
 import { IMAGES } from '@/constants/images';
+
+import { PetFood } from '@/enums/items';
 import { LogCode } from '@/enums/logs';
+
+import { ItemDocument } from '@/interfaces/item';
+
+import {
+  PetDocument,
+  PetHappiness,
+  PetHealth,
+  PetHunger,
+} from '@/interfaces/pet';
+
 import { PetModel } from '@/models/pet';
+
+const { ADD_HAPPINESS, MAX_STATS, REVIVE_HAPPINESS, REVIVE_HEALTH } =
+  CONFIG.FEATURES.PET;
 
 export const createServerPet = async (log: Function) => {
   try {
@@ -25,6 +40,123 @@ export const createServerPet = async (log: Function) => {
   }
 };
 
+export const getHappiness = (value: number): PetHappiness => {
+  if (value < 10) return 'Miserable';
+  else if (value < 30) return 'Depressed';
+  else if (value < 50) return 'Sad';
+  else if (value < 60) return 'Bored';
+  else if (value < 75) return 'Content';
+  else if (value < 90) return 'Happy';
+  else return 'Delighted';
+};
+
+export const getHealth = (value: number): PetHealth => {
+  if (value < 10) return 'Dying';
+  else if (value < 30) return 'Critical';
+  else if (value < 50) return 'Weak';
+  else if (value < 75) return 'Exhausted';
+  else return 'Healthy';
+};
+
+export const getHunger = (value: number): PetHunger => {
+  if (value < 25) return 'Starving';
+  else if (value < 40) return 'Famished';
+  else if (value < 60) return 'Hungry';
+  else if (value < 75) return 'Peckish';
+  else if (value < 90) return 'Satisfied';
+  else return 'Full';
+};
+
+export const getServerPet = async (
+  log: Function
+): Promise<PetDocument | null> => {
+  try {
+    return await PetModel.findOne();
+  } catch (error) {
+    log({
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+    return null;
+  }
+};
+
+export const increasePetHappiness = async (
+  pet: PetDocument,
+  log: Function
+): Promise<PetDocument | undefined> => {
+  try {
+    if (pet.isAlive) {
+      const newHappiness = pet.happiness + ADD_HAPPINESS;
+      pet.happiness = newHappiness <= MAX_STATS ? newHappiness : MAX_STATS;
+      await pet.save();
+      return pet;
+    }
+
+    return;
+  } catch (error) {
+    log({
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+    return;
+  }
+};
+
+export const increasePetHunger = async (
+  pet: PetDocument,
+  food: ItemDocument,
+  log: Function
+): Promise<PetDocument | undefined> => {
+  try {
+    const now = new Date();
+
+    if (pet.isAlive) {
+      if (food.id === PetFood.HoneyCake) {
+        pet.hunger = MAX_STATS;
+      } else {
+        const newHunger = pet.hunger + food.value;
+        pet.hunger = newHunger <= MAX_STATS ? newHunger : MAX_STATS;
+      }
+
+      pet.last_fed = now;
+      await pet.save();
+    }
+
+    return pet;
+  } catch (error) {
+    log({
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+    return;
+  }
+};
+
+export const reviveServerPet = async (
+  pet: PetDocument,
+  log: Function
+): Promise<PetDocument> => {
+  try {
+    const now = new Date();
+
+    pet.isAlive = true;
+    pet.happiness = REVIVE_HAPPINESS;
+    pet.health = REVIVE_HEALTH;
+    pet.hunger = MAX_STATS;
+    pet.last_resurrected = now;
+
+    await pet.save();
+  } catch (error) {
+    log({
+      type: LogCode.Error,
+      description: JSON.stringify(error),
+    });
+  } finally {
+    return pet;
+  }
+};
+
 export const updatePetStatus = async (log: Function) => {
   try {
     const pet = await PetModel.findOne();
@@ -33,6 +165,9 @@ export const updatePetStatus = async (log: Function) => {
     if (pet.isAlive) {
       if (pet.happiness > 0) pet.happiness -= 1;
       if (pet.hunger > 0) pet.hunger -= 1;
+
+      // increase health depending on hunger level
+      if (pet.health < MAX_STATS && pet.hunger > 80) pet.health += 1;
 
       // decrease one extra happiness depending on hunger level
       if (pet.hunger < 30) {
@@ -62,20 +197,13 @@ export const updatePetStatus = async (log: Function) => {
           image: IMAGES.PET.DEAD,
         });
       }
+
+      await pet.save();
     } else {
       // check if pet needs to resurrect automatically
       const now = new Date();
-
-      if (now >= pet.resurrect_time) {
-        pet.happiness = 25;
-        pet.hunger = 100;
-        pet.health = 50;
-        pet.isAlive = true;
-        pet.last_resurrected = now;
-      }
+      if (now >= pet.resurrect_time) await reviveServerPet(pet, log);
     }
-
-    await pet.save();
   } catch (error) {
     log({
       type: LogCode.Error,

@@ -42,6 +42,11 @@ export const COPY = {
       'Very doubtful.',
     ],
   },
+  ERROR: {
+    EXPIRED: 'This interaction has expired.',
+    GENERIC: 'Something went wrong. Please try again later.',
+    NOT_ENOUGH: `You do not have enough ${CONFIG.CURRENCY.PLURAL}`,
+  },
   GAMBLE: {
     NAME: 'gamble',
     DESCRIPTION: `Play your ${CONFIG.CURRENCY.PLURAL} for a chance to double it`,
@@ -93,6 +98,11 @@ export const COPY = {
     NAME: 'lurk',
   },
   PET: {
+    NAME: 'cerberus',
+    DESCRIPTION: 'Resident good boy of the AthenaUS server',
+    OPTION_NAME: 'action',
+    OPTION_DESCRIPTION: 'Interact with Cerberus!',
+    SELECT_FEED_ID: 'cerberus-feed',
     ALIVE:
       'He has been revived and is back to full health. You can now resume earning coins and taking care of him.',
     DEAD: 'Revive him with Honey Cake or wait for his return in the next couple of days. Earning coins has halted until he is revived.',

@@ -10,3 +10,22 @@ export interface PetDocument extends Document {
   last_resurrected: Date;
   resurrect_time: Date;
 }
+
+export type PetHappiness =
+  | 'Delighted'
+  | 'Happy'
+  | 'Content'
+  | 'Bored'
+  | 'Sad'
+  | 'Depressed'
+  | 'Miserable';
+
+export type PetHunger =
+  | 'Full'
+  | 'Satisfied'
+  | 'Peckish'
+  | 'Hungry'
+  | 'Famished'
+  | 'Starving';
+
+export type PetHealth = 'Healthy' | 'Exhausted' | 'Weak' | 'Critical' | 'Dying';
