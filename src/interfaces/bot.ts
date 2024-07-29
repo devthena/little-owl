@@ -6,7 +6,6 @@ import { LogCode } from '@/enums/logs';
 export interface BotsProps {
   cooldowns: ObjectProps;
   discord: djs.Client<boolean>;
-  interactions: Map<string, string>;
   log: Function;
   reply: Function;
   twitch: tmi.Client;

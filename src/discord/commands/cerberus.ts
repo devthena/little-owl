@@ -26,8 +26,9 @@ import {
   getHunger,
   increasePetHappiness,
 } from '@/services/pet';
+
 import { findOrCreateDiscordUser } from '@/services/user';
-import { disablePreviousSelectMenu } from '../helpers';
+import { IMAGES } from '@/constants/images';
 
 export const Cerberus = {
   data: new SlashCommandBuilder()
@@ -70,65 +71,102 @@ export const Cerberus = {
     const options = interaction.options as CommandInteractionOptionResolver;
     const action = options.getString(COPY.PET.OPTION_NAME);
 
-    let hasSelectMenu = false;
+    const lastFedDateTS = Math.floor(pet.last_fed.getTime() / 1000);
+    const resurrectTimeTS = Math.floor(pet.resurrect_time.getTime() / 1000);
+
     let replyOptions: InteractionReplyOptions = {};
 
+    const botEmbed = new EmbedBuilder().setColor(
+      CONFIG.COLORS.BLUE as ColorResolvable
+    );
+
+    let happinessEmoji = EMOJIS.PET.HAPPY_HIGH;
+
     if (action === 'status') {
-      const description = `${pet.name} is doing great! His hunger is fully satisfied, and he is in excellent health. Keep up the good work!`;
-      const happinessLevel = getHappiness(pet.happiness);
+      let healthEmoji = EMOJIS.PET.HEALTH_HIGH;
+      let hungerEmoji = EMOJIS.PET.HUNGER_HIGH;
 
-      const botEmbed = new EmbedBuilder()
-        .setColor(CONFIG.COLORS.BLUE as ColorResolvable)
-        .setTitle(`${pet.name} is feeling ${happinessLevel}`)
-        .setDescription(
-          `Here are the latest stats for Cerberus!\n\n   ${
-            EMOJIS.PET.HEALTH
-          }  -  ${getHealth(pet.health)}  -  **${pet.health}**\n\n   ${
-            EMOJIS.PET.HUNGER
-          }  -  ${getHunger(pet.hunger)}  -  **${pet.hunger}**\n\n   ${
-            EMOJIS.PET.HAPPINESS
-          }  -  ${happinessLevel}  -  **${pet.happiness}**\n\n${description}`
-        );
+      if (pet.isAlive) {
+        const happinessLevel = getHappiness(pet.happiness);
 
-      replyOptions.embeds = [botEmbed];
-    } else if (action === 'pet') {
-      const prevHappyLevel = getHappiness(pet.happiness);
-      const updatedPet = await increasePetHappiness(pet, Bots.log);
+        let description = `He was last fed at <t:${lastFedDateTS}:t> (<t:${lastFedDateTS}:R>).`;
 
-      const botEmbed = new EmbedBuilder().setColor(
-        CONFIG.COLORS.BLUE as ColorResolvable
-      );
-
-      // pet is alive
-      if (updatedPet) {
-        const newHappyLevel = getHappiness(updatedPet.happiness);
-
-        let description = `Happiness level improved from "${prevHappyLevel}" to "${newHappyLevel}"`;
-
-        if (prevHappyLevel === newHappyLevel) {
-          description = `Happiness level remained the same at "${newHappyLevel}"`;
+        if (pet.health < 50) {
+          healthEmoji = EMOJIS.PET.HEALTH_LOW;
         }
 
-        botEmbed.setTitle(`${interaction.user.displayName} pet ${pet.name}!`);
-        botEmbed.setDescription(description);
+        if (pet.hunger < 50) {
+          hungerEmoji = EMOJIS.PET.HUNGER_LOW;
+          description += '\nConsider feeding him soon to keep him healthy!';
+        } else {
+          description += '\nGreat job keeping him well-fed!';
+        }
 
-        replyOptions.embeds = [botEmbed];
+        if (pet.happiness < 50) {
+          happinessEmoji = EMOJIS.PET.HAPPY_LOW;
+        } else if (pet.happiness < 60) {
+          happinessEmoji = EMOJIS.PET.HAPPY_MID;
+        }
+
+        botEmbed.setTitle(`${pet.name} is feeling ${happinessLevel}`);
+        botEmbed.setDescription(
+          `Here are the latest stats for Cerberus!\n\n   ${healthEmoji}  -  ${getHealth(
+            pet.health
+          )}  -  **${pet.health}**\n\n   ${hungerEmoji}  -  ${getHunger(
+            pet.hunger
+          )}  -  **${
+            pet.hunger
+          }**\n\n   ${happinessEmoji}  -  ${happinessLevel}  -  **${
+            pet.happiness
+          }**\n\n${description}`
+        );
       } else {
         botEmbed.setTitle(`${pet.name} is Gone`);
         botEmbed.setDescription(
-          'He needs to be revived with a Honey Cake or wait for his natural resurrection to bring him back to life.'
+          `He needs to be revived with a Honey Cake.\n\nYou can also wait for his natural resurrection <t:${resurrectTimeTS}:R>.`
         );
+        botEmbed.setImage(IMAGES.PET.DEAD);
       }
-    } else if (action === 'feed') {
-      // remove tracked previous interactions for user
-      await disablePreviousSelectMenu(Bots, interaction);
 
+      replyOptions.embeds = [botEmbed];
+    } else if (action === 'pet') {
+      if (pet.isAlive) {
+        await increasePetHappiness(pet, Bots.log);
+
+        if (pet.happiness < 50) {
+          happinessEmoji = EMOJIS.PET.HAPPY_LOW;
+        } else if (pet.happiness < 60) {
+          happinessEmoji = EMOJIS.PET.HAPPY_MID;
+        }
+
+        botEmbed.setTitle(`${interaction.user.displayName} pet ${pet.name}!`);
+        botEmbed.setDescription(
+          `Happiness Level:\n\n${happinessEmoji}  -  ${getHappiness(
+            pet.happiness
+          )}  -  **${pet.happiness}**`
+        );
+      } else {
+        botEmbed.setTitle(`${pet.name} is Gone`);
+        botEmbed.setDescription(
+          `He needs to be revived with a Honey Cake.\n\nYou can also wait for his natural resurrection <t:${resurrectTimeTS}:R>.`
+        );
+        botEmbed.setImage(IMAGES.PET.DEAD);
+      }
+      replyOptions.embeds = [botEmbed];
+    } else if (action === 'feed') {
       const foodOptions = [];
       const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
 
       if (!user) {
         Bots.reply({
           content: COPY.ERROR.GENERIC,
+          ephimeral: true,
+          interaction: interaction,
+        });
+        return;
+      } else if (pet.hunger === CONFIG.FEATURES.PET.MAX_STATS) {
+        Bots.reply({
+          content: COPY.PET.FULL,
           ephimeral: true,
           interaction: interaction,
         });
@@ -165,9 +203,7 @@ export const Cerberus = {
         }
       }
 
-      const botEmbed = new EmbedBuilder()
-        .setColor(CONFIG.COLORS.BLUE as ColorResolvable)
-        .setDescription('Purchase a food item to feed Cerberus:');
+      botEmbed.setDescription('Purchase a food item to feed Cerberus:');
 
       const selectMenu = new StringSelectMenuBuilder()
         .setCustomId(`${COPY.PET.SELECT_FEED_ID}:${interaction.user.id}`)
@@ -180,13 +216,10 @@ export const Cerberus = {
 
       replyOptions.embeds = [botEmbed];
       replyOptions.components = [row];
-
-      hasSelectMenu = true;
     }
 
     try {
-      const message = await interaction.reply(replyOptions);
-      if (hasSelectMenu) Bots.interactions.set(interaction.user.id, message.id);
+      await interaction.reply(replyOptions);
     } catch (error) {
       Bots.log({
         type: LogCode.Error,

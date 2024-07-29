@@ -15,10 +15,14 @@ export const EMOJIS = {
     THIRD: ':third_place:',
   },
   PET: {
-    NEW: ':paw_prints:',
-    HAPPINESS: ':smiling_face:',
-    HEALTH: ':red_heart:',
-    HUNGER: ':meat_on_bone:',
+    PAW: ':paw_prints:',
+    HAPPY_HIGH: ':smiling_face:',
+    HAPPY_MID: ':neutral_face:',
+    HAPPY_LOW: ':sob:',
+    HEALTH_HIGH: ':red_heart:',
+    HEALTH_LOW: ':broken_heart:',
+    HUNGER_HIGH: ':meat_on_bone:',
+    HUNGER_LOW: ':fork_knife_plate:',
   },
   STAR: {
     EMBED: ':sparkles:',

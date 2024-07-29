@@ -4,16 +4,17 @@ import {
   StringSelectMenuInteraction,
 } from 'discord.js';
 
-import { CONFIG, COPY } from '@/constants';
+import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { IMAGES } from '@/constants/images';
 import { FoodItems } from '@/constants/items';
 
 import { PetFood } from '@/enums/items';
 
 import { BotsProps } from '@/interfaces/bot';
-import { PetDocument } from '@/interfaces/pet';
+import { UserDocument } from '@/interfaces/user';
 
 import {
+  getHappiness,
   getHunger,
   getServerPet,
   increasePetHunger,
@@ -21,7 +22,6 @@ import {
 } from '@/services/pet';
 
 import { findOrCreateDiscordUser, setDiscordUser } from '@/services/user';
-import { UserDocument } from '@/interfaces/user';
 
 export const handleSelectMenuInteraction = async (
   Bots: BotsProps,
@@ -54,15 +54,34 @@ export const handleSelectMenuInteraction = async (
       return;
     }
 
-    let updatedPet: PetDocument | undefined;
     let updatedUser: UserDocument | null = null;
 
     const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
     if (!user) return;
 
     if (food.cost > user.cash) {
+      const otherOptionText = pet.isAlive
+        ? '\n\nWould you like to purchase a different item?'
+        : '';
+
+      botEmbed.setTitle('Not enough coins');
       botEmbed.setDescription(
-        `${COPY.ERROR.NOT_ENOUGH} to buy ${food.name}.\nWould you like to purchase a different item?`
+        `You cannot afford to buy ${food.name}.${otherOptionText}`
+      );
+
+      await interaction.update({
+        embeds: [botEmbed],
+        components: pet.isAlive ? undefined : [],
+      });
+      return;
+    }
+
+    if (food.id === PetFood.Bones && pet.isAlive && pet.happiness < 50) {
+      botEmbed.setTitle(`${pet.name} refused to eat ${food.name}`);
+      botEmbed.setDescription(
+        `He is feeling ${getHappiness(
+          pet.happiness
+        )} and would only accept specific foods.\n\nWould you like to purchase a different item?`
       );
 
       await interaction.update({
@@ -78,34 +97,28 @@ export const handleSelectMenuInteraction = async (
     if (!updatedUser) return;
 
     if (pet.isAlive) {
-      const prevHungerLevel = getHunger(pet.hunger);
-      updatedPet = await increasePetHunger(pet, food, Bots.log);
+      let hungerEmoji = EMOJIS.PET.HUNGER_HIGH;
 
-      if (!updatedPet) {
-        botEmbed.setDescription(COPY.ERROR.GENERIC);
-      } else {
-        const newHungerLevel = getHunger(pet.hunger);
-        let description = `Hunger level improved from "${prevHungerLevel}" to "${newHungerLevel}"`;
+      await increasePetHunger(pet, food, Bots.log);
 
-        if (prevHungerLevel === newHungerLevel) {
-          description = `Hunger level remained the same at "${newHungerLevel}"`;
-        }
+      if (pet.hunger < 50) hungerEmoji = EMOJIS.PET.HUNGER_LOW;
 
-        botEmbed.setTitle(
-          `${interaction.user.displayName} has fed ${pet.name} some ${food.name}!`
-        );
-        botEmbed.setDescription(description);
-      }
+      botEmbed.setTitle(
+        `${interaction.user.displayName} fed ${pet.name} some ${food.name}!`
+      );
+      botEmbed.setDescription(
+        `Hunger Level:\n\n${hungerEmoji}  -  ${getHunger(pet.hunger)}  -  **${
+          pet.hunger
+        }**`
+      );
     } else if (selectedOption === PetFood.HoneyCake) {
-      updatedPet = await reviveServerPet(pet, Bots.log);
+      await reviveServerPet(pet, Bots.log);
 
-      if (!updatedPet || !updatedPet.isAlive) {
+      if (!pet.isAlive) {
         botEmbed.setDescription(COPY.ERROR.GENERIC);
       } else {
         botEmbed.setTitle(`${pet.name} has Returned!`);
-        botEmbed.setDescription(
-          'He has been brought back to life, with hunger fully restored, and he is ready to protect the server once more.'
-        );
+        botEmbed.setDescription(COPY.PET.REVIVED);
         botEmbed.setImage(IMAGES.PET.ALIVE);
       }
     }

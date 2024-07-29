@@ -13,16 +13,6 @@ FoodItems.set(PetFood.Bones, {
   emoji: '🦴',
 });
 
-FoodItems.set(PetFood.HoneyCake, {
-  id: PetFood.HoneyCake,
-  name: 'Honey Cake',
-  description:
-    'A rare treat for Cerberus that fully restores his hunger and can revive him if needed.',
-  value: 100,
-  cost: 15000,
-  emoji: '🍰',
-});
-
 FoodItems.set(PetFood.RawMeat, {
   id: PetFood.RawMeat,
   name: 'Raw Meat',
@@ -31,4 +21,14 @@ FoodItems.set(PetFood.RawMeat, {
   value: 15,
   cost: 1250,
   emoji: '🥩',
+});
+
+FoodItems.set(PetFood.HoneyCake, {
+  id: PetFood.HoneyCake,
+  name: 'Honey Cake',
+  description:
+    'A rare treat for Cerberus that fully restores his hunger and can revive him if needed.',
+  value: 100,
+  cost: 15000,
+  emoji: '🍰',
 });

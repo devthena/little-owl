@@ -63,7 +63,6 @@ const Bots: BotsProps = {
       djs.GatewayIntentBits.MessageContent,
     ],
   }),
-  interactions: new Map(),
   log: (props: LogProps) => {
     logEvent(Bots.discord, props);
   },
@@ -105,8 +104,8 @@ const initBots = async () => {
   Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
-  await Bots.discord.login(process.env.DISCORD_TOKEN);
   await Bots.twitch.connect();
+  await Bots.discord.login(process.env.DISCORD_TOKEN);
 
   createServerPet(Bots.log);
 };

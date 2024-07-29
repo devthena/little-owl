@@ -15,8 +15,13 @@ import {
 
 import { PetModel } from '@/models/pet';
 
-const { ADD_HAPPINESS, MAX_STATS, REVIVE_HAPPINESS, REVIVE_HEALTH } =
-  CONFIG.FEATURES.PET;
+const {
+  ADD_HAPPINESS,
+  ADD_HEALTH,
+  MAX_STATS,
+  REVIVE_HAPPINESS,
+  REVIVE_HEALTH,
+} = CONFIG.FEATURES.PET;
 
 export const createServerPet = async (log: Function) => {
   try {
@@ -81,25 +86,18 @@ export const getServerPet = async (
   }
 };
 
-export const increasePetHappiness = async (
-  pet: PetDocument,
-  log: Function
-): Promise<PetDocument | undefined> => {
+export const increasePetHappiness = async (pet: PetDocument, log: Function) => {
   try {
     if (pet.isAlive) {
       const newHappiness = pet.happiness + ADD_HAPPINESS;
       pet.happiness = newHappiness <= MAX_STATS ? newHappiness : MAX_STATS;
       await pet.save();
-      return pet;
     }
-
-    return;
   } catch (error) {
     log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return;
   }
 };
 
@@ -107,7 +105,7 @@ export const increasePetHunger = async (
   pet: PetDocument,
   food: ItemDocument,
   log: Function
-): Promise<PetDocument | undefined> => {
+) => {
   try {
     const now = new Date();
 
@@ -122,21 +120,15 @@ export const increasePetHunger = async (
       pet.last_fed = now;
       await pet.save();
     }
-
-    return pet;
   } catch (error) {
     log({
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-    return;
   }
 };
 
-export const reviveServerPet = async (
-  pet: PetDocument,
-  log: Function
-): Promise<PetDocument> => {
+export const reviveServerPet = async (pet: PetDocument, log: Function) => {
   try {
     const now = new Date();
 
@@ -152,8 +144,6 @@ export const reviveServerPet = async (
       type: LogCode.Error,
       description: JSON.stringify(error),
     });
-  } finally {
-    return pet;
   }
 };
 
@@ -167,15 +157,33 @@ export const updatePetStatus = async (log: Function) => {
       if (pet.hunger > 0) pet.hunger -= 1;
 
       // increase health depending on hunger level
-      if (pet.health < MAX_STATS && pet.hunger > 80) pet.health += 1;
+      if (pet.health < MAX_STATS && pet.hunger > 80) {
+        pet.health += ADD_HEALTH;
+        if (pet.health > MAX_STATS) pet.health = MAX_STATS;
+      }
 
-      // decrease one extra happiness depending on hunger level
-      if (pet.hunger < 30) {
+      // decrease one extra happiness when hunger is low
+      if (pet.hunger < 50) {
         if (pet.happiness > 0) pet.happiness -= 1;
       }
 
-      // decrease health depending on hunger and happiness level
+      // decrease one extra happiness when health is low
+      if (pet.health < 50) {
+        if (pet.happiness > 0) pet.happiness -= 1;
+      }
+
+      // decrease health depending on hunger or happiness level
       if (pet.hunger < 30 || pet.happiness < 10) {
+        if (pet.health > 0) pet.health -= 1;
+      }
+
+      // decrease one extra health when hunger is 0
+      if (pet.hunger === 0) {
+        if (pet.health > 0) pet.health -= 1;
+      }
+
+      // decrease one extra health when happiness is 0
+      if (pet.happiness === 0) {
         if (pet.health > 0) pet.health -= 1;
       }
 
@@ -192,7 +200,7 @@ export const updatePetStatus = async (log: Function) => {
 
         log({
           type: LogCode.Announce,
-          title: `${pet.name} Has Perished!`,
+          title: `${pet.name} has Perished!`,
           description: COPY.PET.DEAD,
           image: IMAGES.PET.DEAD,
         });
@@ -202,7 +210,18 @@ export const updatePetStatus = async (log: Function) => {
     } else {
       // check if pet needs to resurrect automatically
       const now = new Date();
-      if (now >= pet.resurrect_time) await reviveServerPet(pet, log);
+      if (now >= pet.resurrect_time) {
+        await reviveServerPet(pet, log);
+
+        if (pet.isAlive) {
+          log({
+            type: LogCode.Announce,
+            title: `${pet.name} has Returned!`,
+            description: COPY.PET.ALIVE,
+            image: IMAGES.PET.ALIVE,
+          });
+        }
+      }
     }
   } catch (error) {
     log({

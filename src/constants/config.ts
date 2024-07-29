@@ -83,9 +83,10 @@ export const CONFIG = {
     PET: {
       ENABLED: true,
       MAX_STATS: 100,
-      ADD_HAPPINESS: 10,
-      REVIVE_HAPPINESS: 25,
-      REVIVE_HEALTH: 50,
+      ADD_HAPPINESS: 5,
+      ADD_HEALTH: 5,
+      REVIVE_HAPPINESS: 74,
+      REVIVE_HEALTH: 74,
     },
     POINTS: {
       ENABLED: true,
