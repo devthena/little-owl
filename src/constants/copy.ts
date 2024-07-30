@@ -6,6 +6,11 @@ export const COPY = {
   DISABLED: 'This command is not enabled in the server.',
   BONUS: {
     NAME: 'bonus',
+    DESCRIPTION: `[Admin] Bonus reward ${CONFIG.CURRENCY.PLURAL} to a user`,
+    OPTION1_NAME: 'user',
+    OPTION1_DESCRIPTION: '[Admin] Enter recipient username',
+    OPTION2_NAME: 'amount',
+    OPTION2_DESCRIPTION: '[Admin] Enter a specific amount to give',
   },
   COINFLIP: {
     NAME: 'coinflip',
