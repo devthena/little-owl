@@ -9,8 +9,6 @@ import { IMAGES } from '@/constants/images';
 import { FoodItems } from '@/constants/items';
 
 import { PetFood } from '@/enums/items';
-
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
 
 import {
@@ -24,7 +22,6 @@ import {
 import { findOrCreateDiscordUser, setDiscordUser } from '@/services/user';
 
 export const handleSelectMenuInteraction = async (
-  Bots: BotsProps,
   interaction: StringSelectMenuInteraction
 ) => {
   if (interaction.user.bot) return;
@@ -42,7 +39,7 @@ export const handleSelectMenuInteraction = async (
     const selectedOption = interaction.values[0];
     const food = FoodItems.get(selectedOption);
 
-    const pet = await getServerPet(Bots.log);
+    const pet = await getServerPet();
 
     if (!food || !pet) {
       botEmbed.setDescription(COPY.ERROR.GENERIC);
@@ -56,7 +53,7 @@ export const handleSelectMenuInteraction = async (
 
     let updatedUser: UserDocument | null = null;
 
-    const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
+    const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
     if (food.cost > user.cash) {
@@ -90,7 +87,7 @@ export const handleSelectMenuInteraction = async (
       return;
     }
 
-    updatedUser = await setDiscordUser(Bots.log, interaction.user.id, {
+    updatedUser = await setDiscordUser(interaction.user.id, {
       cash: user.cash - food.cost,
     });
 
@@ -99,7 +96,7 @@ export const handleSelectMenuInteraction = async (
     if (pet.isAlive) {
       let hungerEmoji = EMOJIS.PET.HUNGER_HIGH;
 
-      await increasePetHunger(pet, food, Bots.log);
+      await increasePetHunger(pet, food);
 
       if (pet.hunger < 50) hungerEmoji = EMOJIS.PET.HUNGER_LOW;
 
@@ -112,7 +109,7 @@ export const handleSelectMenuInteraction = async (
         }**`
       );
     } else if (selectedOption === PetFood.HoneyCake) {
-      await reviveServerPet(pet, Bots.log);
+      await reviveServerPet(pet);
 
       if (!pet.isAlive) {
         botEmbed.setDescription(COPY.ERROR.GENERIC);

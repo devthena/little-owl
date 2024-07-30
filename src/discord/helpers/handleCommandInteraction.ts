@@ -4,7 +4,8 @@ import {
 } from 'discord.js';
 
 import { CONFIG, EMOJIS } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
+import { BotState } from '@/interfaces/bot';
+
 import { getServerPet } from '@/services/pet';
 import { findOrCreateDiscordUser } from '@/services/user';
 
@@ -23,14 +24,16 @@ import {
   Star,
 } from '../commands';
 
+import { reply } from './reply';
+
 export const handleCommandInteraction = async (
-  Bots: BotsProps,
+  state: BotState,
   interaction: CommandInteraction
 ) => {
   if (interaction.user.bot) return;
 
   const replyNoBot = () => {
-    Bots.reply({
+    reply({
       content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
       ephimeral: true,
       interaction: interaction,
@@ -38,21 +41,21 @@ export const handleCommandInteraction = async (
   };
 
   if (interaction.commandName === AccountLink.getName()) {
-    const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
+    const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return AccountLink.execute(Bots, interaction, user);
+    return AccountLink.execute(interaction, user);
   }
 
   if (interaction.commandName === AccountUnlink.getName()) {
-    const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
+    const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return AccountUnlink.execute(Bots, interaction, user);
+    return AccountUnlink.execute(interaction, user);
   }
 
   if (interaction.commandName === Help.getName()) {
-    return Help.execute(Bots, interaction);
+    return Help.execute(interaction);
   }
 
   if (interaction.commandName === Star.getName()) {
@@ -62,7 +65,7 @@ export const handleCommandInteraction = async (
     if (!recipient) return;
     if (recipient.bot) return replyNoBot();
 
-    return Star.execute(Bots, interaction, recipient);
+    return Star.execute(interaction, recipient);
   }
 
   const isInCasinoChannel =
@@ -75,7 +78,7 @@ export const handleCommandInteraction = async (
     interaction.channelId === CONFIG.CHANNELS.MAIN.STAGE;
 
   if (!isInBotChannel) {
-    Bots.reply({
+    reply({
       content: 'Please use this command in one of the bot channels.',
       ephimeral: true,
       interaction: interaction,
@@ -84,15 +87,15 @@ export const handleCommandInteraction = async (
   }
 
   if (interaction.commandName === Points.getName()) {
-    const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
+    const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return Points.execute(Bots, interaction, user);
+    return Points.execute(interaction, user);
   }
 
   if (interaction.commandName === Gamble.getName()) {
     if (!isInCasinoChannel) {
-      Bots.reply({
+      reply({
         content: 'Please use the #casino channel to gamble your points.',
         ephimeral: true,
         interaction: interaction,
@@ -100,28 +103,28 @@ export const handleCommandInteraction = async (
       return;
     }
 
-    const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
+    const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return Gamble.execute(Bots, interaction, user);
+    return Gamble.execute(interaction, user);
   }
 
   if (interaction.commandName === Profile.getName()) {
-    const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
+    const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return Profile.execute(Bots, interaction, user);
+    return Profile.execute(interaction, user);
   }
 
   if (interaction.commandName === Leaderboard.getName()) {
-    return Leaderboard.execute(Bots, interaction);
+    return Leaderboard.execute(interaction);
   }
 
   if (interaction.commandName === Cerberus.getName()) {
-    const cerberus = await getServerPet(Bots.log);
+    const cerberus = await getServerPet();
     if (!cerberus) return;
 
-    return Cerberus.execute(Bots, interaction, cerberus);
+    return Cerberus.execute(state, interaction, cerberus);
   }
 
   if (interaction.commandName === Give.getName()) {
@@ -131,18 +134,18 @@ export const handleCommandInteraction = async (
     if (!mentioned) return;
     if (mentioned.bot) return replyNoBot();
 
-    const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
-    const recipient = await findOrCreateDiscordUser(Bots.log, mentioned);
+    const user = await findOrCreateDiscordUser(interaction.user);
+    const recipient = await findOrCreateDiscordUser(mentioned);
 
     if (!user || !recipient) return;
-    return Give.execute(Bots, interaction, user, mentioned);
+    return Give.execute(interaction, user, mentioned);
   }
 
   if (interaction.commandName === CoinFlip.getName()) {
-    return CoinFlip.execute(Bots, interaction);
+    return CoinFlip.execute(interaction);
   }
 
   if (interaction.commandName === EightBall.getName()) {
-    return EightBall.execute(Bots, interaction);
+    return EightBall.execute(interaction);
   }
 };

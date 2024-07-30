@@ -1,16 +1,11 @@
 import { IGNORE_LIST } from '@/constants';
+import { log } from '@/discord/helpers';
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
 
-export const onPart = (
-  Bots: BotsProps,
-  _channel: string,
-  username: string,
-  _self: boolean
-) => {
+export const onPart = (_channel: string, username: string, _self: boolean) => {
   if (IGNORE_LIST.includes(username)) return;
 
-  Bots.log({
+  log({
     type: LogCode.User,
     description: `${username} has left the chat.`,
   });

@@ -1,6 +1,8 @@
 import { CONFIG, COPY } from '@/constants';
 import { IMAGES } from '@/constants/images';
 
+import { log } from '@/discord/helpers';
+
 import { PetFood } from '@/enums/items';
 import { LogCode } from '@/enums/logs';
 
@@ -23,7 +25,7 @@ const {
   REVIVE_HEALTH,
 } = CONFIG.FEATURES.PET;
 
-export const createServerPet = async (log: Function) => {
+export const createServerPet = async () => {
   try {
     const pet = await PetModel.findOne();
     if (pet) return;
@@ -72,9 +74,7 @@ export const getHunger = (value: number): PetHunger => {
   else return 'Full';
 };
 
-export const getServerPet = async (
-  log: Function
-): Promise<PetDocument | null> => {
+export const getServerPet = async (): Promise<PetDocument | null> => {
   try {
     return await PetModel.findOne();
   } catch (error) {
@@ -86,7 +86,7 @@ export const getServerPet = async (
   }
 };
 
-export const increasePetHappiness = async (pet: PetDocument, log: Function) => {
+export const increasePetHappiness = async (pet: PetDocument) => {
   try {
     if (pet.isAlive) {
       const newHappiness = pet.happiness + ADD_HAPPINESS;
@@ -103,8 +103,7 @@ export const increasePetHappiness = async (pet: PetDocument, log: Function) => {
 
 export const increasePetHunger = async (
   pet: PetDocument,
-  food: ItemDocument,
-  log: Function
+  food: ItemDocument
 ) => {
   try {
     const now = new Date();
@@ -128,7 +127,7 @@ export const increasePetHunger = async (
   }
 };
 
-export const reviveServerPet = async (pet: PetDocument, log: Function) => {
+export const reviveServerPet = async (pet: PetDocument) => {
   try {
     const now = new Date();
 
@@ -147,7 +146,7 @@ export const reviveServerPet = async (pet: PetDocument, log: Function) => {
   }
 };
 
-export const updatePetStatus = async (log: Function) => {
+export const updatePetStatus = async () => {
   try {
     const pet = await PetModel.findOne();
     if (!pet) return;
@@ -211,7 +210,7 @@ export const updatePetStatus = async (log: Function) => {
       // check if pet needs to resurrect automatically
       const now = new Date();
       if (now >= pet.resurrect_time) {
-        await reviveServerPet(pet, log);
+        await reviveServerPet(pet);
 
         if (pet.isAlive) {
           log({

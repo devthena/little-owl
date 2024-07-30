@@ -1,10 +1,11 @@
 import { CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
-import { getCurrency } from '@/lib';
+import { getCurrency } from '@/lib/utils';
 import { incDiscordUser, setDiscordUser } from '@/services/user';
+
+import { reply } from '../helpers';
 
 export const Give = {
   data: new SlashCommandBuilder()
@@ -23,13 +24,12 @@ export const Give = {
         .setRequired(true)
     ),
   execute: async (
-    Bots: BotsProps,
     interaction: CommandInteraction,
     user: UserDocument,
     recipient: User
   ) => {
     if (!CONFIG.FEATURES.GIVE.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -50,7 +50,7 @@ export const Give = {
     };
 
     if (user.cash < 1) {
-      Bots.reply({
+      reply({
         content: replies.noPoints,
         ephimeral: true,
         interaction: interaction,
@@ -59,7 +59,7 @@ export const Give = {
     }
 
     if (amount < 1) {
-      Bots.reply({
+      reply({
         content: replies.invalidNegative,
         ephimeral: true,
         interaction: interaction,
@@ -68,7 +68,7 @@ export const Give = {
     }
 
     if (user.cash < amount) {
-      Bots.reply({
+      reply({
         content: replies.notEnough,
         ephimeral: true,
         interaction: interaction,
@@ -77,7 +77,7 @@ export const Give = {
     }
 
     if (user.discord_id === recipient.id) {
-      Bots.reply({
+      reply({
         content: replies.invalidRecipient,
         ephimeral: true,
         interaction: interaction,
@@ -85,12 +85,12 @@ export const Give = {
       return;
     }
 
-    await incDiscordUser(Bots.log, recipient.id, { cash: amount });
-    await setDiscordUser(Bots.log, interaction.user.id, {
+    await incDiscordUser(recipient.id, { cash: amount });
+    await setDiscordUser(interaction.user.id, {
       cash: (user.cash -= amount),
     });
 
-    Bots.reply({
+    reply({
       content: `${replies.success} Your new balance: ${user.cash} ${EMOJIS.CURRENCY}`,
       ephimeral: false,
       interaction: interaction,

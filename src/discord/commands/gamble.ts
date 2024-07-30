@@ -1,10 +1,11 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
-import { getCurrency, weightedRandom } from '@/lib';
+import { getCurrency, weightedRandom } from '@/lib/utils';
 import { setDiscordUser } from '@/services/user';
+
+import { reply } from '../helpers';
 
 export const Gamble = {
   data: new SlashCommandBuilder()
@@ -16,13 +17,9 @@ export const Gamble = {
         .setDescription(COPY.GAMBLE.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (
-    Bots: BotsProps,
-    interaction: CommandInteraction,
-    user: UserDocument
-  ) => {
+  execute: async (interaction: CommandInteraction, user: UserDocument) => {
     if (!CONFIG.FEATURES.GAMBLE.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -40,7 +37,7 @@ export const Gamble = {
     };
 
     if (user.cash < 1) {
-      Bots.reply({
+      reply({
         content: replies.noPoints,
         ephimeral: true,
         interaction: interaction,
@@ -52,7 +49,7 @@ export const Gamble = {
     const amount = typeof arg === 'string' ? parseInt(arg, 10) : 0;
 
     if (isNaN(amount) && arg !== 'all' && arg !== 'half') {
-      Bots.reply({
+      reply({
         content: replies.invalidInput,
         ephimeral: true,
         interaction: interaction,
@@ -62,7 +59,7 @@ export const Gamble = {
 
     const isOverLimit = async (amount: number) => {
       if (amount > CONFIG.FEATURES.GAMBLE.LIMIT) {
-        Bots.reply({
+        reply({
           content: replies.maxReached,
           ephimeral: true,
           interaction: interaction,
@@ -86,7 +83,7 @@ export const Gamble = {
       if (result === 'win') {
         points += user.cash;
 
-        Bots.reply({
+        reply({
           content: `You won ${user.cash} ${getCurrency(user.cash)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
@@ -96,7 +93,7 @@ export const Gamble = {
       } else {
         points = 0;
 
-        Bots.reply({
+        reply({
           content: replies.lostAll,
           ephimeral: false,
           interaction: interaction,
@@ -109,7 +106,7 @@ export const Gamble = {
       if (result === 'win') {
         points += halfPoints;
 
-        Bots.reply({
+        reply({
           content: `You won ${halfPoints} ${getCurrency(halfPoints)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
@@ -119,7 +116,7 @@ export const Gamble = {
       } else {
         points -= halfPoints;
 
-        Bots.reply({
+        reply({
           content: `You lost ${halfPoints} ${getCurrency(halfPoints)}. ${
             EMOJIS.GAMBLE.LOST
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
@@ -128,7 +125,7 @@ export const Gamble = {
         });
       }
     } else if (amount < 1) {
-      Bots.reply({
+      reply({
         content: replies.invalidNegative,
         ephimeral: true,
         interaction: interaction,
@@ -139,7 +136,7 @@ export const Gamble = {
       if (result === 'win') {
         points += amount;
 
-        Bots.reply({
+        reply({
           content: `You won ${amount} ${getCurrency(amount)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
@@ -149,7 +146,7 @@ export const Gamble = {
       } else {
         points -= amount;
 
-        Bots.reply({
+        reply({
           content: `You lost ${amount} ${getCurrency(amount)}. ${
             EMOJIS.GAMBLE.LOST
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
@@ -158,7 +155,7 @@ export const Gamble = {
         });
       }
     } else if (amount > user.cash) {
-      Bots.reply({
+      reply({
         content: replies.notEnough,
         ephimeral: true,
         interaction: interaction,
@@ -166,7 +163,7 @@ export const Gamble = {
       return;
     }
 
-    setDiscordUser(Bots.log, interaction.user.id, { cash: points });
+    setDiscordUser(interaction.user.id, { cash: points });
   },
   getName: (): string => {
     return COPY.GAMBLE.NAME;

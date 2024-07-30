@@ -1,15 +1,14 @@
-import { GuildMember } from 'discord.js';
+import { GuildMember, PartialGuildMember } from 'discord.js';
 
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
+import { log } from '../helpers';
 
 export const onGuildMemberRemove = async (
-  Bots: BotsProps,
-  member: GuildMember
+  member: GuildMember | PartialGuildMember
 ) => {
   if (!member.guild?.available) return;
 
-  Bots.log({
+  log({
     type: LogCode.Leave,
     description: `${member.user.username} aka ${member.displayName} has left or has been kicked from the server.`,
     thumbnail: member.displayAvatarURL() || undefined,

@@ -1,21 +1,22 @@
 import { Message } from 'discord.js';
 
 import { CONFIG } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
+import { discord } from '@/lib/clients';
 import { getENV } from '@/lib/config';
+
 import { findOrCreateDiscordUser, incDiscordUser } from '@/services/user';
 
-export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
+export const onMessageCreate = async (message: Message) => {
   if (!message.guild?.available) return;
   if (!message.channel.isTextBased()) return;
   if (!message.member) return;
   if (message.author.system) return;
-  if (message.author.bot && message.author.id !== Bots.discord.user?.id) return;
+  if (message.author.bot && message.author.id !== discord.user?.id) return;
 
   const { ADMIN_SERVER_ID, SERVER_ID } = getENV();
 
   if (message.guild.id === ADMIN_SERVER_ID) {
-    const server = Bots.discord.guilds.cache.get(SERVER_ID);
+    const server = discord.guilds.cache.get(SERVER_ID);
     if (!server?.available) return;
 
     let channel = null;
@@ -38,7 +39,7 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
   }
 
   if (message.guild.id !== SERVER_ID) return;
-  if (message.author.id === Bots.discord.user?.id) return;
+  if (message.author.id === discord.user?.id) return;
 
   const words = message.content.split(/ +/g);
   const pattern = new RegExp('[A-Za-z].{2,}');
@@ -50,6 +51,6 @@ export const onMessageCreate = async (Bots: BotsProps, message: Message) => {
 
   if (!isValid) return;
 
-  await findOrCreateDiscordUser(Bots.log, message.member.user);
-  await incDiscordUser(Bots.log, message.member.id, { cash: incAmount });
+  await findOrCreateDiscordUser(message.member.user);
+  await incDiscordUser(message.member.id, { cash: incAmount });
 };

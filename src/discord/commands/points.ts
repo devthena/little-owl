@@ -1,20 +1,17 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
+
+import { reply } from '../helpers';
 
 export const Points = {
   data: new SlashCommandBuilder()
     .setName(COPY.POINTS.NAME)
     .setDescription(COPY.POINTS.DESCRIPTION),
-  execute: async (
-    Bots: BotsProps,
-    interaction: CommandInteraction,
-    user: UserDocument
-  ) => {
+  execute: async (interaction: CommandInteraction, user: UserDocument) => {
     if (!CONFIG.FEATURES.POINTS.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -22,7 +19,7 @@ export const Points = {
       return;
     }
 
-    Bots.reply({
+    reply({
       content: `Your current balance is: ${user.cash} ${EMOJIS.CURRENCY}`,
       ephimeral: false,
       interaction: interaction,

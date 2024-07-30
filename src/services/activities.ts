@@ -1,9 +1,9 @@
+import { log } from '@/discord/helpers';
 import { LogCode } from '@/enums/logs';
 import { ActivityDocument, StarActivity } from '@/interfaces/activities';
 import { ActivityModel } from '@/models/activities';
 
 export const deleteActivity = async (
-  log: Function,
   id: string
 ): Promise<ActivityDocument | null> => {
   try {
@@ -19,7 +19,6 @@ export const deleteActivity = async (
 };
 
 export const findOrCreateStarActivity = async (
-  log: Function,
   id: string
 ): Promise<StarActivity | null> => {
   try {
@@ -60,7 +59,6 @@ export const findOrCreateStarActivity = async (
 };
 
 export const updateStarActivity = async (
-  log: Function,
   id: string
 ): Promise<ActivityDocument | null> => {
   try {

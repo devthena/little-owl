@@ -15,7 +15,6 @@ export const CONFIG = {
   ],
   ALERTS: {
     LIVE: {
-      COOLDOWN_MS: 43200000,
       ENABLED: true,
       ID: '901898913047511071',
     },

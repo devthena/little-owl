@@ -8,15 +8,16 @@ import {
 
 import { CONFIG, COPY, URLS } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
+
+import { log, reply } from '../helpers';
 
 export const Help = {
   data: new SlashCommandBuilder()
     .setName(COPY.HELP.NAME)
     .setDescription(COPY.HELP.DESCRIPTION),
-  execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
+  execute: async (interaction: CommandInteraction) => {
     if (!CONFIG.FEATURES.HELP.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -43,7 +44,7 @@ export const Help = {
     try {
       await interaction.reply({ components: [row] });
     } catch (error) {
-      Bots.log({
+      log({
         type: LogCode.Error,
         description: JSON.stringify(error),
       });

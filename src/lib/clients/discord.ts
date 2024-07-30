@@ -1,0 +1,32 @@
+import { Client, GatewayIntentBits } from 'discord.js';
+
+if (!process.env.DISCORD_TOKEN) {
+  console.error('Error initializing Discord.js: Missing environment variables');
+  process.exit(1);
+}
+
+const discord = new Client({
+  intents: [
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildModeration,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.MessageContent,
+  ],
+});
+
+discord.on('ready', () => {
+  console.log('* Discord LittleOwl is online *');
+
+  discord.user?.setActivity({
+    name: process.env.STAGING ? 'TEST MODE' : 'with Chat',
+    type: 0,
+  });
+});
+
+discord.login(process.env.DISCORD_TOKEN);
+
+export { discord };

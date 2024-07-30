@@ -6,9 +6,10 @@ import {
 
 import { CONFIG, COPY } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
 import { createUser, setDiscordUser } from '@/services/user';
+
+import { log, reply } from '../helpers';
 
 export const AccountUnlink = {
   data: new SlashCommandBuilder()
@@ -20,13 +21,9 @@ export const AccountUnlink = {
         .setDescription(COPY.UNLINK.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (
-    Bots: BotsProps,
-    interaction: CommandInteraction,
-    user: UserDocument
-  ) => {
+  execute: async (interaction: CommandInteraction, user: UserDocument) => {
     if (!CONFIG.FEATURES.UNLINK.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -35,7 +32,7 @@ export const AccountUnlink = {
     }
 
     if (!user.twitch_id) {
-      Bots.reply({
+      reply({
         content: COPY.UNLINK.RESPONSES.NOLINK,
         ephimeral: true,
         interaction: interaction,
@@ -46,7 +43,7 @@ export const AccountUnlink = {
     const twitchName = interaction.options.get('username')?.value;
 
     if (user.twitch_username !== twitchName) {
-      Bots.reply({
+      reply({
         content: COPY.UNLINK.RESPONSES.INVALID,
         ephimeral: true,
         interaction: interaction,
@@ -54,13 +51,13 @@ export const AccountUnlink = {
       return;
     }
 
-    await createUser(Bots.log, {
+    await createUser({
       twitch_id: user.twitch_id,
       twitch_username: user.twitch_username,
       cash: 0,
     });
 
-    await setDiscordUser(Bots.log, interaction.user.id, {
+    await setDiscordUser(interaction.user.id, {
       twitch_id: null,
       twitch_username: null,
     });
@@ -70,7 +67,7 @@ export const AccountUnlink = {
       ephemeral: true,
     });
 
-    Bots.log({
+    log({
       type: LogCode.Activity,
       description: `${user.discord_username} aka ${user.discord_name} has unlinked their account: ${user.twitch_username}`,
     });

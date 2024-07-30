@@ -12,12 +12,13 @@ import {
 } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
+import { IMAGES } from '@/constants/images';
 import { FoodItems } from '@/constants/items';
 
 import { PetFood } from '@/enums/items';
 import { LogCode } from '@/enums/logs';
 
-import { BotsProps } from '@/interfaces/bot';
+import { BotState } from '@/interfaces/bot';
 import { PetDocument } from '@/interfaces/pet';
 
 import {
@@ -28,7 +29,8 @@ import {
 } from '@/services/pet';
 
 import { findOrCreateDiscordUser } from '@/services/user';
-import { IMAGES } from '@/constants/images';
+
+import { log, reply } from '../helpers';
 
 export const Cerberus = {
   data: new SlashCommandBuilder()
@@ -55,12 +57,12 @@ export const Cerberus = {
         ])
     ),
   execute: async (
-    Bots: BotsProps,
+    state: BotState,
     interaction: CommandInteraction,
     pet: PetDocument
   ) => {
     if (!CONFIG.FEATURES.PET.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -130,14 +132,16 @@ export const Cerberus = {
       replyOptions.embeds = [botEmbed];
     } else if (action === 'pet') {
       // check for user cooldown
-      if (Bots.cooldowns.cerberus.has(interaction.user.id)) {
+      if (state.cooldowns.cerberus.has(interaction.user.id)) {
         const now = Date.now();
-        const timeEnd: Date = Bots.cooldowns.cerberus.get(interaction.user.id)!;
+        const timeEnd: Date = state.cooldowns.cerberus.get(
+          interaction.user.id
+        )!;
         const timeEndMS = timeEnd.getTime();
         const timeEndTS = Math.floor(timeEnd.getTime() / 1000);
 
         if (now < timeEndMS) {
-          Bots.reply({
+          reply({
             content: `This command is in cooldown for you.\n\nPlease try again <t:${timeEndTS}:R>`,
             ephimeral: true,
             interaction: interaction,
@@ -147,7 +151,7 @@ export const Cerberus = {
       }
 
       if (pet.isAlive) {
-        await increasePetHappiness(pet, Bots.log);
+        await increasePetHappiness(pet);
 
         if (pet.happiness < 50) {
           happinessEmoji = EMOJIS.PET.HAPPY_LOW;
@@ -173,20 +177,20 @@ export const Cerberus = {
 
       // add 15-minute cooldown for user
       const cooldownDate = new Date(Date.now() + 15 * 60 * 1000);
-      Bots.cooldowns.cerberus.set(interaction.user.id, cooldownDate);
+      state.cooldowns.cerberus.set(interaction.user.id, cooldownDate);
     } else if (action === 'feed') {
       const foodOptions = [];
-      const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
+      const user = await findOrCreateDiscordUser(interaction.user);
 
       if (!user) {
-        Bots.reply({
+        reply({
           content: COPY.ERROR.GENERIC,
           ephimeral: true,
           interaction: interaction,
         });
         return;
       } else if (pet.hunger === CONFIG.FEATURES.PET.MAX_STATS) {
-        Bots.reply({
+        reply({
           content: COPY.PET.FULL,
           ephimeral: true,
           interaction: interaction,
@@ -242,7 +246,7 @@ export const Cerberus = {
     try {
       await interaction.reply(replyOptions);
     } catch (error) {
-      Bots.log({
+      log({
         type: LogCode.Error,
         description: JSON.stringify(error),
       });

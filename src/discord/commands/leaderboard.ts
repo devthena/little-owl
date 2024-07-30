@@ -7,16 +7,17 @@ import {
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
 import { getUsersByCategory } from '@/services/user';
+
+import { log, reply } from '../helpers';
 
 export const Leaderboard = {
   data: new SlashCommandBuilder()
     .setName(COPY.LEADERBOARD.NAME)
     .setDescription(COPY.LEADERBOARD.DESCRIPTION),
-  execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
+  execute: async (interaction: CommandInteraction) => {
     if (!CONFIG.FEATURES.LEADERBOARD.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -25,7 +26,7 @@ export const Leaderboard = {
     }
 
     const description = `Here are the users with the highest ${CONFIG.CURRENCY.PLURAL}!`;
-    const leaderboardUsers = await getUsersByCategory(Bots.log, 'cash', 5);
+    const leaderboardUsers = await getUsersByCategory('cash', 5);
 
     if (!leaderboardUsers.length) {
       return await interaction.reply({
@@ -68,7 +69,7 @@ export const Leaderboard = {
     try {
       await interaction.reply({ embeds: [botEmbed] });
     } catch (error) {
-      Bots.log({
+      log({
         type: LogCode.Error,
         description: JSON.stringify(error),
       });

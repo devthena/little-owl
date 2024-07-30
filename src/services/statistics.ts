@@ -1,9 +1,9 @@
+import { log } from '@/discord/helpers';
 import { LogCode } from '@/enums/logs';
 import { StatsDocument } from '@/interfaces/statistics';
 import { StatsModel } from '@/models/statistics';
 
 export const deleteStats = async (
-  log: Function,
   id: string
 ): Promise<StatsDocument | null> => {
   try {

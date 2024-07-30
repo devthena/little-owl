@@ -1,17 +1,12 @@
-import * as djs from 'discord.js';
-import * as tmi from 'tmi.js';
-
+import { CommandInteraction } from 'discord.js';
 import { LogCode } from '@/enums/logs';
 
-export interface BotsProps {
+export interface BotState {
+  activity: number;
   cooldowns: {
     cerberus: Map<string, Date>;
-    streamAlerts: boolean;
+    stream: Date;
   };
-  discord: djs.Client<boolean>;
-  log: Function;
-  reply: Function;
-  twitch: tmi.Client;
 }
 
 export interface LogProps {
@@ -31,5 +26,5 @@ export interface ObjectProps {
 export interface ReplyProps {
   content: string;
   ephimeral: boolean;
-  interaction: djs.CommandInteraction;
+  interaction: CommandInteraction;
 }

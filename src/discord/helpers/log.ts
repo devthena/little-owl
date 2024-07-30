@@ -1,7 +1,9 @@
-import { Client, ColorResolvable, EmbedBuilder } from 'discord.js';
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
 import { CONFIG } from '@/constants';
 import { LogProps } from '@/interfaces/bot';
+
+import { discord } from '@/lib/clients';
 import { getENV } from '@/lib/config';
 
 const typeMap = {
@@ -35,12 +37,18 @@ const typeMap = {
   },
 };
 
-export const logEvent = (
-  clientDiscord: Client,
-  { type, title, description, image, authorIcon, thumbnail, footer }: LogProps
-) => {
+export const log = ({
+  type,
+  title,
+  description,
+  image,
+  authorIcon,
+  thumbnail,
+  footer,
+}: LogProps) => {
   const { ADMIN_SERVER_ID } = getENV();
-  const server = clientDiscord.guilds.cache.get(ADMIN_SERVER_ID);
+
+  const server = discord.guilds.cache.get(ADMIN_SERVER_ID);
 
   if (server && server.available) {
     const channel = server.channels.cache.get(typeMap[type].channel);
