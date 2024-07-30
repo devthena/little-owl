@@ -7,7 +7,7 @@ export const connectDatabase = async () => {
     : process.env.MONGODB_DB;
 
   if (!mongodbURL || !databaseName) {
-    console.error('Error connecting to MongoDB: Missing environment variables');
+    console.error('🦉 Error: MongoDB Missing Environment Variables');
     process.exit(1);
   }
 
@@ -15,9 +15,9 @@ export const connectDatabase = async () => {
 
   try {
     await mongoose.connect(dbURL);
-    console.log('* Database connection successful *');
+    console.log('🦉 Database Connection: Success');
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error('🦉 Error: ' + error);
     process.exit(1);
   }
 };

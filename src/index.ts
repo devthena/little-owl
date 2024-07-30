@@ -1,9 +1,8 @@
 import { version } from 'process';
 
 if (parseInt(version.slice(1).split('.')[0], 10) < 20) {
-  throw new Error(
-    'Node 20.0.0 or higher is required. Update Node on your system.'
-  );
+  console.error('🦉 Error: Node Version 20 or Higher Is Required');
+  process.exit(1);
 }
 
 require('dotenv').config();

@@ -1,7 +1,7 @@
 import { Client } from 'tmi.js';
 
 if (!process.env.USERNAME || !process.env.PASSWORD || !process.env.CHANNELS) {
-  console.error('Error initializing Discord.js: Missing environment variables');
+  console.error('🦉 Error: TMI.js Missing Environment Variables');
   process.exit(1);
 }
 

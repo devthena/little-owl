@@ -200,7 +200,9 @@ export const incDiscordUser = async (
   values: UserIncrementFields
 ) => {
   if (Object.keys(values).length === 0) {
-    throw new Error('No fields specified for increment.');
+    return console.error(
+      '🦉 Error: No Fields Specified for Discord User Increment'
+    );
   }
 
   try {
@@ -228,7 +230,9 @@ export const incTwitchUser = async (
   values: UserIncrementFields
 ) => {
   if (Object.keys(values).length === 0) {
-    throw new Error('No fields specified for increment.');
+    return console.error(
+      '🦉 Error: No Fields Specified for Twitch User Increment'
+    );
   }
 
   try {
@@ -240,7 +244,7 @@ export const incTwitchUser = async (
     if (result.modifiedCount === 0) {
       log({
         type: LogCode.Error,
-        description: `Increment Discord User: No user found with Discord ID: ${id}`,
+        description: `Increment Twitch User: No user found with Discord ID: ${id}`,
       });
     }
   } catch (error) {

@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 
 if (!process.env.DISCORD_TOKEN) {
-  console.error('Error initializing Discord.js: Missing environment variables');
+  console.error('🦉 Error: Discord.js Missing Environment Variables');
   process.exit(1);
 }
 
@@ -19,7 +19,7 @@ const discord = new Client({
 });
 
 discord.on('ready', () => {
-  console.log('* Discord LittleOwl is online *');
+  console.log('🦉 Discord LittleOwl: Online');
 
   discord.user?.setActivity({
     name: process.env.STAGING ? 'TEST MODE' : 'with Chat',

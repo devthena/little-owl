@@ -16,7 +16,8 @@ export const getENV = () => {
     !MONGODB_USERS ||
     !SERVER_ID
   ) {
-    throw new Error('Missing necessary environment variables');
+    console.error('🦉 Error: Missing Necessary Environment Variables');
+    process.exit(1);
   }
 
   return {

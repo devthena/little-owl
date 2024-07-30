@@ -19,19 +19,25 @@ import {
 
 export const registerDiscordCommands = (): void => {
   if (!process.env.DISCORD_TOKEN) {
-    return console.error('Bot Register Command: Missing Token.');
+    console.error('🦉 Error: Discord Register Command Missing Token.');
+    process.exit(1);
   }
 
   if (!process.env.DISCORD_CLIENT_ID) {
-    return console.error('Bot Register Command: Missing Client ID.');
+    console.error('🦉 Error: Discord Register Command Missing Client ID.');
+    process.exit(1);
   }
 
   if (!process.env.SERVER_ID) {
-    return console.error('Bot Register Command: Missing Server ID.');
+    console.error('🦉 Error: Discord Register Command Missing Server ID.');
+    process.exit(1);
   }
 
   if (!process.env.ADMIN_SERVER_ID) {
-    return console.error('Bot Register Command: Missing Admin Server ID.');
+    console.error(
+      '🦉 Error: Discord Register Command Missing Admin Server ID.'
+    );
+    process.exit(1);
   }
 
   const commands = [];
@@ -69,9 +75,7 @@ export const registerDiscordCommands = (): void => {
         ),
         { body: commands }
       )
-      .then(_data =>
-        console.log('Successfully registered PROD Discord commands.')
-      )
+      .then(_data => console.log('🦉 Discord Register PROD Commands: Success'))
       .catch(console.error);
 
   if (commandsGlobal.length > 0)
@@ -80,7 +84,7 @@ export const registerDiscordCommands = (): void => {
         body: commandsGlobal,
       })
       .then(_data =>
-        console.log('Successfully registered GLOBAL Discord commands.')
+        console.log('🦉 Discord Register GLOBAL Commands: Success')
       )
       .catch(console.error);
 
@@ -93,8 +97,6 @@ export const registerDiscordCommands = (): void => {
         ),
         { body: commandsStage }
       )
-      .then(_data =>
-        console.log('Successfully registered STAGE Discord commands.')
-      )
+      .then(_data => console.log('🦉 Discord Register STAGE Commands: Success'))
       .catch(console.error);
 };
