@@ -42,8 +42,14 @@ import {
 import { discordReply, logEvent } from '@/lib';
 import { connectDatabase } from '@/lib/config';
 
+import { scheduleTasks } from '@/scheduler';
+import { createServerPet } from '@/services/pet';
+
+import { registerDiscordCommands } from '@/discord/helpers';
+
 const Bots: BotsProps = {
   cooldowns: {
+    cerberus: new Map(),
     streamAlerts: false,
   },
   discord: new djs.Client({
@@ -99,8 +105,13 @@ const initBots = async () => {
   Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
   Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
 
-  Bots.discord.login(process.env.DISCORD_TOKEN);
-  Bots.twitch.connect();
+  await Bots.twitch.connect();
+  await Bots.discord.login(process.env.DISCORD_TOKEN);
+
+  createServerPet(Bots.log);
 };
 
+if (!process.env.STAGING) registerDiscordCommands();
+
 initBots();
+scheduleTasks(Bots);

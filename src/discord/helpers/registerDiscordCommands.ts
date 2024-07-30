@@ -1,8 +1,10 @@
 import { Routes } from 'discord.js';
 import { REST } from '@discordjs/rest';
+
 import {
   AccountLink,
   AccountUnlink,
+  Cerberus,
   CoinFlip,
   EightBall,
   Gamble,
@@ -12,11 +14,9 @@ import {
   Points,
   Profile,
   Star,
-} from './commands';
+} from '../commands';
 
-require('dotenv').config();
-
-const register = (): void => {
+export const registerDiscordCommands = (): void => {
   if (!process.env.DISCORD_TOKEN) {
     return console.error('Bot Register Command: Missing Token.');
   }
@@ -40,6 +40,7 @@ const register = (): void => {
   // commands ready for production should be added here
   commands.push(AccountLink.data.toJSON());
   commands.push(AccountUnlink.data.toJSON());
+  commands.push(Cerberus.data.toJSON());
   commands.push(CoinFlip.data.toJSON());
   commands.push(EightBall.data.toJSON());
   commands.push(Gamble.data.toJSON());
@@ -95,5 +96,3 @@ const register = (): void => {
       )
       .catch(console.error);
 };
-
-register();

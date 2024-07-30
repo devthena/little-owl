@@ -13,6 +13,10 @@ const typeMap = {
     channel: CONFIG.CHANNELS.LOGS.ALERT,
     color: CONFIG.COLORS.PINK,
   },
+  announce: {
+    channel: CONFIG.CHANNELS.ADMIN.STAGE,
+    color: CONFIG.COLORS.BLUE,
+  },
   deleted: {
     channel: CONFIG.CHANNELS.LOGS.DELETED,
     color: CONFIG.COLORS.RED,
@@ -33,7 +37,7 @@ const typeMap = {
 
 export const logEvent = (
   clientDiscord: Client,
-  { type, description, authorIcon, thumbnail, footer }: LogProps
+  { type, title, description, image, authorIcon, thumbnail, footer }: LogProps
 ) => {
   const { ADMIN_SERVER_ID } = getENV();
   const server = clientDiscord.guilds.cache.get(ADMIN_SERVER_ID);
@@ -44,12 +48,17 @@ export const logEvent = (
     if (channel) {
       const botEmbed = new EmbedBuilder()
         .setColor(typeMap[type].color as ColorResolvable)
-        .setAuthor({
-          name: `${server.name} Server`,
-          iconURL: authorIcon || server.iconURL() || '',
-        })
         .setDescription(description);
 
+      if (authorIcon) {
+        botEmbed.setAuthor({
+          name: `${server.name} Server`,
+          iconURL: authorIcon || server.iconURL() || '',
+        });
+      }
+
+      if (title) botEmbed.setTitle(title);
+      if (image) botEmbed.setImage(image);
       if (thumbnail) botEmbed.setThumbnail(thumbnail);
       if (footer) botEmbed.setFooter({ text: footer });
 
