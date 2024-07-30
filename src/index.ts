@@ -49,6 +49,7 @@ import { registerDiscordCommands } from '@/discord/helpers';
 
 const Bots: BotsProps = {
   cooldowns: {
+    cerberus: new Map(),
     streamAlerts: false,
   },
   discord: new djs.Client({

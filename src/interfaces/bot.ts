@@ -4,7 +4,10 @@ import * as tmi from 'tmi.js';
 import { LogCode } from '@/enums/logs';
 
 export interface BotsProps {
-  cooldowns: ObjectProps;
+  cooldowns: {
+    cerberus: Map<string, Date>;
+    streamAlerts: boolean;
+  };
   discord: djs.Client<boolean>;
   log: Function;
   reply: Function;

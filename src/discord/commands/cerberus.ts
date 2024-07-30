@@ -81,11 +81,10 @@ export const Cerberus = {
     );
 
     let happinessEmoji = EMOJIS.PET.HAPPY_HIGH;
+    let healthEmoji = EMOJIS.PET.HEALTH_HIGH;
+    let hungerEmoji = EMOJIS.PET.HUNGER_HIGH;
 
     if (action === 'status') {
-      let healthEmoji = EMOJIS.PET.HEALTH_HIGH;
-      let hungerEmoji = EMOJIS.PET.HUNGER_HIGH;
-
       if (pet.isAlive) {
         const happinessLevel = getHappiness(pet.happiness);
 
@@ -130,6 +129,23 @@ export const Cerberus = {
 
       replyOptions.embeds = [botEmbed];
     } else if (action === 'pet') {
+      // check for user cooldown
+      if (Bots.cooldowns.cerberus.has(interaction.user.id)) {
+        const now = Date.now();
+        const timeEnd: Date = Bots.cooldowns.cerberus.get(interaction.user.id)!;
+        const timeEndMS = timeEnd.getTime();
+        const timeEndTS = Math.floor(timeEnd.getTime() / 1000);
+
+        if (now < timeEndMS) {
+          Bots.reply({
+            content: `This command is in cooldown for you.\n\nPlease try again <t:${timeEndTS}:R>`,
+            ephimeral: true,
+            interaction: interaction,
+          });
+          return;
+        }
+      }
+
       if (pet.isAlive) {
         await increasePetHappiness(pet, Bots.log);
 
@@ -152,7 +168,12 @@ export const Cerberus = {
         );
         botEmbed.setImage(IMAGES.PET.DEAD);
       }
+
       replyOptions.embeds = [botEmbed];
+
+      // add 15-minute cooldown for user
+      const cooldownDate = new Date(Date.now() + 15 * 60 * 1000);
+      Bots.cooldowns.cerberus.set(interaction.user.id, cooldownDate);
     } else if (action === 'feed') {
       const foodOptions = [];
       const user = await findOrCreateDiscordUser(Bots.log, interaction.user);
