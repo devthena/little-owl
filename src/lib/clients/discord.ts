@@ -19,7 +19,7 @@ const discord = new Client({
 });
 
 discord.on('ready', () => {
-  console.log('🦉 Discord LittleOwl: Online');
+  console.log('🦉 Little Owl: Discord.js Connected');
 
   discord.user?.setActivity({
     name: process.env.STAGING ? 'TEST MODE' : 'with Chat',

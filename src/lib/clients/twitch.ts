@@ -6,12 +6,16 @@ if (!process.env.USERNAME || !process.env.PASSWORD || !process.env.CHANNELS) {
 }
 
 const twitch = new Client({
-  options: { debug: true },
+  options: { debug: !!process.env.STAGING },
   identity: {
     username: process.env.USERNAME,
     password: process.env.PASSWORD,
   },
   channels: process.env.CHANNELS.split(','),
+});
+
+twitch.on('connected', () => {
+  console.log('🦉 Little Owl: TMI.js Connected');
 });
 
 twitch.connect();

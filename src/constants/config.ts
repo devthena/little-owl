@@ -93,6 +93,9 @@ export const CONFIG = {
     PROFILE: {
       ENABLED: true,
     },
+    SLEEP: {
+      ENABLED: true,
+    },
     STAR: {
       ENABLED: true,
     },

@@ -9,22 +9,7 @@ import { BotState } from '@/interfaces/bot';
 import { getServerPet } from '@/services/pet';
 import { findOrCreateDiscordUser } from '@/services/user';
 
-import {
-  AccountLink,
-  AccountUnlink,
-  Bonus,
-  Cerberus,
-  CoinFlip,
-  EightBall,
-  Gamble,
-  Give,
-  Help,
-  Leaderboard,
-  Points,
-  Profile,
-  Star,
-} from '../commands';
-
+import * as dc from '../commands';
 import { reply } from './reply';
 
 export const handleCommandInteraction = async (
@@ -42,35 +27,40 @@ export const handleCommandInteraction = async (
   };
 
   // command: link
-  if (interaction.commandName === AccountLink.getName()) {
+  if (interaction.commandName === dc.AccountLink.getName()) {
     const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return AccountLink.execute(interaction, user);
+    return dc.AccountLink.execute(interaction, user);
   }
 
   // command: unlink
-  else if (interaction.commandName === AccountUnlink.getName()) {
+  else if (interaction.commandName === dc.AccountUnlink.getName()) {
     const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return AccountUnlink.execute(interaction, user);
+    return dc.AccountUnlink.execute(interaction, user);
   }
 
   // command: help
-  else if (interaction.commandName === Help.getName()) {
-    return Help.execute(interaction);
+  else if (interaction.commandName === dc.Help.getName()) {
+    return dc.Help.execute(interaction);
+  }
+
+  // command: sleep
+  else if (interaction.commandName === dc.Sleep.getName()) {
+    return dc.Sleep.execute(state, interaction);
   }
 
   // command: star
-  else if (interaction.commandName === Star.getName()) {
+  else if (interaction.commandName === dc.Star.getName()) {
     const options = interaction.options as CommandInteractionOptionResolver;
     const recipient = options.getUser('user');
 
     if (!recipient) return;
     if (recipient.bot) return replyNoBot();
 
-    return Star.execute(interaction, recipient);
+    return dc.Star.execute(interaction, recipient);
   }
 
   const isInCasinoChannel =
@@ -92,15 +82,15 @@ export const handleCommandInteraction = async (
   }
 
   // command: points
-  if (interaction.commandName === Points.getName()) {
+  if (interaction.commandName === dc.Points.getName()) {
     const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return Points.execute(interaction, user);
+    return dc.Points.execute(interaction, user);
   }
 
   // command: gamble
-  else if (interaction.commandName === Gamble.getName()) {
+  else if (interaction.commandName === dc.Gamble.getName()) {
     if (!isInCasinoChannel) {
       reply({
         content: 'Please use the #casino channel to gamble your points.',
@@ -113,32 +103,32 @@ export const handleCommandInteraction = async (
     const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return Gamble.execute(interaction, user);
+    return dc.Gamble.execute(interaction, user);
   }
 
   // command: profile
-  else if (interaction.commandName === Profile.getName()) {
+  else if (interaction.commandName === dc.Profile.getName()) {
     const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
-    return Profile.execute(interaction, user);
+    return dc.Profile.execute(interaction, user);
   }
 
   // command: leaderboard
-  else if (interaction.commandName === Leaderboard.getName()) {
-    return Leaderboard.execute(interaction);
+  else if (interaction.commandName === dc.Leaderboard.getName()) {
+    return dc.Leaderboard.execute(interaction);
   }
 
   // command: cerberus
-  else if (interaction.commandName === Cerberus.getName()) {
+  else if (interaction.commandName === dc.Cerberus.getName()) {
     const cerberus = await getServerPet();
     if (!cerberus) return;
 
-    return Cerberus.execute(state, interaction, cerberus);
+    return dc.Cerberus.execute(state, interaction, cerberus);
   }
 
   // command: give
-  else if (interaction.commandName === Give.getName()) {
+  else if (interaction.commandName === dc.Give.getName()) {
     const options = interaction.options as CommandInteractionOptionResolver;
     const mentioned = options.getUser('user');
 
@@ -149,11 +139,11 @@ export const handleCommandInteraction = async (
     const recipient = await findOrCreateDiscordUser(mentioned);
 
     if (!user || !recipient) return;
-    return Give.execute(interaction, user, mentioned);
+    return dc.Give.execute(interaction, user, mentioned);
   }
 
   // command: bonus
-  else if (interaction.commandName === Bonus.getName()) {
+  else if (interaction.commandName === dc.Bonus.getName()) {
     const options = interaction.options as CommandInteractionOptionResolver;
     const mentioned = options.getUser('user');
 
@@ -163,16 +153,16 @@ export const handleCommandInteraction = async (
     const recipient = await findOrCreateDiscordUser(mentioned);
 
     if (!recipient) return;
-    return Bonus.execute(interaction, mentioned);
+    return dc.Bonus.execute(interaction, mentioned);
   }
 
   // command: coinflip
-  else if (interaction.commandName === CoinFlip.getName()) {
-    return CoinFlip.execute(interaction);
+  else if (interaction.commandName === dc.CoinFlip.getName()) {
+    return dc.CoinFlip.execute(interaction);
   }
 
   // command: 8ball
-  else if (interaction.commandName === EightBall.getName()) {
-    return EightBall.execute(interaction);
+  else if (interaction.commandName === dc.EightBall.getName()) {
+    return dc.EightBall.execute(interaction);
   }
 };

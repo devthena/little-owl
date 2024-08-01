@@ -14,6 +14,7 @@ import {
   Leaderboard,
   Points,
   Profile,
+  Sleep,
   Star,
 } from '../commands';
 
@@ -59,7 +60,7 @@ export const registerDiscordCommands = (): void => {
   commands.push(Star.data.toJSON());
 
   // commands in development for testing should be added here
-  commandsStage.push(Profile.data.toJSON());
+  commandsStage.push(Sleep.data.toJSON());
 
   // global commands should be added here
   commandsGlobal.push(Help.data.toJSON());
@@ -75,7 +76,9 @@ export const registerDiscordCommands = (): void => {
         ),
         { body: commands }
       )
-      .then(_data => console.log('🦉 Discord Register PROD Commands: Success'))
+      .then(_data =>
+        console.log('🦉 Little Owl: Discord PROD Commands Registered')
+      )
       .catch(console.error);
 
   if (commandsGlobal.length > 0)
@@ -84,7 +87,7 @@ export const registerDiscordCommands = (): void => {
         body: commandsGlobal,
       })
       .then(_data =>
-        console.log('🦉 Discord Register GLOBAL Commands: Success')
+        console.log('🦉 Little Owl: Discord GLOBAL Commands Registered')
       )
       .catch(console.error);
 
@@ -97,6 +100,8 @@ export const registerDiscordCommands = (): void => {
         ),
         { body: commandsStage }
       )
-      .then(_data => console.log('🦉 Discord Register STAGE Commands: Success'))
+      .then(_data =>
+        console.log('🦉 Little Owl: Discord STAGE Commands Registered')
+      )
       .catch(console.error);
 };

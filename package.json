@@ -26,8 +26,8 @@
     "typescript": "^5.5.4"
   },
   "scripts": {
-    "bot:register": "ts-node -r tsconfig-paths/register src/discord/register.ts",
     "dev": "STAGING=true ts-node -r tsconfig-paths/register src/index.ts",
+    "dev:register": "REGISTER=true STAGING=true ts-node -r tsconfig-paths/register src/index.ts",
     "start": "ts-node -r tsconfig-paths/register -T src/index.ts"
   }
 }

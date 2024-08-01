@@ -15,7 +15,7 @@ export const connectDatabase = async () => {
 
   try {
     await mongoose.connect(dbURL);
-    console.log('🦉 Database Connection: Success');
+    console.log('🦉 Little Owl: Database Connected');
   } catch (error) {
     console.error('🦉 Error: ' + error);
     process.exit(1);

@@ -7,35 +7,14 @@ if (parseInt(version.slice(1).split('.')[0], 10) < 20) {
 
 require('dotenv').config();
 
-import {
-  onGuildBanAdd,
-  onGuildMemberAdd,
-  onGuildMemberRemove,
-  onInteractionCreate,
-  onMessageCreate,
-  onMessageDelete,
-  onPresenceUpdate,
-} from '@/discord/events';
-
-import {
-  onBan,
-  onChat,
-  onCheer,
-  onJoin,
-  onPart,
-  onRaided,
-  onResub,
-  onSubGift,
-  onSubMysteryGift,
-  onSubscription,
-  onTimeout,
-} from '@/twitch/events';
+import * as de from '@/discord/events';
+import * as te from '@/twitch/events';
 
 import { registerDiscordCommands } from '@/discord/helpers';
 import { BotState } from '@/interfaces/bot';
 
 import { discord, twitch } from '@/lib/clients';
-import { connectDatabase } from '@/lib/config';
+import { connectDatabase, sleepTime } from '@/lib/config';
 
 import { scheduleTasks } from '@/scheduler';
 import { createServerPet } from '@/services/pet';
@@ -46,35 +25,56 @@ const state: BotState = {
     cerberus: new Map(),
     stream: new Date(),
   },
+  timers: [],
 };
 
-const initBots = async () => {
+const addEventListeners = async () => {
+  discord.on('guildBanAdd', de.onGuildBanAdd);
+  discord.on('guildMemberAdd', de.onGuildMemberAdd);
+  discord.on('guildMemberRemove', de.onGuildMemberRemove);
+  discord.on('interactionCreate', de.onInteractionCreate.bind(null, state));
+  discord.on('messageCreate', de.onMessageCreate);
+  discord.on('messageDelete', de.onMessageDelete);
+  discord.on('presenceUpdate', de.onPresenceUpdate.bind(null, state));
+
+  console.log('🦉 Little Owl: Discord.js Event Listeners Added');
+
+  twitch.on('ban', te.onBan);
+  twitch.on('chat', te.onChat);
+  twitch.on('cheer', te.onCheer);
+  twitch.on('join', te.onJoin);
+  twitch.on('part', te.onPart);
+  twitch.on('raided', te.onRaided);
+  twitch.on('resub', te.onResub);
+  twitch.on('subgift', te.onSubGift);
+  twitch.on('submysterygift', te.onSubMysteryGift);
+  twitch.on('subscription', te.onSubscription);
+  twitch.on('timeout', te.onTimeout);
+
+  console.log('🦉 Little Owl: TMI.js Event Listeners Added');
+};
+
+const addSleepListeners = async () => {
+  process.on('SIGINT', async () => {
+    console.log('🦉 Little Owl: Received SIGINT');
+    await sleepTime(state);
+  });
+  process.on('SIGTERM', async () => {
+    console.log('🦉 Little Owl: Received SIGTERM');
+    await sleepTime(state);
+  });
+
+  console.log('🦉 Little Owl: Sleep Listeners Added');
+};
+
+const init = async () => {
   await connectDatabase();
-
-  discord.on('guildBanAdd', onGuildBanAdd);
-  discord.on('guildMemberAdd', onGuildMemberAdd);
-  discord.on('guildMemberRemove', onGuildMemberRemove);
-  discord.on('interactionCreate', onInteractionCreate.bind(null, state));
-  discord.on('messageCreate', onMessageCreate);
-  discord.on('messageDelete', onMessageDelete);
-  discord.on('presenceUpdate', onPresenceUpdate.bind(null, state));
-
-  twitch.on('ban', onBan);
-  twitch.on('chat', onChat);
-  twitch.on('cheer', onCheer);
-  twitch.on('join', onJoin);
-  twitch.on('part', onPart);
-  twitch.on('raided', onRaided);
-  twitch.on('resub', onResub);
-  twitch.on('subgift', onSubGift);
-  twitch.on('submysterygift', onSubMysteryGift);
-  twitch.on('subscription', onSubscription);
-  twitch.on('timeout', onTimeout);
-
-  createServerPet();
+  await addEventListeners();
+  await addSleepListeners();
+  await createServerPet();
+  await scheduleTasks(state);
 };
 
-if (!process.env.STAGING) registerDiscordCommands();
+if (process.env.REGISTER) registerDiscordCommands();
 
-initBots();
-scheduleTasks(state);
+init();

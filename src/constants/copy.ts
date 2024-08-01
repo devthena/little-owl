@@ -121,6 +121,10 @@ export const COPY = {
     NAME: 'profile',
     DESCRIPTION: 'Display your profile',
   },
+  SLEEP: {
+    NAME: 'sleep',
+    DESCRIPTION: 'Sleep time for Little Owl',
+  },
   STAR: {
     NAME: 'star',
     DESCRIPTION: 'Give a star as a form of endorsement',
