@@ -16,7 +16,9 @@ const typeMap = {
     color: CONFIG.COLORS.PINK,
   },
   announce: {
-    channel: CONFIG.CHANNELS.ADMIN.STAGE,
+    channel: process.env.STAGING
+      ? CONFIG.CHANNELS.ADMIN.STAGE
+      : CONFIG.CHANNELS.ADMIN.ANNOUNCE,
     color: CONFIG.COLORS.BLUE,
   },
   deleted: {
