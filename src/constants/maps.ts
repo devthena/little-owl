@@ -11,6 +11,7 @@ export const COMMAND_MAP = [
   'steam',
   'switch',
   'twitter',
+  'web',
 ];
 
 export const MONTH_MAP = [
