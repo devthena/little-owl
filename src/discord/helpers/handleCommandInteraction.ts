@@ -100,6 +100,17 @@ export const handleCommandInteraction = async (
       return;
     }
 
+    const cerberus = await getServerPet();
+
+    if (cerberus && !cerberus.isAlive) {
+      reply({
+        content: `Earning ${CONFIG.CURRENCY.PLURAL} has been halted until ${cerberus.name} has returned.`,
+        ephimeral: true,
+        interaction: interaction,
+      });
+      return;
+    }
+
     const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
