@@ -1,11 +1,12 @@
 import { CONFIG, EMOTES } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
-import { getCurrency, isNumber, weightedRandom } from '@/lib';
+
+import { twitch } from '@/lib/clients';
+import { getCurrency, isNumber, weightedRandom } from '@/lib/utils';
+
 import { setTwitchUser } from '@/services/user';
 
 export const onGamble = async (
-  Bots: BotsProps,
   channel: string,
   user: UserDocument,
   args: string[]
@@ -20,7 +21,7 @@ export const onGamble = async (
   };
 
   if (user.cash < 1) {
-    Bots.twitch.say(channel, replies.noPoints);
+    twitch.say(channel, replies.noPoints);
     return;
   }
 
@@ -42,7 +43,7 @@ export const onGamble = async (
 
   const isOverLimit = (amount: number) => {
     if (amount > CONFIG.FEATURES.GAMBLE.LIMIT) {
-      Bots.twitch.say(channel, replies.maxReached);
+      twitch.say(channel, replies.maxReached);
       return true;
     }
     return false;
@@ -53,7 +54,7 @@ export const onGamble = async (
 
     if (result === 'win') {
       points += user.cash;
-      Bots.twitch.say(
+      twitch.say(
         channel,
         `${user.twitch_username} won ${user.cash} ${getCurrency(user.cash)}! ${
           EMOTES.GAMBLE.WIN
@@ -61,7 +62,7 @@ export const onGamble = async (
       );
     } else {
       points = 0;
-      Bots.twitch.say(channel, replies.lostAll);
+      twitch.say(channel, replies.lostAll);
     }
   } else if (value === 'half') {
     const halfPoints = Math.round(user.cash / 2);
@@ -69,7 +70,7 @@ export const onGamble = async (
 
     if (result === 'win') {
       points += halfPoints;
-      Bots.twitch.say(
+      twitch.say(
         channel,
         `${user.twitch_username} won ${halfPoints} ${getCurrency(
           halfPoints
@@ -79,7 +80,7 @@ export const onGamble = async (
       );
     } else {
       points -= halfPoints;
-      Bots.twitch.say(
+      twitch.say(
         channel,
         `${user.twitch_username} lost ${halfPoints} ${getCurrency(
           halfPoints
@@ -93,7 +94,7 @@ export const onGamble = async (
 
     if (result === 'win') {
       points += amount;
-      Bots.twitch.say(
+      twitch.say(
         channel,
         `${user.twitch_username} won ${amount} ${getCurrency(amount)}! ${
           EMOTES.GAMBLE.WIN
@@ -101,7 +102,7 @@ export const onGamble = async (
       );
     } else {
       points -= amount;
-      Bots.twitch.say(
+      twitch.say(
         channel,
         `${user.twitch_username} lost ${amount} ${getCurrency(amount)}. ${
           EMOTES.GAMBLE.LOST
@@ -109,11 +110,11 @@ export const onGamble = async (
       );
     }
   } else if (amount > user.cash) {
-    Bots.twitch.say(channel, replies.notEnough);
+    twitch.say(channel, replies.notEnough);
     return;
   }
 
   if (user.twitch_id) {
-    await setTwitchUser(Bots.log, user.twitch_id, { cash: points });
+    await setTwitchUser(user.twitch_id, { cash: points });
   }
 };

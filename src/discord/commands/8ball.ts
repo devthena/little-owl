@@ -5,7 +5,7 @@ import {
 } from 'discord.js';
 
 import { CONFIG, COPY } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
+import { reply } from '../helpers';
 
 export const EightBall = {
   data: new SlashCommandBuilder()
@@ -17,9 +17,9 @@ export const EightBall = {
         .setDescription(COPY.EIGHTBALL.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (Bots: BotsProps, interaction: CommandInteraction) => {
+  execute: async (interaction: CommandInteraction) => {
     if (!CONFIG.FEATURES.EIGHTBALL.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -33,7 +33,7 @@ export const EightBall = {
 
     const answer = COPY.EIGHTBALL.RESPONSES[randomNum];
 
-    Bots.reply({
+    reply({
       content: `:8ball: says.. ${answer}`,
       ephimeral: false,
       interaction: interaction,

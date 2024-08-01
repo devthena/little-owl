@@ -1,13 +1,15 @@
 import { User } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 
+import { log } from '@/discord/helpers';
 import { LogCode } from '@/enums/logs';
+
 import { ObjectProps } from '@/interfaces/bot';
 import { UserDocument, UserIncrementFields } from '@/interfaces/user';
+
 import { UserModel } from '@/models/user';
 
 export const createUser = async (
-  log: Function,
   payload: Partial<UserDocument>
 ): Promise<UserDocument | undefined> => {
   try {
@@ -22,10 +24,7 @@ export const createUser = async (
   }
 };
 
-export const deleteUser = async (
-  log: Function,
-  id: string
-): Promise<UserDocument | null> => {
+export const deleteUser = async (id: string): Promise<UserDocument | null> => {
   try {
     const deleted = await UserModel.findOneAndDelete({ user_id: id });
     return deleted;
@@ -39,7 +38,6 @@ export const deleteUser = async (
 };
 
 export const deleteUserByDiscordId = async (
-  log: Function,
   id: string
 ): Promise<UserDocument | null> => {
   try {
@@ -55,7 +53,6 @@ export const deleteUserByDiscordId = async (
 };
 
 export const deleteUserByTwitchUsername = async (
-  log: Function,
   username: string
 ): Promise<UserDocument | null> => {
   try {
@@ -73,7 +70,6 @@ export const deleteUserByTwitchUsername = async (
 };
 
 export const findOrCreateDiscordUser = async (
-  log: Function,
   discordUser: User
 ): Promise<UserDocument | undefined> => {
   try {
@@ -101,7 +97,6 @@ export const findOrCreateDiscordUser = async (
 };
 
 export const findOrCreateTwitchUser = async (
-  log: Function,
   userstate: ObjectProps
 ): Promise<UserDocument | undefined> => {
   try {
@@ -130,12 +125,11 @@ export const findOrCreateTwitchUser = async (
 };
 
 export const getTwitchUserByName = async (
-  log: Function,
   username: string
 ): Promise<UserDocument | null> => {
   try {
     const user = await UserModel.findOne({
-      twitch_username: username,
+      twitch_username: username.toLowerCase(),
     }).exec();
     return user;
   } catch (error) {
@@ -147,10 +141,7 @@ export const getTwitchUserByName = async (
   }
 };
 
-export const getUserById = async (
-  log: Function,
-  id: string
-): Promise<UserDocument | null> => {
+export const getUserById = async (id: string): Promise<UserDocument | null> => {
   try {
     const user = await UserModel.findOne({
       user_id: id,
@@ -166,7 +157,6 @@ export const getUserById = async (
 };
 
 export const getUsersByCategory = async (
-  log: Function,
   category: string,
   max: number
 ): Promise<UserDocument[]> => {
@@ -189,10 +179,7 @@ export const getUsersByCategory = async (
   }
 };
 
-export const getUserRank = async (
-  log: Function,
-  value: number
-): Promise<number | null> => {
+export const getUserRank = async (value: number): Promise<number | null> => {
   try {
     const rank = await UserModel.countDocuments({
       discord_id: { $exists: true, $ne: null },
@@ -209,12 +196,13 @@ export const getUserRank = async (
 };
 
 export const incDiscordUser = async (
-  log: Function,
   id: string,
   values: UserIncrementFields
 ) => {
   if (Object.keys(values).length === 0) {
-    throw new Error('No fields specified for increment.');
+    return console.error(
+      '🦉 Error: No Fields Specified for Discord User Increment'
+    );
   }
 
   try {
@@ -238,12 +226,13 @@ export const incDiscordUser = async (
 };
 
 export const incTwitchUser = async (
-  log: Function,
   id: string,
   values: UserIncrementFields
 ) => {
   if (Object.keys(values).length === 0) {
-    throw new Error('No fields specified for increment.');
+    return console.error(
+      '🦉 Error: No Fields Specified for Twitch User Increment'
+    );
   }
 
   try {
@@ -255,7 +244,7 @@ export const incTwitchUser = async (
     if (result.modifiedCount === 0) {
       log({
         type: LogCode.Error,
-        description: `Increment Discord User: No user found with Discord ID: ${id}`,
+        description: `Increment Twitch User: No user found with Discord ID: ${id}`,
       });
     }
   } catch (error) {
@@ -267,7 +256,6 @@ export const incTwitchUser = async (
 };
 
 export const setDiscordUser = async (
-  log: Function,
   id: string,
   payload: Partial<UserDocument>
 ): Promise<UserDocument | null> => {
@@ -287,7 +275,6 @@ export const setDiscordUser = async (
 };
 
 export const setTwitchUser = async (
-  log: Function,
   id: string,
   payload: Partial<UserDocument>
 ): Promise<UserDocument | null> => {

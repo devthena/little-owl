@@ -8,7 +8,6 @@ import {
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
 
 import {
   findOrCreateStarActivity,
@@ -16,6 +15,8 @@ import {
 } from '@/services/activities';
 
 import { incDiscordUser } from '@/services/user';
+
+import { log, reply } from '../helpers';
 
 export const Star = {
   data: new SlashCommandBuilder()
@@ -27,13 +28,9 @@ export const Star = {
         .setDescription(COPY.STAR.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (
-    Bots: BotsProps,
-    interaction: CommandInteraction,
-    recipient: User
-  ) => {
+  execute: async (interaction: CommandInteraction, recipient: User) => {
     if (!CONFIG.FEATURES.STAR.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -48,7 +45,7 @@ export const Star = {
     };
 
     if (interaction.user.id === recipient.id) {
-      Bots.reply({
+      reply({
         content: replies.invalidSelf,
         ephimeral: true,
         interaction: interaction,
@@ -56,13 +53,10 @@ export const Star = {
       return;
     }
 
-    const starActivity = await findOrCreateStarActivity(
-      Bots.log,
-      interaction.user.id
-    );
+    const starActivity = await findOrCreateStarActivity(interaction.user.id);
 
     if (!starActivity) {
-      Bots.reply({
+      reply({
         content: replies.error,
         ephimeral: true,
         interaction: interaction,
@@ -73,7 +67,7 @@ export const Star = {
     const today = new Date().toDateString();
 
     if (starActivity.last_given === today) {
-      Bots.reply({
+      reply({
         content: replies.invalidMax,
         ephimeral: true,
         interaction: interaction,
@@ -81,8 +75,8 @@ export const Star = {
       return;
     }
 
-    await updateStarActivity(Bots.log, interaction.user.id);
-    await incDiscordUser(Bots.log, recipient.id, { stars: 1 });
+    await updateStarActivity(interaction.user.id);
+    await incDiscordUser(recipient.id, { stars: 1 });
 
     const botEmbed = new EmbedBuilder()
       .setColor(CONFIG.COLORS.YELLOW as ColorResolvable)
@@ -96,7 +90,7 @@ export const Star = {
     try {
       await interaction.reply({ embeds: [botEmbed] });
     } catch (error) {
-      Bots.log({
+      log({
         type: LogCode.Error,
         description: JSON.stringify(error),
       });

@@ -1,11 +1,12 @@
 import { CONFIG } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
-import { getCurrency } from '@/lib';
+
+import { twitch } from '@/lib/clients';
+import { getCurrency } from '@/lib/utils';
+
 import { incTwitchUser } from '@/services/user';
 
 export const onBonus = async (
-  Bots: BotsProps,
   channel: string,
   recipient: UserDocument,
   value: number
@@ -13,9 +14,9 @@ export const onBonus = async (
   if (!CONFIG.FEATURES.BONUS.ENABLED) return;
 
   if (recipient.twitch_id) {
-    await incTwitchUser(Bots.log, recipient.twitch_id, { cash: value });
+    await incTwitchUser(recipient.twitch_id, { cash: value });
 
-    Bots.twitch.say(
+    twitch.say(
       channel,
       `${recipient.twitch_username} has received ${value} ${getCurrency(value)}`
     );

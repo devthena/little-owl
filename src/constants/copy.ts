@@ -1,10 +1,16 @@
 import { CONFIG } from './config';
+import { EMOJIS } from './emojis';
 import { URLS } from './urls';
 
 export const COPY = {
   DISABLED: 'This command is not enabled in the server.',
   BONUS: {
     NAME: 'bonus',
+    DESCRIPTION: `[Admin] Bonus reward ${CONFIG.CURRENCY.PLURAL} to a user`,
+    OPTION1_NAME: 'user',
+    OPTION1_DESCRIPTION: '[Admin] Enter recipient username',
+    OPTION2_NAME: 'amount',
+    OPTION2_DESCRIPTION: '[Admin] Enter a specific amount to give',
   },
   COINFLIP: {
     NAME: 'coinflip',
@@ -40,6 +46,10 @@ export const COPY = {
       'Outlook not so good',
       'Very doubtful.',
     ],
+  },
+  ERROR: {
+    EXPIRED: 'This interaction has expired.',
+    GENERIC: 'Something went wrong. Please try again later.',
   },
   GAMBLE: {
     NAME: 'gamble',
@@ -91,6 +101,18 @@ export const COPY = {
   LURK: {
     NAME: 'lurk',
   },
+  PET: {
+    NAME: 'cerberus',
+    DESCRIPTION: 'Resident good boy of the AthenaUS server',
+    OPTION_NAME: 'action',
+    OPTION_DESCRIPTION: 'Interact with Cerberus!',
+    SELECT_FEED_ID: 'cerberus-feed',
+    ALIVE: `He has revived after a period of rest. He comes back with hunger fully restored, ready to watch over the server once more. ${EMOJIS.PET.PAW}\n\nYou can now resume earning coins ${EMOJIS.CURRENCY} and taking care of him.`,
+    DEAD: `Revive him with Honey Cake or wait for his return in the next couple of days. Earning coins ${EMOJIS.CURRENCY} has halted until he is revived.`,
+    FULL: '**Cerberus is currently Full**\nPlease check back later when he goes hungry again.',
+    NEW: `Cerberus has arrived to guard and protect our server. Keep him well-fed and happy to continue earning ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.PET.PAW}`,
+    REVIVED: `He has been revived, his hunger fully restored, and he is ready to protect the server once more. ${EMOJIS.PET.PAW}\n\nYou can now resume earning coins ${EMOJIS.CURRENCY} and taking care of him.`,
+  },
   POINTS: {
     NAME: 'points',
     DESCRIPTION: `Display the amount of ${CONFIG.CURRENCY.PLURAL} you have`,
@@ -98,6 +120,10 @@ export const COPY = {
   PROFILE: {
     NAME: 'profile',
     DESCRIPTION: 'Display your profile',
+  },
+  SLEEP: {
+    NAME: 'sleep',
+    DESCRIPTION: 'Sleep time for Little Owl',
   },
   STAR: {
     NAME: 'star',

@@ -15,7 +15,6 @@ export const CONFIG = {
   ],
   ALERTS: {
     LIVE: {
-      COOLDOWN_MS: 43200000,
       ENABLED: true,
       ID: '901898913047511071',
     },
@@ -80,10 +79,21 @@ export const CONFIG = {
     LINK: {
       ENABLED: true,
     },
+    PET: {
+      ENABLED: true,
+      MAX_STATS: 100,
+      ADD_HAPPINESS: 5,
+      ADD_HEALTH: 5,
+      REVIVE_HAPPINESS: 74,
+      REVIVE_HEALTH: 74,
+    },
     POINTS: {
       ENABLED: true,
     },
     PROFILE: {
+      ENABLED: true,
+    },
+    SLEEP: {
       ENABLED: true,
     },
     STAR: {

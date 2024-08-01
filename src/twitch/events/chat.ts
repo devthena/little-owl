@@ -6,9 +6,13 @@ import {
   IGNORE_LIST,
   URLS,
 } from '@/constants';
+
+import { log } from '@/discord/helpers';
 import { LogCode } from '@/enums/logs';
-import { BotsProps, ObjectProps } from '@/interfaces/bot';
-import { getCurrency, isNumber } from '@/lib';
+import { ObjectProps } from '@/interfaces/bot';
+
+import { twitch } from '@/lib/clients';
+import { getCurrency, isNumber } from '@/lib/utils';
 
 import {
   findOrCreateTwitchUser,
@@ -28,7 +32,6 @@ const infoCommands = [
 ];
 
 export const onChat = async (
-  Bots: BotsProps,
   channel: string,
   userstate: ObjectProps,
   message: string,
@@ -37,8 +40,7 @@ export const onChat = async (
   if (self) return;
   if (IGNORE_LIST.includes(userstate.username)) return;
 
-  const user = await findOrCreateTwitchUser(Bots.log, userstate);
-
+  const user = await findOrCreateTwitchUser(userstate);
   if (!user) return;
 
   const redeemId = userstate['custom-reward-id'];
@@ -60,14 +62,14 @@ export const onChat = async (
 
     if (!points) return;
 
-    Bots.log({
+    log({
       type: LogCode.Activity,
       description: `${userstate.username} has redeemed conversion of ${
         points * 10
       } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
     });
 
-    await incTwitchUser(Bots.log, userstate['user-id'], { cash: points });
+    await incTwitchUser(userstate['user-id'], { cash: points });
     return;
   }
 
@@ -81,7 +83,7 @@ export const onChat = async (
     // commands that do not expect an argument
 
     if (command === COPY.POINTS.NAME) {
-      return Bots.twitch.say(
+      return twitch.say(
         channel,
         `${userstate['display-name']} you have ${user.cash} ${getCurrency(
           user.cash
@@ -90,24 +92,24 @@ export const onChat = async (
     }
 
     if (infoCommands.includes(command)) {
-      return Bots.twitch.say(channel, COPY.INFO[command]);
+      return twitch.say(channel, COPY.INFO[command]);
     }
 
     if (command === COPY.LURK.NAME) {
-      return Bots.twitch.say(
+      return twitch.say(
         channel,
         `/me ${userstate['display-name']} has disappeared into the shadows ${EMOTES.LURK.DEFAULT}`
       );
     }
 
     if (command === COPY.COMMANDS.NAME) {
-      return Bots.twitch.say(channel, URLS.COMMANDS);
+      return twitch.say(channel, URLS.COMMANDS);
     }
 
     // commands that expect at least one (1) argument
 
     if (command === COPY.GAMBLE.NAME) {
-      return onGamble(Bots, channel, user, args);
+      return onGamble(channel, user, args);
     }
 
     // commands that expect a recipient in the argument
@@ -117,7 +119,7 @@ export const onChat = async (
     if (!recipientName) return;
 
     if (command === COPY.HUG.NAME) {
-      return Bots.twitch.say(
+      return twitch.say(
         channel,
         `${EMOTES.HUG.LEFT} ${userstate['display-name']} hugs ${recipientName} ${EMOTES.HUG.RIGHT}`
       );
@@ -133,17 +135,17 @@ export const onChat = async (
 
     if (value < 1) return;
 
-    const recipient = await getTwitchUserByName(Bots.log, recipientName);
+    const recipient = await getTwitchUserByName(recipientName);
 
     if (!recipient) return;
 
     if (command === COPY.GIVE.NAME) {
-      return onGive(Bots, channel, user, recipient, value);
+      return onGive(channel, user, recipient, value);
     }
 
     if (command === COPY.BONUS.NAME) {
       if (userstate.username !== channel.slice(1)) return;
-      return onBonus(Bots, channel, recipient, value);
+      return onBonus(channel, recipient, value);
     }
   }
 
@@ -156,5 +158,5 @@ export const onChat = async (
 
   if (!isValid) return;
 
-  await incTwitchUser(Bots.log, userstate['user-id'], { cash: 1 });
+  await incTwitchUser(userstate['user-id'], { cash: 1 });
 };

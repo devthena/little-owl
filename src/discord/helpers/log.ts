@@ -1,7 +1,9 @@
-import { Client, ColorResolvable, EmbedBuilder } from 'discord.js';
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
 import { CONFIG } from '@/constants';
 import { LogProps } from '@/interfaces/bot';
+
+import { discord } from '@/lib/clients';
 import { getENV } from '@/lib/config';
 
 const typeMap = {
@@ -12,6 +14,12 @@ const typeMap = {
   alert: {
     channel: CONFIG.CHANNELS.LOGS.ALERT,
     color: CONFIG.COLORS.PINK,
+  },
+  announce: {
+    channel: process.env.STAGING
+      ? CONFIG.CHANNELS.ADMIN.STAGE
+      : CONFIG.CHANNELS.ADMIN.ANNOUNCE,
+    color: CONFIG.COLORS.BLUE,
   },
   deleted: {
     channel: CONFIG.CHANNELS.LOGS.DELETED,
@@ -31,12 +39,18 @@ const typeMap = {
   },
 };
 
-export const logEvent = (
-  clientDiscord: Client,
-  { type, description, authorIcon, thumbnail, footer }: LogProps
-) => {
+export const log = ({
+  type,
+  title,
+  description,
+  image,
+  authorIcon,
+  thumbnail,
+  footer,
+}: LogProps) => {
   const { ADMIN_SERVER_ID } = getENV();
-  const server = clientDiscord.guilds.cache.get(ADMIN_SERVER_ID);
+
+  const server = discord.guilds.cache.get(ADMIN_SERVER_ID);
 
   if (server && server.available) {
     const channel = server.channels.cache.get(typeMap[type].channel);
@@ -44,12 +58,17 @@ export const logEvent = (
     if (channel) {
       const botEmbed = new EmbedBuilder()
         .setColor(typeMap[type].color as ColorResolvable)
-        .setAuthor({
-          name: `${server.name} Server`,
-          iconURL: authorIcon || server.iconURL() || '',
-        })
         .setDescription(description);
 
+      if (authorIcon) {
+        botEmbed.setAuthor({
+          name: `${server.name} Server`,
+          iconURL: authorIcon || server.iconURL() || '',
+        });
+      }
+
+      if (title) botEmbed.setTitle(title);
+      if (image) botEmbed.setImage(image);
       if (thumbnail) botEmbed.setThumbnail(thumbnail);
       if (footer) botEmbed.setFooter({ text: footer });
 

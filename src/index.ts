@@ -1,106 +1,80 @@
 import { version } from 'process';
 
 if (parseInt(version.slice(1).split('.')[0], 10) < 20) {
-  throw new Error(
-    'Node 20.0.0 or higher is required. Update Node on your system.'
-  );
+  console.error('🦉 Error: Node Version 20 or Higher Is Required');
+  process.exit(1);
 }
 
 require('dotenv').config();
 
-import * as djs from 'discord.js';
-import * as tmi from 'tmi.js';
+import * as de from '@/discord/events';
+import * as te from '@/twitch/events';
 
-import { BotsProps, LogProps, ReplyProps } from '@/interfaces/bot';
+import { registerDiscordCommands } from '@/discord/helpers';
+import { BotState } from '@/interfaces/bot';
 
-import {
-  onGuildBanAdd,
-  onGuildMemberAdd,
-  onGuildMemberRemove,
-  onInteractionCreate,
-  onMessageCreate,
-  onMessageDelete,
-  onMessageDeleteBulk,
-  onPresenceUpdate,
-  onReady,
-} from '@/discord/events';
+import { discord, twitch } from '@/lib/clients';
+import { connectDatabase, sleepTime } from '@/lib/config';
 
-import {
-  onBan,
-  onChat,
-  onCheer,
-  onJoin,
-  onPart,
-  onRaided,
-  onResub,
-  onSubGift,
-  onSubMysteryGift,
-  onSubscription,
-  onTimeout,
-} from '@/twitch/events';
+import { scheduleTasks } from '@/scheduler';
+import { createServerPet } from '@/services/pet';
 
-import { discordReply, logEvent } from '@/lib';
-import { connectDatabase } from '@/lib/config';
-
-const Bots: BotsProps = {
+const state: BotState = {
+  activity: 1,
   cooldowns: {
-    streamAlerts: false,
+    cerberus: new Map(),
+    stream: new Date(),
   },
-  discord: new djs.Client({
-    intents: [
-      djs.GatewayIntentBits.DirectMessages,
-      djs.GatewayIntentBits.GuildMembers,
-      djs.GatewayIntentBits.GuildMessageReactions,
-      djs.GatewayIntentBits.GuildMessages,
-      djs.GatewayIntentBits.GuildModeration,
-      djs.GatewayIntentBits.GuildPresences,
-      djs.GatewayIntentBits.Guilds,
-      djs.GatewayIntentBits.MessageContent,
-    ],
-  }),
-  log: (props: LogProps) => {
-    logEvent(Bots.discord, props);
-  },
-  reply: (props: ReplyProps) => {
-    discordReply(Bots, props);
-  },
-  twitch: new tmi.Client({
-    options: { debug: true },
-    identity: {
-      username: process.env.USERNAME,
-      password: process.env.PASSWORD,
-    },
-    channels: process.env.CHANNELS?.split(','),
-  }),
+  timers: [],
 };
 
-const initBots = async () => {
+const addEventListeners = async () => {
+  discord.on('guildBanAdd', de.onGuildBanAdd);
+  discord.on('guildMemberAdd', de.onGuildMemberAdd);
+  discord.on('guildMemberRemove', de.onGuildMemberRemove);
+  discord.on('interactionCreate', de.onInteractionCreate.bind(null, state));
+  discord.on('messageCreate', de.onMessageCreate);
+  discord.on('messageDelete', de.onMessageDelete);
+  discord.on('presenceUpdate', de.onPresenceUpdate.bind(null, state));
+
+  console.log('🦉 Little Owl: Discord.js Event Listeners Added');
+
+  twitch.on('ban', te.onBan);
+  twitch.on('chat', te.onChat);
+  twitch.on('cheer', te.onCheer);
+  twitch.on('join', te.onJoin);
+  twitch.on('part', te.onPart);
+  twitch.on('raided', te.onRaided);
+  twitch.on('resub', te.onResub);
+  twitch.on('subgift', te.onSubGift);
+  twitch.on('submysterygift', te.onSubMysteryGift);
+  twitch.on('subscription', te.onSubscription);
+  twitch.on('timeout', te.onTimeout);
+
+  console.log('🦉 Little Owl: TMI.js Event Listeners Added');
+};
+
+const addSleepListeners = async () => {
+  process.on('SIGINT', async () => {
+    console.log('🦉 Little Owl: Received SIGINT');
+    await sleepTime(state);
+  });
+  process.on('SIGTERM', async () => {
+    console.log('🦉 Little Owl: Received SIGTERM');
+    await sleepTime(state);
+  });
+
+  console.log('🦉 Little Owl: Sleep Listeners Added');
+};
+
+const init = async () => {
   await connectDatabase();
-
-  Bots.discord.on('guildBanAdd', onGuildBanAdd.bind(null, Bots));
-  Bots.discord.on('guildMemberAdd', onGuildMemberAdd.bind(null, Bots));
-  Bots.discord.on('guildMemberRemove', onGuildMemberRemove.bind(null, Bots));
-  Bots.discord.on('interactionCreate', onInteractionCreate.bind(null, Bots));
-  Bots.discord.on('messageCreate', onMessageCreate.bind(null, Bots));
-  Bots.discord.on('messageDelete', onMessageDelete.bind(null, Bots));
-  Bots.discord.on('messageDeleteBulk', onMessageDeleteBulk.bind(null, Bots));
-  Bots.discord.on('presenceUpdate', onPresenceUpdate.bind(null, Bots));
-  Bots.discord.on('ready', onReady.bind(null, Bots.discord));
-
-  Bots.twitch.on('ban', onBan.bind(null, Bots));
-  Bots.twitch.on('chat', onChat.bind(null, Bots));
-  Bots.twitch.on('cheer', onCheer.bind(null, Bots));
-  Bots.twitch.on('join', onJoin.bind(null, Bots));
-  Bots.twitch.on('part', onPart.bind(null, Bots));
-  Bots.twitch.on('raided', onRaided.bind(null, Bots));
-  Bots.twitch.on('resub', onResub.bind(null, Bots));
-  Bots.twitch.on('subgift', onSubGift.bind(null, Bots));
-  Bots.twitch.on('submysterygift', onSubMysteryGift.bind(null, Bots));
-  Bots.twitch.on('subscription', onSubscription.bind(null, Bots));
-  Bots.twitch.on('timeout', onTimeout.bind(null, Bots));
-
-  Bots.discord.login(process.env.DISCORD_TOKEN);
-  Bots.twitch.connect();
+  await addEventListeners();
+  await addSleepListeners();
+  await createServerPet();
+  await scheduleTasks(state);
 };
 
-initBots();
+if (process.env.REGISTER) registerDiscordCommands();
+
+init();

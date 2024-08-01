@@ -6,10 +6,11 @@ import {
 
 import { CONFIG, COPY } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
 
 import { deleteUser, getUserById, setDiscordUser } from '@/services/user';
+
+import { log, reply } from '../helpers';
 
 export const AccountLink = {
   data: new SlashCommandBuilder()
@@ -21,13 +22,9 @@ export const AccountLink = {
         .setDescription(COPY.LINK.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (
-    Bots: BotsProps,
-    interaction: CommandInteraction,
-    user: UserDocument
-  ) => {
+  execute: async (interaction: CommandInteraction, user: UserDocument) => {
     if (!CONFIG.FEATURES.LINK.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -38,7 +35,7 @@ export const AccountLink = {
     const code = interaction.options.get('code')?.value;
 
     if (user.twitch_id) {
-      Bots.reply({
+      reply({
         content: COPY.LINK.RESPONSES.LINKED_DISCORD,
         ephimeral: true,
         interaction: interaction,
@@ -47,7 +44,7 @@ export const AccountLink = {
     }
 
     const userId = code?.toString();
-    const twitchUser = userId ? await getUserById(Bots.log, userId) : null;
+    const twitchUser = userId ? await getUserById(userId) : null;
 
     if (!twitchUser) {
       await interaction.reply({
@@ -67,20 +64,20 @@ export const AccountLink = {
 
     let points = user.cash + twitchUser.cash;
 
-    await setDiscordUser(Bots.log, interaction.user.id, {
+    await setDiscordUser(interaction.user.id, {
       twitch_id: twitchUser.twitch_id,
       twitch_username: twitchUser.twitch_username,
       cash: points,
     });
 
-    if (userId) await deleteUser(Bots.log, userId);
+    if (userId) await deleteUser(userId);
 
     await interaction.reply({
       content: COPY.LINK.RESPONSES.SUCCESS,
       ephemeral: true,
     });
 
-    Bots.log({
+    log({
       type: LogCode.Activity,
       description: `${user.discord_username} aka ${user.discord_name} has linked their Twitch account: ${twitchUser.twitch_username}`,
     });

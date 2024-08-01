@@ -1,11 +1,12 @@
 import { CONFIG } from '@/constants';
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
-import { getCurrency } from '@/lib';
+
+import { twitch } from '@/lib/clients';
+import { getCurrency } from '@/lib/utils';
+
 import { incTwitchUser, setTwitchUser } from '@/services/user';
 
 export const onGive = async (
-  Bots: BotsProps,
   channel: string,
   user: UserDocument,
   recipient: UserDocument,
@@ -21,14 +22,14 @@ export const onGive = async (
     }`,
   };
 
-  if (user.cash < 1) return Bots.twitch.say(channel, replies.noPoints);
-  if (user.cash < value) return Bots.twitch.say(channel, replies.notEnough);
+  if (user.cash < 1) return twitch.say(channel, replies.noPoints);
+  if (user.cash < value) return twitch.say(channel, replies.notEnough);
 
   if (user.twitch_id && recipient.twitch_id) {
-    await setTwitchUser(Bots.log, user.twitch_id, { cash: user.cash - value });
-    await incTwitchUser(Bots.log, recipient.twitch_id, { cash: value });
+    await setTwitchUser(user.twitch_id, { cash: user.cash - value });
+    await incTwitchUser(recipient.twitch_id, { cash: value });
 
-    Bots.twitch.say(channel, replies.success);
+    twitch.say(channel, replies.success);
   }
 
   return;

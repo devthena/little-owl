@@ -1,8 +1,8 @@
+import { log } from '@/discord/helpers';
 import { LogCode } from '@/enums/logs';
-import { BotsProps, ObjectProps } from '@/interfaces/bot';
+import { ObjectProps } from '@/interfaces/bot';
 
 export const onSubGift = (
-  Bots: BotsProps,
   _channel: string,
   username: string,
   _streakMonths: number,
@@ -10,7 +10,7 @@ export const onSubGift = (
   _methods: ObjectProps,
   _userstate: ObjectProps
 ) => {
-  Bots.log({
+  log({
     type: LogCode.Alert,
     description: `${username} gifted a subscription to ${recipient}!`,
   });

@@ -12,23 +12,19 @@ import { CONFIG, COPY, MONTH_MAP } from '@/constants';
 import { LogCode } from '@/enums/logs';
 import { CoinIcon, StarIcon } from '@/icons';
 
-import { BotsProps } from '@/interfaces/bot';
 import { UserDocument } from '@/interfaces/user';
-
-import { parseHexToRGB } from '@/lib';
+import { parseHexToRGB } from '@/lib/utils';
 import { getUserRank, setDiscordUser } from '@/services/user';
+
+import { log, reply } from '../helpers';
 
 export const Profile = {
   data: new SlashCommandBuilder()
     .setName(COPY.PROFILE.NAME)
     .setDescription(COPY.PROFILE.DESCRIPTION),
-  execute: async (
-    Bots: BotsProps,
-    interaction: CommandInteraction,
-    user: UserDocument
-  ) => {
+  execute: async (interaction: CommandInteraction, user: UserDocument) => {
     if (!CONFIG.FEATURES.PROFILE.ENABLED) {
-      Bots.reply({
+      reply({
         content: COPY.DISABLED,
         ephimeral: true,
         interaction: interaction,
@@ -47,7 +43,7 @@ export const Profile = {
       return;
     }
 
-    const userRank = (await getUserRank(Bots.log, user.cash)) ?? 'N/A';
+    const userRank = (await getUserRank(user.cash)) ?? 'N/A';
 
     const whiteRGB = { r: 248, g: 248, b: 255 };
     const roleColorRGB = parseHexToRGB(member.displayHexColor);
@@ -232,12 +228,12 @@ export const Profile = {
           await interaction.editReply({ files: [attachment] });
 
           if (user.discord_name !== member.displayName) {
-            await setDiscordUser(Bots.log, interaction.user.id, {
+            await setDiscordUser(interaction.user.id, {
               discord_name: member.displayName,
             });
           }
         } catch (error) {
-          Bots.log({
+          log({
             type: LogCode.Error,
             description: JSON.stringify(error),
           });

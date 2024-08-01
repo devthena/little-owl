@@ -7,11 +7,13 @@ import {
 
 import { CONFIG } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { BotsProps } from '@/interfaces/bot';
+import { BotState } from '@/interfaces/bot';
+
+import { log } from '../helpers';
 
 export const onPresenceUpdate = async (
-  Bots: BotsProps,
-  oldPresence: Presence,
+  state: BotState,
+  oldPresence: Presence | null,
   newPresence: Presence
 ) => {
   if (!newPresence.guild?.available) return;
@@ -53,7 +55,7 @@ export const onPresenceUpdate = async (
         newPresence.member?.roles
           .add(liveRole)
           .then(_data => {
-            Bots.log({
+            log({
               type: LogCode.Activity,
               description: `${newPresence.member?.user.username} aka ${newPresence.member?.displayName} has started streaming.`,
               footer: `Discord User ID: ${newPresence.member?.id}`,
@@ -76,10 +78,13 @@ export const onPresenceUpdate = async (
           channel => channel.id === CONFIG.ALERTS.LIVE.ID
         );
 
+        const isStreamAlertInCooldown =
+          Date.now() < state.cooldowns.stream.getTime();
+
         if (
           streamActivity &&
           streamAlertChannelExists &&
-          !Bots.cooldowns.streamAlerts
+          !isStreamAlertInCooldown
         ) {
           let liveMessage = '';
 
@@ -116,11 +121,9 @@ export const onPresenceUpdate = async (
             })
             .catch(console.error)
             .finally(() => {
-              Bots.cooldowns.streamAlerts = true;
-
-              setTimeout(() => {
-                Bots.cooldowns.streamAlerts = false;
-              }, CONFIG.ALERTS.LIVE.COOLDOWN_MS);
+              state.cooldowns.stream = new Date(
+                Date.now() + 12 * 60 * 60 * 1000
+              );
             });
         }
       }
