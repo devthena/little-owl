@@ -22,7 +22,7 @@ export const onMessageCreate = async (message: Message) => {
     let channel = null;
 
     if (message.channel.id === CONFIG.CHANNELS.ADMIN.ANNOUNCE) {
-      channel = server.channels.cache.get(CONFIG.CHANNELS.MAIN.ANNOUNCE);
+      channel = server.channels.cache.get(CONFIG.CHANNELS.MAIN.OWL);
     } else if (message.channel.id === CONFIG.CHANNELS.ADMIN.STAGE) {
       channel = server.channels.cache.get(CONFIG.CHANNELS.MAIN.STAGE);
     }
