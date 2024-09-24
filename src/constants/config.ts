@@ -80,7 +80,7 @@ export const CONFIG = {
       ENABLED: true,
     },
     PET: {
-      ENABLED: true,
+      ENABLED: false,
       MAX_STATS: 100,
       ADD_HAPPINESS: 5,
       ADD_HEALTH: 5,
