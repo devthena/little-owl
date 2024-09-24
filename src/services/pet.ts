@@ -26,6 +26,8 @@ const {
 } = CONFIG.FEATURES.PET;
 
 export const createServerPet = async () => {
+  if (!CONFIG.FEATURES.PET.ENABLED) return;
+
   try {
     const pet = await PetModel.findOne();
     if (pet) return;
