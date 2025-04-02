@@ -1,7 +1,7 @@
 import { version } from 'process';
 
-if (parseInt(version.slice(1).split('.')[0], 10) < 20) {
-  console.error('🦉 Error: Node Version 20 or Higher Is Required');
+if (parseInt(version.slice(1).split('.')[0], 10) < 22) {
+  console.error('🦉 Error: Node Version 22 or Higher Is Required');
   process.exit(1);
 }
 
