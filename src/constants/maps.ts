@@ -1,5 +1,6 @@
 export const COMMAND_MAP = [
   'bonus',
+  'bsky',
   'commands',
   'discord',
   'dstmods',
@@ -10,8 +11,17 @@ export const COMMAND_MAP = [
   'points',
   'steam',
   'switch',
-  'twitter',
   'web',
+];
+
+export const DAY_MAP = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
 ];
 
 export const MONTH_MAP = [

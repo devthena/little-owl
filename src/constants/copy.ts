@@ -77,7 +77,7 @@ export const COPY = {
     dstmods: 'https://steamcommunity.com/workshop/filedetails/?id=1783032105',
     steam: 'https://steamcommunity.com/id/AthenaUS',
     switch: 'SW-8136-7007-4521',
-    twitter: 'https://twitter.com/athenaus',
+    bsky: 'https://bsky.app/profile/athenaus.io',
     web: 'https://parthenon.app',
   } as { [key: string]: string },
   LEADERBOARD: {

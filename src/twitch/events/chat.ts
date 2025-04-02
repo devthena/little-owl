@@ -22,14 +22,7 @@ import {
 
 import { onBonus, onGamble, onGive } from '../commands';
 
-const infoCommands = [
-  'discord',
-  'dstmods',
-  'steam',
-  'switch',
-  'twitter',
-  'web',
-];
+const infoCommands = ['bsky', 'discord', 'dstmods', 'steam', 'switch', 'web'];
 
 export const onChat = async (
   channel: string,
