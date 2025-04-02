@@ -1,4 +1,5 @@
 export const EMOJIS = {
+  ARRIVE: '<:athena1Arrive:1251686415603863562>',
   BOT: '<:athena1Bot:1092867248814821466>',
   CURRENCY: ':coin:',
   GAMBLE: {
