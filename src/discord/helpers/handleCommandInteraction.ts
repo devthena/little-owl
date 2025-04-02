@@ -20,7 +20,7 @@ export const handleCommandInteraction = async (
 
   const replyNoBot = () => {
     reply({
-      content: `I'm only accepting human members for this command. ${EMOJIS.BOT}`,
+      content: `I'm only accepting human members for this command. ${EMOJIS.CUSTOM.BOT}`,
       ephimeral: true,
       interaction: interaction,
     });

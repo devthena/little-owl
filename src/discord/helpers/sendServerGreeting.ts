@@ -13,7 +13,7 @@ export const sendServerGreeting = async () => {
 
     if (channel && channel.isTextBased()) {
       const today = DAY_MAP[new Date().getDay()];
-      await channel.send(`Happy ${today}, everyone! ${EMOJIS.ARRIVE}`);
+      await channel.send(`Happy ${today}, everyone! ${EMOJIS.CUSTOM.ARRIVE}`);
     }
   }
 };

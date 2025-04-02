@@ -1,7 +1,11 @@
 export const EMOJIS = {
-  ARRIVE: '<:athena1Arrive:1251686415603863562>',
-  BOT: '<:athena1Bot:1092867248814821466>',
   CURRENCY: ':coin:',
+  CUSTOM: {
+    // animated emojis have an extra "a" character before the name
+    ARRIVE: '<a:athena1Arrive:1251686415603863562>',
+    BOT: '<:athena1Bot:1092867248814821466>',
+    OWL: '<:owlSub:1213997322586038352>',
+  },
   GAMBLE: {
     LOST: ':money_with_wings:',
     INVALID: ':neutral_face:',
