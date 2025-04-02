@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 
-import { CONFIG } from '@/constants';
+import { CONFIG, EMOJIS } from '@/constants';
 import { discord } from '@/lib/clients';
 import { getENV } from '@/lib/config';
 
@@ -43,11 +43,22 @@ export const onMessageCreate = async (message: Message) => {
   if (message.guild.id !== SERVER_ID) return;
   if (message.author.id === discord.user?.id) return;
 
-  const words = message.content.split(/ +/g);
-  const pattern = new RegExp('[A-Za-z].{2,}');
+  const owlRegex = /\blittle\s?owl\b/i;
+  const contentLowerCase = message.content.toLowerCase();
+  const hasLittleOwl = owlRegex.test(contentLowerCase);
 
-  const isValidMsg = words.length > 2 && words.some(word => pattern.test(word));
+  // add a reaction if the message mentions the bot
+  if ((discord.user && message.mentions.has(discord.user)) || hasLittleOwl) {
+    await message.react(EMOJIS.CUSTOM.OWL);
+  }
+
+  const words = message.content.split(/ +/g);
+  const wordRegex = new RegExp('[A-Za-z].{2,}');
+
+  const isValidMsg =
+    words.length > 2 && words.some(word => wordRegex.test(word));
   const isValidAttachment = !!message.attachments.first();
+
   const incAmount = isValidAttachment ? 2 : 1;
   const isValid = isValidMsg || isValidAttachment;
 
