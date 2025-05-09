@@ -14,7 +14,7 @@ export const Sleep = {
     if (!CONFIG.FEATURES.SLEEP.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -22,7 +22,7 @@ export const Sleep = {
 
     reply({
       content: '🦉 Little Owl: Good night!',
-      ephimeral: false,
+      ephemeral: false,
       interaction: interaction,
     });
 

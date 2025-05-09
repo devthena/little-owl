@@ -31,7 +31,7 @@ export const Give = {
     if (!CONFIG.FEATURES.GIVE.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -52,7 +52,7 @@ export const Give = {
     if (user.cash < 1) {
       reply({
         content: replies.noPoints,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -61,7 +61,7 @@ export const Give = {
     if (amount < 1) {
       reply({
         content: replies.invalidNegative,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -70,7 +70,7 @@ export const Give = {
     if (user.cash < amount) {
       reply({
         content: replies.notEnough,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -79,7 +79,7 @@ export const Give = {
     if (user.discord_id === recipient.id) {
       reply({
         content: replies.invalidRecipient,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -92,7 +92,7 @@ export const Give = {
 
     reply({
       content: `${replies.success} Your new balance: ${user.cash} ${EMOJIS.CURRENCY}`,
-      ephimeral: false,
+      ephemeral: false,
       interaction: interaction,
     });
   },

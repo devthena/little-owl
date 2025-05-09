@@ -21,7 +21,7 @@ export const EightBall = {
     if (!CONFIG.FEATURES.EIGHTBALL.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -35,7 +35,7 @@ export const EightBall = {
 
     reply({
       content: `:8ball: says.. ${answer}`,
-      ephimeral: false,
+      ephemeral: false,
       interaction: interaction,
     });
   },

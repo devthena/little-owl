@@ -19,7 +19,7 @@ export const Help = {
     if (!CONFIG.FEATURES.HELP.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;

@@ -28,6 +28,6 @@ export interface ObjectProps {
 
 export interface ReplyProps {
   content: string;
-  ephimeral: boolean;
+  ephemeral: boolean;
   interaction: CommandInteraction;
 }

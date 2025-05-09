@@ -1,5 +1,6 @@
 import {
   CommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
   SlashCommandStringOption,
 } from 'discord.js';
@@ -25,7 +26,7 @@ export const AccountUnlink = {
     if (!CONFIG.FEATURES.UNLINK.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -34,7 +35,7 @@ export const AccountUnlink = {
     if (!user.twitch_id) {
       reply({
         content: COPY.UNLINK.RESPONSES.NOLINK,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -45,7 +46,7 @@ export const AccountUnlink = {
     if (user.twitch_username !== twitchName) {
       reply({
         content: COPY.UNLINK.RESPONSES.INVALID,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -64,7 +65,7 @@ export const AccountUnlink = {
 
     await interaction.reply({
       content: COPY.UNLINK.RESPONSES.SUCCESS,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
 
     log({

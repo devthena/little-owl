@@ -13,7 +13,7 @@ export const Points = {
     if (!CONFIG.FEATURES.POINTS.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -21,7 +21,7 @@ export const Points = {
 
     reply({
       content: `Your current balance is: ${user.cash} ${EMOJIS.CURRENCY}`,
-      ephimeral: false,
+      ephemeral: false,
       interaction: interaction,
     });
   },
