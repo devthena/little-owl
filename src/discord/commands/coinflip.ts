@@ -13,7 +13,7 @@ export const CoinFlip = {
     if (!CONFIG.FEATURES.COINFLIP.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -22,9 +22,12 @@ export const CoinFlip = {
     const probability = { Heads: 0.5, Tails: 0.5 };
     const result = weightedRandom(probability);
 
+    let currencyEmoji = EMOJIS.CURRENCY_TAILS;
+    if (result === 'Heads') currencyEmoji = EMOJIS.CURRENCY;
+
     reply({
-      content: `You got... ${result}! ${EMOJIS.CURRENCY}`,
-      ephimeral: false,
+      content: `You got... ${result}! ${currencyEmoji}`,
+      ephemeral: false,
       interaction: interaction,
     });
   },

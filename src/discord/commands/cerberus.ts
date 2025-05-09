@@ -64,7 +64,7 @@ export const Cerberus = {
     if (!CONFIG.FEATURES.PET.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -143,7 +143,7 @@ export const Cerberus = {
         if (now < timeEndMS) {
           reply({
             content: `This command is in cooldown for you.\n\nPlease try again <t:${timeEndTS}:R>`,
-            ephimeral: true,
+            ephemeral: true,
             interaction: interaction,
           });
           return;
@@ -185,14 +185,14 @@ export const Cerberus = {
       if (!user) {
         reply({
           content: COPY.ERROR.GENERIC,
-          ephimeral: true,
+          ephemeral: true,
           interaction: interaction,
         });
         return;
       } else if (pet.hunger === CONFIG.FEATURES.PET.MAX_STATS) {
         reply({
           content: COPY.PET.FULL,
-          ephimeral: true,
+          ephemeral: true,
           interaction: interaction,
         });
         return;

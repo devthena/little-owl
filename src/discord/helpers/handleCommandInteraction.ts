@@ -21,7 +21,7 @@ export const handleCommandInteraction = async (
   const replyNoBot = () => {
     reply({
       content: `I'm only accepting human members for this command. ${EMOJIS.CUSTOM.BOT}`,
-      ephimeral: true,
+      ephemeral: true,
       interaction: interaction,
     });
   };
@@ -75,7 +75,7 @@ export const handleCommandInteraction = async (
   if (!isInBotChannel) {
     reply({
       content: 'Please use this command in one of the bot channels.',
-      ephimeral: true,
+      ephemeral: true,
       interaction: interaction,
     });
     return;
@@ -94,7 +94,7 @@ export const handleCommandInteraction = async (
     if (!isInCasinoChannel) {
       reply({
         content: 'Please use the #casino channel to gamble your points.',
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -105,7 +105,7 @@ export const handleCommandInteraction = async (
     if (cerberus && !cerberus.isAlive) {
       reply({
         content: `Earning ${CONFIG.CURRENCY.PLURAL} has been halted until ${cerberus.name} has returned.`,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;

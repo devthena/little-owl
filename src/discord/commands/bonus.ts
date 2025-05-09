@@ -25,7 +25,7 @@ export const Bonus = {
     if (!CONFIG.FEATURES.BONUS.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -42,7 +42,7 @@ export const Bonus = {
     if (interaction.user.id !== interaction.guild?.ownerId) {
       reply({
         content: replies.invalidAdmin,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -51,7 +51,7 @@ export const Bonus = {
     if (amount < 1) {
       reply({
         content: replies.invalidNegative,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -61,7 +61,7 @@ export const Bonus = {
 
     reply({
       content: replies.success,
-      ephimeral: false,
+      ephemeral: false,
       interaction: interaction,
     });
   },

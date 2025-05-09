@@ -32,7 +32,7 @@ export const Star = {
     if (!CONFIG.FEATURES.STAR.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -47,7 +47,7 @@ export const Star = {
     if (interaction.user.id === recipient.id) {
       reply({
         content: replies.invalidSelf,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -58,7 +58,7 @@ export const Star = {
     if (!starActivity) {
       reply({
         content: replies.error,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -69,7 +69,7 @@ export const Star = {
     if (starActivity.last_given === today) {
       reply({
         content: replies.invalidMax,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;

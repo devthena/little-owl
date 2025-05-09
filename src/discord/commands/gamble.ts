@@ -21,7 +21,7 @@ export const Gamble = {
     if (!CONFIG.FEATURES.GAMBLE.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -39,7 +39,7 @@ export const Gamble = {
     if (user.cash < 1) {
       reply({
         content: replies.noPoints,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -51,7 +51,7 @@ export const Gamble = {
     if (isNaN(amount) && arg !== 'all' && arg !== 'half') {
       reply({
         content: replies.invalidInput,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -61,7 +61,7 @@ export const Gamble = {
       if (amount > CONFIG.FEATURES.GAMBLE.LIMIT) {
         reply({
           content: replies.maxReached,
-          ephimeral: true,
+          ephemeral: true,
           interaction: interaction,
         });
         return true;
@@ -87,7 +87,7 @@ export const Gamble = {
           content: `You won ${user.cash} ${getCurrency(user.cash)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       } else {
@@ -95,7 +95,7 @@ export const Gamble = {
 
         reply({
           content: replies.lostAll,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       }
@@ -110,7 +110,7 @@ export const Gamble = {
           content: `You won ${halfPoints} ${getCurrency(halfPoints)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       } else {
@@ -120,14 +120,14 @@ export const Gamble = {
           content: `You lost ${halfPoints} ${getCurrency(halfPoints)}. ${
             EMOJIS.GAMBLE.LOST
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       }
     } else if (amount < 1) {
       reply({
         content: replies.invalidNegative,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
     } else if (amount <= user.cash) {
@@ -140,7 +140,7 @@ export const Gamble = {
           content: `You won ${amount} ${getCurrency(amount)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       } else {
@@ -150,14 +150,14 @@ export const Gamble = {
           content: `You lost ${amount} ${getCurrency(amount)}. ${
             EMOJIS.GAMBLE.LOST
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       }
     } else if (amount > user.cash) {
       reply({
         content: replies.notEnough,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
