@@ -1,6 +1,6 @@
 export const EMOJIS = {
-  CURRENCY: '<:silver:1370208423525748806>',
-  CURRENCY_TAILS: '<:silver_tails:1370208489619587072>',
+  CURRENCY: '<:silver:1370526592375197797>',
+  CURRENCY_TAILS: '<:silver_tails:1370526609496342528>',
   CUSTOM: {
     // animated emojis have an extra "a" character before the name
     ARRIVE: '<a:athena1Arrive:1251686415603863562>',
