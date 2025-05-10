@@ -10,7 +10,7 @@ import puppeteer from 'puppeteer';
 
 import { CONFIG, COPY, MONTH_MAP } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { CoinIcon, StarIcon } from '@/icons';
+import { SilverCoinIcon, StarIcon } from '@/icons';
 
 import { UserDocument } from '@/interfaces/user';
 import { parseHexToRGB } from '@/lib/utils';
@@ -63,11 +63,6 @@ export const Profile = {
       <head>
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300..600&display=swap');
-          svg {
-            height: 20px;
-            margin-right: 5px;
-            width: 20px;
-          }
           #profile {
             background: linear-gradient(180deg, #f8f8ff 0%, ${rgbString} 80%, ${
       member.displayHexColor
@@ -122,18 +117,20 @@ export const Profile = {
           }
           .values {
             display: flex;
+            gap: 10px;
             margin-top: 10px;
           }
           .balance > p {
             align-items: center;
-            font-size: 16px;
             display: flex;
+            font-size: 16px;
+            gap: 3px;
           }
           .stars {
             align-items: center;
             display: flex;
             font-size: 16px;
-            margin-left: 25px;
+            gap: 3px;
           }
           .rank {
             font-size: 10px;
@@ -164,12 +161,12 @@ export const Profile = {
               <div class="values">
                 <div class="balance">
                   <p class="cash">
-                    ${CoinIcon}
+                    ${SilverCoinIcon(19, 20)}
                     <span>${user.cash}</span>
                   </p>
                 </div>
                 <div class="stars">
-                  ${StarIcon}
+                  ${StarIcon(20, 20)}
                   <span>${user.stars ?? 0}</span>
                 </div>
               </div>
