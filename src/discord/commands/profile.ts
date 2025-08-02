@@ -10,7 +10,7 @@ import puppeteer from 'puppeteer';
 
 import { CONFIG, COPY, MONTH_MAP } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { SilverCoinIcon, StarIcon } from '@/icons';
+import { SilverIcon, StarIcon } from '@/icons';
 
 import { UserDocument } from '@/interfaces/user';
 import { parseHexToRGB } from '@/lib/utils';
@@ -164,7 +164,7 @@ export const Profile = {
               <div class="values">
                 <div class="balance">
                   <p class="cash">
-                    ${SilverCoinIcon(19, 20)}
+                    ${SilverIcon(20, 20)}
                     <span>${user.cash}</span>
                   </p>
                 </div>
