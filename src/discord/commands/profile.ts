@@ -4,8 +4,6 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import fs from 'fs';
-import path from 'path';
 import puppeteer from 'puppeteer';
 
 import { CONFIG, COPY, MONTH_MAP } from '@/constants';
@@ -208,21 +206,19 @@ export const Profile = {
     if (element) {
       const boundingBox = await element.boundingBox();
       if (boundingBox) {
-        const screenshotPath = path.join(__dirname, 'profile.png');
-
-        await page.screenshot({
-          path: `${screenshotPath}.png`,
-          clip: boundingBox,
-          type: 'png',
-          fullPage: false,
-        });
+        const buffer = Buffer.from(
+          await page.screenshot({
+            clip: boundingBox,
+            type: 'png',
+            fullPage: false,
+          })
+        );
 
         await browser.close();
 
-        const attachment = new AttachmentBuilder(
-          fs.readFileSync(screenshotPath),
-          { name: 'profile.png' }
-        );
+        const attachment = new AttachmentBuilder(buffer, {
+          name: 'profile.png',
+        });
 
         try {
           await interaction.editReply({ files: [attachment] });
@@ -238,7 +234,6 @@ export const Profile = {
             description: JSON.stringify(error),
           });
         } finally {
-          fs.unlinkSync(screenshotPath);
           return;
         }
       }
