@@ -2,4 +2,4 @@
 
 _Add description here_
 
-Closes #<issue number>
+Closes #
