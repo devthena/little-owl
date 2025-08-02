@@ -20,16 +20,6 @@ export const EMOJIS = {
     SECOND: ':second_place:',
     THIRD: ':third_place:',
   },
-  PET: {
-    PAW: ':paw_prints:',
-    HAPPY_HIGH: ':smiling_face:',
-    HAPPY_MID: ':neutral_face:',
-    HAPPY_LOW: ':sob:',
-    HEALTH_HIGH: ':red_heart:',
-    HEALTH_LOW: ':broken_heart:',
-    HUNGER_HIGH: ':meat_on_bone:',
-    HUNGER_LOW: ':fork_knife_plate:',
-  },
   STAR: {
     EMBED: ':sparkles:',
     INVALID: ':neutral_face:',

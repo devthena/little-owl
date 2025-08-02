@@ -1,12 +1,10 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
 } from 'discord.js';
 
 import { CONFIG, EMOJIS } from '@/constants';
 import { BotState } from '@/interfaces/bot';
-
-import { getServerPet } from '@/services/pet';
 import { findOrCreateDiscordUser } from '@/services/user';
 
 import * as dc from '../commands';
@@ -14,7 +12,7 @@ import { reply } from './reply';
 
 export const handleCommandInteraction = async (
   state: BotState,
-  interaction: CommandInteraction
+  interaction: ChatInputCommandInteraction
 ) => {
   if (interaction.user.bot) return;
 
@@ -100,17 +98,6 @@ export const handleCommandInteraction = async (
       return;
     }
 
-    const cerberus = await getServerPet();
-
-    if (cerberus && !cerberus.isAlive) {
-      reply({
-        content: `Earning ${CONFIG.CURRENCY.PLURAL} has been halted until ${cerberus.name} has returned.`,
-        ephemeral: true,
-        interaction: interaction,
-      });
-      return;
-    }
-
     const user = await findOrCreateDiscordUser(interaction.user);
     if (!user) return;
 
@@ -128,14 +115,6 @@ export const handleCommandInteraction = async (
   // command: leaderboard
   else if (interaction.commandName === dc.Leaderboard.getName()) {
     return dc.Leaderboard.execute(interaction);
-  }
-
-  // command: cerberus
-  else if (interaction.commandName === dc.Cerberus.getName()) {
-    const cerberus = await getServerPet();
-    if (!cerberus) return;
-
-    return dc.Cerberus.execute(state, interaction, cerberus);
   }
 
   // command: give

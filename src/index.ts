@@ -17,12 +17,10 @@ import { discord, twitch } from '@/lib/clients';
 import { connectDatabase, sleepTime } from '@/lib/config';
 
 import { scheduleTasks } from '@/scheduler';
-import { createServerPet } from '@/services/pet';
 
 const state: BotState = {
   activity: 1,
   cooldowns: {
-    cerberus: new Map(),
     stream: new Date(),
   },
   timers: [],
@@ -71,7 +69,6 @@ const init = async () => {
   await connectDatabase();
   await addEventListeners();
   await addSleepListeners();
-  await createServerPet();
   await scheduleTasks(state);
 };
 

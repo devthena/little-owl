@@ -1,25 +1,13 @@
-import {
-  CommandInteraction,
-  Interaction,
-  StringSelectMenuInteraction,
-} from 'discord.js';
+import { Interaction } from 'discord.js';
 
 import { BotState } from '@/interfaces/bot';
-
-import {
-  handleCommandInteraction,
-  handleSelectMenuInteraction,
-} from '../helpers';
+import { handleCommandInteraction } from '../helpers';
 
 export const onInteractionCreate = async (
   state: BotState,
   interaction: Interaction
 ) => {
   if (interaction.isChatInputCommand()) {
-    await handleCommandInteraction(state, interaction as CommandInteraction);
-  } else if (interaction.isStringSelectMenu()) {
-    await handleSelectMenuInteraction(
-      interaction as StringSelectMenuInteraction
-    );
+    await handleCommandInteraction(state, interaction);
   }
 };

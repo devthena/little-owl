@@ -1,5 +1,5 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   SlashCommandBuilder,
   SlashCommandStringOption,
 } from 'discord.js';
@@ -17,7 +17,7 @@ export const EightBall = {
         .setDescription(COPY.EIGHTBALL.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     if (!CONFIG.FEATURES.EIGHTBALL.ENABLED) {
       reply({
         content: COPY.DISABLED,

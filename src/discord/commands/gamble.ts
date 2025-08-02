@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { UserDocument } from '@/interfaces/user';
@@ -17,7 +17,10 @@ export const Gamble = {
         .setDescription(COPY.GAMBLE.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, user: UserDocument) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    user: UserDocument
+  ) => {
     if (!CONFIG.FEATURES.GAMBLE.ENABLED) {
       reply({
         content: COPY.DISABLED,

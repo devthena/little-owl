@@ -1,6 +1,6 @@
 import {
   ColorResolvable,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   EmbedBuilder,
   MessageFlags,
   SlashCommandBuilder,
@@ -16,7 +16,7 @@ export const Leaderboard = {
   data: new SlashCommandBuilder()
     .setName(COPY.LEADERBOARD.NAME)
     .setDescription(COPY.LEADERBOARD.DESCRIPTION),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     if (!CONFIG.FEATURES.LEADERBOARD.ENABLED) {
       reply({
         content: COPY.DISABLED,

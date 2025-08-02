@@ -81,14 +81,6 @@ export const CONFIG = {
     LINK: {
       ENABLED: true,
     },
-    PET: {
-      ENABLED: false,
-      MAX_STATS: 100,
-      ADD_HAPPINESS: 5,
-      ADD_HEALTH: 5,
-      REVIVE_HAPPINESS: 74,
-      REVIVE_HEALTH: 74,
-    },
     POINTS: {
       ENABLED: true,
     },

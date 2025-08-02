@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { weightedRandom } from '@/lib/utils';
@@ -9,7 +9,7 @@ export const CoinFlip = {
   data: new SlashCommandBuilder()
     .setName(COPY.COINFLIP.NAME)
     .setDescription(COPY.COINFLIP.DESCRIPTION),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     if (!CONFIG.FEATURES.COINFLIP.ENABLED) {
       reply({
         content: COPY.DISABLED,

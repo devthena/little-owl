@@ -1,6 +1,6 @@
 import {
   ColorResolvable,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
   User,
@@ -28,7 +28,10 @@ export const Star = {
         .setDescription(COPY.STAR.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, recipient: User) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    recipient: User
+  ) => {
     if (!CONFIG.FEATURES.STAR.ENABLED) {
       reply({
         content: COPY.DISABLED,

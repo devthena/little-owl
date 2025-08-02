@@ -2,7 +2,7 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -15,7 +15,7 @@ export const Help = {
   data: new SlashCommandBuilder()
     .setName(COPY.HELP.NAME)
     .setDescription(COPY.HELP.DESCRIPTION),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     if (!CONFIG.FEATURES.HELP.ENABLED) {
       reply({
         content: COPY.DISABLED,
