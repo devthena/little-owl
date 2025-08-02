@@ -4,7 +4,7 @@ import { LogCode } from '@/enums/logs';
 import { getENV } from '@/lib/config';
 
 import { deleteActivity } from '@/services/activities';
-import { deleteStats } from '@/services/statistics';
+import { deleteStats } from '@/services/stat';
 import { deleteUser } from '@/services/user';
 
 import { log } from '../helpers/log';

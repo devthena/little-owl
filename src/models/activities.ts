@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, models, Schema } from 'mongoose';
 
 import { ActivityDocument } from '@/interfaces/activities';
 import { getENV } from '@/lib/config';
@@ -30,7 +30,5 @@ const activitySchema = new Schema<ActivityDocument>(
   { collection: MONGODB_ACTS, versionKey: false }
 );
 
-export const ActivityModel = model<ActivityDocument>(
-  'Activity',
-  activitySchema
-);
+export const ActivityModel =
+  models.Activity || model<ActivityDocument>('Activity', activitySchema);
