@@ -1,4 +1,8 @@
-import { CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
+import {
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+  User,
+} from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { UserDocument } from '@/interfaces/user';
@@ -24,7 +28,7 @@ export const Give = {
         .setRequired(true)
     ),
   execute: async (
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     user: UserDocument,
     recipient: User
   ) => {

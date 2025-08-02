@@ -1,6 +1,6 @@
 export const EMOJIS = {
-  CURRENCY: '<:silver:1370526592375197797>',
-  CURRENCY_TAILS: '<:silver_tails:1370526609496342528>',
+  CURRENCY: '<:silver:1401279198571790346>',
+  CURRENCY_TAILS: '<:silver_reverse:1401279283040620606>',
   CUSTOM: {
     // animated emojis have an extra "a" character before the name
     ARRIVE: '<a:athena1Arrive:1251686415603863562>',
@@ -19,16 +19,6 @@ export const EMOJIS = {
     FIRST: ':first_place:',
     SECOND: ':second_place:',
     THIRD: ':third_place:',
-  },
-  PET: {
-    PAW: ':paw_prints:',
-    HAPPY_HIGH: ':smiling_face:',
-    HAPPY_MID: ':neutral_face:',
-    HAPPY_LOW: ':sob:',
-    HEALTH_HIGH: ':red_heart:',
-    HEALTH_LOW: ':broken_heart:',
-    HUNGER_HIGH: ':meat_on_bone:',
-    HUNGER_LOW: ':fork_knife_plate:',
   },
   STAR: {
     EMBED: ':sparkles:',

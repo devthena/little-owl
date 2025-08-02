@@ -1,5 +1,5 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
   SlashCommandStringOption,
@@ -23,7 +23,10 @@ export const AccountLink = {
         .setDescription(COPY.LINK.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, user: UserDocument) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    user: UserDocument
+  ) => {
     if (!CONFIG.FEATURES.LINK.ENABLED) {
       reply({
         content: COPY.DISABLED,

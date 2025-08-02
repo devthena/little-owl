@@ -1,4 +1,8 @@
-import { CommandInteraction, SlashCommandBuilder, User } from 'discord.js';
+import {
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+  User,
+} from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { incDiscordUser } from '@/services/user';
@@ -21,7 +25,10 @@ export const Bonus = {
         .setDescription(COPY.BONUS.OPTION2_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, recipient: User) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    recipient: User
+  ) => {
     if (!CONFIG.FEATURES.BONUS.ENABLED) {
       reply({
         content: COPY.DISABLED,

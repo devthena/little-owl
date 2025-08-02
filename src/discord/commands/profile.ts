@@ -1,6 +1,6 @@
 import {
   AttachmentBuilder,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -10,7 +10,7 @@ import puppeteer from 'puppeteer';
 
 import { CONFIG, COPY, MONTH_MAP } from '@/constants';
 import { LogCode } from '@/enums/logs';
-import { SilverCoinIcon, StarIcon } from '@/icons';
+import { SilverIcon, StarIcon } from '@/icons';
 
 import { UserDocument } from '@/interfaces/user';
 import { parseHexToRGB } from '@/lib/utils';
@@ -22,7 +22,10 @@ export const Profile = {
   data: new SlashCommandBuilder()
     .setName(COPY.PROFILE.NAME)
     .setDescription(COPY.PROFILE.DESCRIPTION),
-  execute: async (interaction: CommandInteraction, user: UserDocument) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    user: UserDocument
+  ) => {
     if (!CONFIG.FEATURES.PROFILE.ENABLED) {
       reply({
         content: COPY.DISABLED,
@@ -161,7 +164,7 @@ export const Profile = {
               <div class="values">
                 <div class="balance">
                   <p class="cash">
-                    ${SilverCoinIcon(19, 20)}
+                    ${SilverIcon(20, 20)}
                     <span>${user.cash}</span>
                   </p>
                 </div>
@@ -208,7 +211,7 @@ export const Profile = {
         const screenshotPath = path.join(__dirname, 'profile.png');
 
         await page.screenshot({
-          path: screenshotPath,
+          path: `${screenshotPath}.png`,
           clip: boundingBox,
           type: 'png',
           fullPage: false,

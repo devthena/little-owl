@@ -6,7 +6,6 @@ import { LogCode } from '@/enums/logs';
 export interface BotState {
   activity: number;
   cooldowns: {
-    cerberus: Map<string, Date>;
     stream: Date;
   };
   timers: ScheduledTask[];
