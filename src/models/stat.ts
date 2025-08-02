@@ -1,12 +1,12 @@
-import { model, Schema } from 'mongoose';
+import { model, models, Schema } from 'mongoose';
 
-import { GameCode } from '@/enums/statistics';
-import { StatsDocument } from '@/interfaces/statistics';
+import { GameCode } from '@/enums/games';
+import { StatDocument } from '@/interfaces/stat';
 import { getENV } from '@/lib/config';
 
 const { MONGODB_STATS } = getENV();
 
-const statsSchema = new Schema<StatsDocument>(
+const statSchema = new Schema<StatDocument>(
   {
     discord_id: { type: String, default: null },
     [GameCode.Wordle]: {
@@ -20,4 +20,4 @@ const statsSchema = new Schema<StatsDocument>(
   { collection: MONGODB_STATS, versionKey: false }
 );
 
-export const StatsModel = model<StatsDocument>('Stats', statsSchema);
+export const StatModel = models.Stat || model<StatDocument>('Stat', statSchema);
