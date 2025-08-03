@@ -19,11 +19,13 @@ import { connectDatabase, sleepTime } from '@/lib/config';
 import { scheduleTasks } from '@/scheduler';
 
 const state: BotState = {
-  activity: 1,
+  activityIndex: 1,
   cooldowns: {
     stream: new Date(),
   },
+  reminderIndex: 0,
   timers: [],
+  twitchChatQueue: 0,
 };
 
 const addEventListeners = async () => {
@@ -38,7 +40,7 @@ const addEventListeners = async () => {
   console.log('🦉 Little Owl: Discord.js Event Listeners Added');
 
   twitch.on('ban', te.onBan);
-  twitch.on('chat', te.onChat);
+  twitch.on('chat', te.onChat.bind(null, state));
   twitch.on('cheer', te.onCheer);
   twitch.on('join', te.onJoin);
   twitch.on('part', te.onPart);

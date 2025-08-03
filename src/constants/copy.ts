@@ -1,4 +1,5 @@
 import { CONFIG } from './config';
+import { EMOTES } from './emojis';
 import { URLS } from './urls';
 
 export const COPY = {
@@ -118,6 +119,10 @@ export const COPY = {
     OPTION_NAME: 'user',
     OPTION_DESCRIPTION: 'Enter recipient username',
   },
+  TWITCH_REMINDERS: [
+    `Positivity Reminder: You're awesome! ${EMOTES.REMINDER.POSITIVITY}`,
+    'Join the official community: https://parthenon.app. Log in with Discord to play and earn points!',
+  ],
   UNLINK: {
     NAME: 'unlink',
     DESCRIPTION: `Unlink your accounts (All ${CONFIG.CURRENCY.PLURAL} stay in your Discord account)`,
