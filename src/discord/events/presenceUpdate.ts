@@ -115,9 +115,9 @@ export const onPresenceUpdate = async (
           if (!streamAlertChannel || !streamAlertChannel.isTextBased()) return;
 
           streamAlertChannel
-            .send(`@everyone ${newPresence.member.displayName} is now live!`)
-            .then(_data => {
-              streamAlertChannel.send({ embeds: [botEmbed] });
+            .send({
+              content: `@everyone ${newPresence.member.displayName} is now live!`,
+              embeds: [botEmbed],
             })
             .catch(console.error)
             .finally(() => {
