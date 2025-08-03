@@ -16,7 +16,7 @@ export const onGive = async (
 
   const replies = {
     noPoints: `${user.twitch_username} you have no ${CONFIG.CURRENCY.SINGLE} to give.`,
-    notEnough: `${user.twitch_username} you don't have that much ${CONFIG.CURRENCY.PLURAL} to give.`,
+    notEnough: `${user.twitch_username} you don't have enough ${CONFIG.CURRENCY.PLURAL} to give.`,
     success: `${user.twitch_username} gave ${value} ${getCurrency(value)} to ${
       recipient.twitch_username
     }`,

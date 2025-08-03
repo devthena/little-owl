@@ -51,8 +51,8 @@ export const CONFIG = {
     YELLOW: '#F1C40F',
   },
   CURRENCY: {
-    PLURAL: 'coins',
-    SINGLE: 'coin',
+    PLURAL: 'silver coins',
+    SINGLE: 'silver coin',
   },
   FEATURES: {
     BONUS: {
