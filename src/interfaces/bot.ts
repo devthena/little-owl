@@ -4,11 +4,13 @@ import { ScheduledTask } from 'node-cron';
 import { LogCode } from '@/enums/logs';
 
 export interface BotState {
-  activity: number;
+  activityIndex: number;
   cooldowns: {
     stream: Date;
   };
+  reminderIndex: number;
   timers: ScheduledTask[];
+  twitchChatQueue: number;
 }
 
 export interface LogProps {

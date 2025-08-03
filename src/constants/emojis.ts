@@ -39,4 +39,7 @@ export const EMOTES = {
   LURK: {
     DEFAULT: 'ScaredyCat',
   },
+  REMINDER: {
+    POSITIVITY: 'DinoDance',
+  },
 };
