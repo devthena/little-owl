@@ -58,9 +58,7 @@ export const onChat = async (
 
     log({
       type: LogCode.Activity,
-      description: `${userstate.username} has redeemed conversion of ${
-        points * 10
-      } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
+      description: `${userstate.username} has claimed ${points} channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
     });
 
     await incTwitchUser(userstate['user-id'], { cash: points });
