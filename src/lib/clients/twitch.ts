@@ -19,8 +19,7 @@ twitch.on('connected', () => {
 });
 
 twitch.on('roomstate', (channel: string, _state: RoomState) => {
-  console.log('🦉 Little Owl: Roomstate');
-  if (process.env.STAGING) twitch.say(channel, 'TEST MODE');
+  console.log('🦉 Little Owl: Roomstate', channel);
 });
 
 twitch.connect();

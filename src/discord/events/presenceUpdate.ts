@@ -17,19 +17,24 @@ export const onPresenceUpdate = async (
   newPresence: Presence
 ) => {
   if (!newPresence.guild?.available) return;
+  if (!newPresence.member) return;
 
   const liveRole = newPresence.guild.roles.cache.find(
     role => CONFIG.ROLES.LIVE.ENABLED && role.id === CONFIG.ROLES.LIVE.ID
   );
 
+  const canBotManage =
+    newPresence.member.manageable ||
+    newPresence.member.id === newPresence.guild.ownerId;
+
   // member has gone offline
   if (newPresence.status === 'offline' || newPresence.status === 'invisible') {
     if (
       liveRole &&
-      newPresence.member?.manageable &&
-      newPresence.member?.roles.cache.has(liveRole.id)
+      canBotManage &&
+      newPresence.member.roles.cache.has(liveRole.id)
     ) {
-      newPresence.member?.roles.remove(liveRole).catch(console.error);
+      newPresence.member.roles.remove(liveRole).catch(console.error);
     }
     return;
   }
@@ -49,10 +54,10 @@ export const onPresenceUpdate = async (
       // member has started streaming
       if (
         liveRole &&
-        newPresence.member?.manageable &&
-        !newPresence.member?.roles.cache.has(liveRole.id)
+        canBotManage &&
+        !newPresence.member.roles.cache.has(liveRole.id)
       ) {
-        newPresence.member?.roles
+        newPresence.member.roles
           .add(liveRole)
           .then(_data => {
             log({
@@ -68,7 +73,7 @@ export const onPresenceUpdate = async (
       if (
         !hasBeenStreaming &&
         CONFIG.ALERTS.LIVE.ENABLED &&
-        newPresence.guild.ownerId === newPresence.member?.id
+        newPresence.guild.ownerId === newPresence.member.id
       ) {
         const streamActivity = newPresence.activities.find(
           activity => activity.type == ActivityType.Streaming
@@ -133,10 +138,10 @@ export const onPresenceUpdate = async (
     // member has ended their stream
     if (
       liveRole &&
-      newPresence.member?.manageable &&
-      newPresence.member?.roles.cache.has(liveRole.id)
+      canBotManage &&
+      newPresence.member.roles.cache.has(liveRole.id)
     ) {
-      newPresence.member?.roles.remove(liveRole).catch(console.error);
+      newPresence.member.roles.remove(liveRole).catch(console.error);
     }
 
     return;
@@ -144,9 +149,9 @@ export const onPresenceUpdate = async (
 
   if (
     liveRole &&
-    newPresence.member?.manageable &&
-    newPresence.member?.roles.cache.has(liveRole.id)
+    canBotManage &&
+    newPresence.member.roles.cache.has(liveRole.id)
   ) {
-    newPresence.member?.roles.remove(liveRole).catch(console.error);
+    newPresence.member.roles.remove(liveRole).catch(console.error);
   }
 };
