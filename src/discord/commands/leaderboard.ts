@@ -1,7 +1,8 @@
 import {
   ColorResolvable,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   EmbedBuilder,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -15,11 +16,11 @@ export const Leaderboard = {
   data: new SlashCommandBuilder()
     .setName(COPY.LEADERBOARD.NAME)
     .setDescription(COPY.LEADERBOARD.DESCRIPTION),
-  execute: async (interaction: CommandInteraction) => {
+  execute: async (interaction: ChatInputCommandInteraction) => {
     if (!CONFIG.FEATURES.LEADERBOARD.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -31,7 +32,7 @@ export const Leaderboard = {
     if (!leaderboardUsers.length) {
       return await interaction.reply({
         content: `Awkward.. it looks like nobody has any ${CONFIG.CURRENCY.SINGLE} right now.`,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 

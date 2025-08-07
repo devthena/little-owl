@@ -1,6 +1,7 @@
-export const StarIcon = `<svg
-    width="32"
-    height="32"
+export const StarIcon = (width: number, height: number) => `
+  <svg
+    width="${width}"
+    height="${height}"
     viewBox="0 0 32 32"
     fill="none"
     xmlns="http://www.w3.org/2000/svg">

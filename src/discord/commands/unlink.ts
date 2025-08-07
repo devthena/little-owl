@@ -1,5 +1,6 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
   SlashCommandStringOption,
 } from 'discord.js';
@@ -21,11 +22,14 @@ export const AccountUnlink = {
         .setDescription(COPY.UNLINK.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, user: UserDocument) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    user: UserDocument
+  ) => {
     if (!CONFIG.FEATURES.UNLINK.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -34,7 +38,7 @@ export const AccountUnlink = {
     if (!user.twitch_id) {
       reply({
         content: COPY.UNLINK.RESPONSES.NOLINK,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -45,7 +49,7 @@ export const AccountUnlink = {
     if (user.twitch_username !== twitchName) {
       reply({
         content: COPY.UNLINK.RESPONSES.INVALID,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -64,7 +68,7 @@ export const AccountUnlink = {
 
     await interaction.reply({
       content: COPY.UNLINK.RESPONSES.SUCCESS,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
 
     log({

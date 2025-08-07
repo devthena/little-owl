@@ -9,7 +9,7 @@ import {
 
 import { log } from '@/discord/helpers';
 import { LogCode } from '@/enums/logs';
-import { ObjectProps } from '@/interfaces/bot';
+import { BotState, ObjectProps } from '@/interfaces/bot';
 
 import { twitch } from '@/lib/clients';
 import { getCurrency, isNumber } from '@/lib/utils';
@@ -25,6 +25,7 @@ import { onBonus, onGamble, onGive } from '../commands';
 const infoCommands = ['bsky', 'discord', 'dstmods', 'steam', 'switch', 'web'];
 
 export const onChat = async (
+  state: BotState,
   channel: string,
   userstate: ObjectProps,
   message: string,
@@ -57,9 +58,7 @@ export const onChat = async (
 
     log({
       type: LogCode.Activity,
-      description: `${userstate.username} has redeemed conversion of ${
-        points * 10
-      } channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
+      description: `${userstate.username} has claimed ${points} channel points to ${points} ${CONFIG.CURRENCY.PLURAL}!`,
     });
 
     await incTwitchUser(userstate['user-id'], { cash: points });
@@ -142,7 +141,9 @@ export const onChat = async (
     }
   }
 
-  // if message is not a command, reward coins if possible
+  // if message is not a command
+
+  state.twitchChatQueue += 1;
 
   const words = message.split(/ +/g);
   const pattern = /[A-Za-z].{2,}/;

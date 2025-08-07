@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits } from 'discord.js';
 
 if (!process.env.DISCORD_TOKEN) {
   console.error('🦉 Error: Discord.js Missing Environment Variables');
@@ -18,7 +18,7 @@ const discord = new Client({
   ],
 });
 
-discord.on('ready', () => {
+discord.on(Events.ClientReady, () => {
   console.log('🦉 Little Owl: Discord.js Connected');
 
   discord.user?.setActivity({

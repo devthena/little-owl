@@ -1,13 +1,10 @@
 import { Routes } from 'discord.js';
 import { REST } from '@discordjs/rest';
 
-import { CONFIG } from '@/constants';
-
 import {
   AccountLink,
   AccountUnlink,
   Bonus,
-  Cerberus,
   CoinFlip,
   EightBall,
   Gamble,
@@ -59,10 +56,6 @@ export const registerDiscordCommands = (): void => {
   commands.push(Points.data.toJSON());
   commands.push(Profile.data.toJSON());
   commands.push(Star.data.toJSON());
-
-  if (CONFIG.FEATURES.PET.ENABLED) {
-    commands.push(Cerberus.data.toJSON());
-  }
 
   // commands in development for testing should be added here
   commandsStage.push(Sleep.data.toJSON());

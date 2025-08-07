@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY } from '@/constants';
 import { BotState } from '@/interfaces/bot';
@@ -10,11 +10,14 @@ export const Sleep = {
   data: new SlashCommandBuilder()
     .setName(COPY.SLEEP.NAME)
     .setDescription(COPY.SLEEP.DESCRIPTION),
-  execute: async (state: BotState, interaction: CommandInteraction) => {
+  execute: async (
+    state: BotState,
+    interaction: ChatInputCommandInteraction
+  ) => {
     if (!CONFIG.FEATURES.SLEEP.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -22,7 +25,7 @@ export const Sleep = {
 
     reply({
       content: '🦉 Little Owl: Good night!',
-      ephimeral: false,
+      ephemeral: false,
       interaction: interaction,
     });
 

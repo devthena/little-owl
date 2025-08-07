@@ -1,4 +1,4 @@
-import { ColorResolvable, EmbedBuilder } from 'discord.js';
+import { ColorResolvable, EmbedBuilder, MessageFlags } from 'discord.js';
 
 import { CONFIG } from '@/constants';
 import { LogCode } from '@/enums/logs';
@@ -8,7 +8,7 @@ import { log } from './log';
 
 export const reply = async ({
   content,
-  ephimeral,
+  ephemeral,
   interaction,
 }: ReplyProps) => {
   try {
@@ -16,7 +16,10 @@ export const reply = async ({
       .setColor(CONFIG.COLORS.BLUE as ColorResolvable)
       .setDescription(content);
 
-    await interaction.reply({ embeds: [botEmbed], ephemeral: ephimeral });
+    await interaction.reply({
+      embeds: [botEmbed],
+      ...(ephemeral && { flags: MessageFlags.Ephemeral }),
+    });
   } catch (error) {
     log({
       type: LogCode.Error,

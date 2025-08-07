@@ -1,12 +1,10 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   CommandInteractionOptionResolver,
 } from 'discord.js';
 
 import { CONFIG, EMOJIS } from '@/constants';
 import { BotState } from '@/interfaces/bot';
-
-import { getServerPet } from '@/services/pet';
 import { findOrCreateDiscordUser } from '@/services/user';
 
 import * as dc from '../commands';
@@ -14,14 +12,14 @@ import { reply } from './reply';
 
 export const handleCommandInteraction = async (
   state: BotState,
-  interaction: CommandInteraction
+  interaction: ChatInputCommandInteraction
 ) => {
   if (interaction.user.bot) return;
 
   const replyNoBot = () => {
     reply({
       content: `I'm only accepting human members for this command. ${EMOJIS.CUSTOM.BOT}`,
-      ephimeral: true,
+      ephemeral: true,
       interaction: interaction,
     });
   };
@@ -75,7 +73,7 @@ export const handleCommandInteraction = async (
   if (!isInBotChannel) {
     reply({
       content: 'Please use this command in one of the bot channels.',
-      ephimeral: true,
+      ephemeral: true,
       interaction: interaction,
     });
     return;
@@ -94,18 +92,7 @@ export const handleCommandInteraction = async (
     if (!isInCasinoChannel) {
       reply({
         content: 'Please use the #casino channel to gamble your points.',
-        ephimeral: true,
-        interaction: interaction,
-      });
-      return;
-    }
-
-    const cerberus = await getServerPet();
-
-    if (cerberus && !cerberus.isAlive) {
-      reply({
-        content: `Earning ${CONFIG.CURRENCY.PLURAL} has been halted until ${cerberus.name} has returned.`,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -128,14 +115,6 @@ export const handleCommandInteraction = async (
   // command: leaderboard
   else if (interaction.commandName === dc.Leaderboard.getName()) {
     return dc.Leaderboard.execute(interaction);
-  }
-
-  // command: cerberus
-  else if (interaction.commandName === dc.Cerberus.getName()) {
-    const cerberus = await getServerPet();
-    if (!cerberus) return;
-
-    return dc.Cerberus.execute(state, interaction, cerberus);
   }
 
   // command: give

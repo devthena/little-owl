@@ -1,5 +1,6 @@
 export const EMOJIS = {
-  CURRENCY: ':coin:',
+  CURRENCY: '<:silver:1401279198571790346>',
+  CURRENCY_TAILS: '<:silver_reverse:1401279283040620606>',
   CUSTOM: {
     // animated emojis have an extra "a" character before the name
     ARRIVE: '<a:athena1Arrive:1251686415603863562>',
@@ -19,16 +20,6 @@ export const EMOJIS = {
     SECOND: ':second_place:',
     THIRD: ':third_place:',
   },
-  PET: {
-    PAW: ':paw_prints:',
-    HAPPY_HIGH: ':smiling_face:',
-    HAPPY_MID: ':neutral_face:',
-    HAPPY_LOW: ':sob:',
-    HEALTH_HIGH: ':red_heart:',
-    HEALTH_LOW: ':broken_heart:',
-    HUNGER_HIGH: ':meat_on_bone:',
-    HUNGER_LOW: ':fork_knife_plate:',
-  },
   STAR: {
     EMBED: ':sparkles:',
     INVALID: ':neutral_face:',
@@ -47,5 +38,8 @@ export const EMOTES = {
   },
   LURK: {
     DEFAULT: 'ScaredyCat',
+  },
+  REMINDER: {
+    POSITIVITY: 'DinoDance',
   },
 };

@@ -17,15 +17,15 @@ import { discord, twitch } from '@/lib/clients';
 import { connectDatabase, sleepTime } from '@/lib/config';
 
 import { scheduleTasks } from '@/scheduler';
-import { createServerPet } from '@/services/pet';
 
 const state: BotState = {
-  activity: 1,
+  activityIndex: 1,
   cooldowns: {
-    cerberus: new Map(),
     stream: new Date(),
   },
+  reminderIndex: 0,
   timers: [],
+  twitchChatQueue: 0,
 };
 
 const addEventListeners = async () => {
@@ -40,7 +40,7 @@ const addEventListeners = async () => {
   console.log('🦉 Little Owl: Discord.js Event Listeners Added');
 
   twitch.on('ban', te.onBan);
-  twitch.on('chat', te.onChat);
+  twitch.on('chat', te.onChat.bind(null, state));
   twitch.on('cheer', te.onCheer);
   twitch.on('join', te.onJoin);
   twitch.on('part', te.onPart);
@@ -71,7 +71,6 @@ const init = async () => {
   await connectDatabase();
   await addEventListeners();
   await addSleepListeners();
-  await createServerPet();
   await scheduleTasks(state);
 };
 

@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, models, Schema } from 'mongoose';
 
 import { UserDocument } from '@/interfaces/user';
 import { getENV } from '@/lib/config';
@@ -20,4 +20,4 @@ const userSchema = new Schema<UserDocument>(
   { collection: MONGODB_USERS, versionKey: false }
 );
 
-export const UserModel = model<UserDocument>('User', userSchema);
+export const UserModel = models.User || model<UserDocument>('User', userSchema);

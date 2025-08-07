@@ -1,5 +1,5 @@
 import { CONFIG } from './config';
-import { EMOJIS } from './emojis';
+import { EMOTES } from './emojis';
 import { URLS } from './urls';
 
 export const COPY = {
@@ -101,18 +101,6 @@ export const COPY = {
   LURK: {
     NAME: 'lurk',
   },
-  PET: {
-    NAME: 'cerberus',
-    DESCRIPTION: 'Resident good boy of the AthenaUS server',
-    OPTION_NAME: 'action',
-    OPTION_DESCRIPTION: 'Interact with Cerberus!',
-    SELECT_FEED_ID: 'cerberus-feed',
-    ALIVE: `He has revived after a period of rest. He comes back with hunger fully restored, ready to watch over the server once more. ${EMOJIS.PET.PAW}\n\nYou can now resume earning coins ${EMOJIS.CURRENCY} and taking care of him.`,
-    DEAD: `Revive him with Honey Cake or wait for his return in the next couple of days. Earning coins ${EMOJIS.CURRENCY} has halted until he is revived.`,
-    FULL: '**Cerberus is currently Full**\nPlease check back later when he goes hungry again.',
-    NEW: `Cerberus has arrived to guard and protect our server. Keep him well-fed and happy to continue earning ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.PET.PAW}`,
-    REVIVED: `He has been revived, his hunger fully restored, and he is ready to protect the server once more. ${EMOJIS.PET.PAW}\n\nYou can now resume earning coins ${EMOJIS.CURRENCY} and taking care of him.`,
-  },
   POINTS: {
     NAME: 'points',
     DESCRIPTION: `Display the amount of ${CONFIG.CURRENCY.PLURAL} you have`,
@@ -131,6 +119,10 @@ export const COPY = {
     OPTION_NAME: 'user',
     OPTION_DESCRIPTION: 'Enter recipient username',
   },
+  TWITCH_REMINDERS: [
+    `Reminder: You're awesome! ${EMOTES.REMINDER.POSITIVITY}`,
+    'Check out our community website: https://parthenon.app. Log in with Discord to play and earn points!',
+  ],
   UNLINK: {
     NAME: 'unlink',
     DESCRIPTION: `Unlink your accounts (All ${CONFIG.CURRENCY.PLURAL} stay in your Discord account)`,

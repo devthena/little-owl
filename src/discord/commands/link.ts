@@ -1,5 +1,6 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
   SlashCommandStringOption,
 } from 'discord.js';
@@ -22,11 +23,14 @@ export const AccountLink = {
         .setDescription(COPY.LINK.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, user: UserDocument) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    user: UserDocument
+  ) => {
     if (!CONFIG.FEATURES.LINK.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -37,7 +41,7 @@ export const AccountLink = {
     if (user.twitch_id) {
       reply({
         content: COPY.LINK.RESPONSES.LINKED_DISCORD,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -49,7 +53,7 @@ export const AccountLink = {
     if (!twitchUser) {
       await interaction.reply({
         content: COPY.LINK.RESPONSES.INVALID,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -57,7 +61,7 @@ export const AccountLink = {
     if (twitchUser && twitchUser.discord_id) {
       await interaction.reply({
         content: COPY.LINK.RESPONSES.LINKED_TWITCH,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -74,7 +78,7 @@ export const AccountLink = {
 
     await interaction.reply({
       content: COPY.LINK.RESPONSES.SUCCESS,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
 
     log({

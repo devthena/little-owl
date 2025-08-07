@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 import { CONFIG, COPY, EMOJIS } from '@/constants';
 import { UserDocument } from '@/interfaces/user';
@@ -17,11 +17,14 @@ export const Gamble = {
         .setDescription(COPY.GAMBLE.OPTION_DESCRIPTION)
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, user: UserDocument) => {
+  execute: async (
+    interaction: ChatInputCommandInteraction,
+    user: UserDocument
+  ) => {
     if (!CONFIG.FEATURES.GAMBLE.ENABLED) {
       reply({
         content: COPY.DISABLED,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -33,13 +36,13 @@ export const Gamble = {
       lostAll: `You lost all of your ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.GAMBLE.LOST}`,
       maxReached: `You can only gamble up to ${CONFIG.FEATURES.GAMBLE.LIMIT} ${CONFIG.CURRENCY.PLURAL}. ${EMOJIS.GAMBLE.INVALID}`,
       noPoints: `You have no ${CONFIG.CURRENCY.SINGLE} to gamble. ${EMOJIS.GAMBLE.INVALID}`,
-      notEnough: `You don't have enough ${CONFIG.CURRENCY.PLURAL} to gamble that amount. ${EMOJIS.GAMBLE.INVALID}`,
+      notEnough: `You don't have enough ${CONFIG.CURRENCY.PLURAL} to gamble. ${EMOJIS.GAMBLE.INVALID}`,
     };
 
     if (user.cash < 1) {
       reply({
         content: replies.noPoints,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -51,7 +54,7 @@ export const Gamble = {
     if (isNaN(amount) && arg !== 'all' && arg !== 'half') {
       reply({
         content: replies.invalidInput,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
@@ -61,7 +64,7 @@ export const Gamble = {
       if (amount > CONFIG.FEATURES.GAMBLE.LIMIT) {
         reply({
           content: replies.maxReached,
-          ephimeral: true,
+          ephemeral: true,
           interaction: interaction,
         });
         return true;
@@ -87,7 +90,7 @@ export const Gamble = {
           content: `You won ${user.cash} ${getCurrency(user.cash)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       } else {
@@ -95,7 +98,7 @@ export const Gamble = {
 
         reply({
           content: replies.lostAll,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       }
@@ -110,7 +113,7 @@ export const Gamble = {
           content: `You won ${halfPoints} ${getCurrency(halfPoints)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       } else {
@@ -120,14 +123,14 @@ export const Gamble = {
           content: `You lost ${halfPoints} ${getCurrency(halfPoints)}. ${
             EMOJIS.GAMBLE.LOST
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       }
     } else if (amount < 1) {
       reply({
         content: replies.invalidNegative,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
     } else if (amount <= user.cash) {
@@ -140,7 +143,7 @@ export const Gamble = {
           content: `You won ${amount} ${getCurrency(amount)}! ${
             EMOJIS.GAMBLE.WIN
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       } else {
@@ -150,14 +153,14 @@ export const Gamble = {
           content: `You lost ${amount} ${getCurrency(amount)}. ${
             EMOJIS.GAMBLE.LOST
           } Current balance: ${points} ${EMOJIS.CURRENCY}`,
-          ephimeral: false,
+          ephemeral: false,
           interaction: interaction,
         });
       }
     } else if (amount > user.cash) {
       reply({
         content: replies.notEnough,
-        ephimeral: true,
+        ephemeral: true,
         interaction: interaction,
       });
       return;
