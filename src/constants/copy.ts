@@ -120,8 +120,8 @@ export const COPY = {
     OPTION_DESCRIPTION: 'Enter recipient username',
   },
   TWITCH_REMINDERS: [
-    `Positivity Reminder: You're awesome! ${EMOTES.REMINDER.POSITIVITY}`,
-    'Join the official community: https://parthenon.app. Log in with Discord to play and earn points!',
+    `Reminder: You're awesome! ${EMOTES.REMINDER.POSITIVITY}`,
+    'Check out our community website: https://parthenon.app. Log in with Discord to play and earn points!',
   ],
   UNLINK: {
     NAME: 'unlink',
